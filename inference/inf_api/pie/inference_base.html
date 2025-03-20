@@ -1,0 +1,1772 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>inference.pie.inference_base API documentation</title>
+<meta name="description" content="Utilities and base class for inferences." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>inference.pie.inference_base</code></h1>
+</header>
+<section id="section-intro">
+<p>Utilities and base class for inferences.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Utilities and base class for inferences.
+&#34;&#34;&#34;
+
+import inspect
+
+from .param import *
+from .autoname import HasAutoNamed
+from .signalmodel import SignalModel, StopStepping
+from scipy import zeros, array, identity
+from ..utils.nrmin import powell
+from .predictor import PredictorSet
+from .containers import ParamValues, ScalarGrid, VectorGrid
+
+# TODO:  Work out the minimizer situation; powell is imported from my
+# NRMin module (not in inference), based on Numerical Recipes.  Rewrite
+# it for inference, or use something in scipy.optimize.
+
+# Enum for extremize direction:
+
+
+class ExtremizeDrxn:
+    maximize, minimize = &#39;max&#39;, &#39;min&#39;
+
+
+maximize, minimize = ExtremizeDrxn.maximize, ExtremizeDrxn.minimize
+
+# Exceptions for inferences:
+
+
+class InferenceError(Exception):
+    pass
+
+
+class Inference(HasAutoNamed):
+    &#34;&#34;&#34;
+    Base class for inferences, managing basic parameter bookkeeping:
+    fixing, stepping, and varying parameters.
+
+    A subclass of Inference will typically get mixed in with a SignalModel
+    subclass and a PredictorSet subclass, or a ProbModel subclass.  Inference
+    thus relies on methods present in these mixin classes.
+
+    Note:  If the inference inheriting this class defines an __init__ method,
+    it should call Inference.__init__() within that method.
+    &#34;&#34;&#34;
+
+    def __init__(self):
+        self.fixed_params = []
+        self.varying_params = []
+        self.stepping_params = []
+        self.stepping_info = {}  # vals = lists: [drxn, index, steps]
+
+        # This sets whether to use unbounded transforms of varying params.
+        self.use_unbounded = False
+
+        self.on_use_done = False
+
+        # ??? Keep lists of current values of various param types?
+
+        # Default minimization method &amp; tolerance: if a subclass
+        # hasn&#39;t defined these, set them to None.
+        # We don&#39;t provide a default method &amp; tolerance here
+        # because different inference methods may have different
+        # appropriate default methods.
+        if not hasattr(self, &#39;min_method&#39;):
+            self.min_method = None
+        if not hasattr(self, &#39;min_tol&#39;):
+            self.min_tol = None
+
+        # log_dens indicates whether the objective function can
+        # be interpreted as the negative log of a distribution
+        # on parameter space.  This gets used to determine if
+        # results on grids can be meaningfully integrated.
+        # if not hasattr(self, &#39;minus_log_df&#39;):
+        #    self.log_dens = False
+        if not hasattr(self, &#39;minus_log_df&#39;):
+            self.log_dens = False
+
+        # did_signals keeps track of whether we&#39;ve already evaluated
+        # the model.
+        # *** NOT YET IMPLEMENTED
+        # self.did_signals = False
+
+        # *** Provide hooks for storing state or calculating candidate state
+        # before storing it, to facilitate MCMC.
+
+        # Reorder the param names associated with this inference to reflect
+        # the order in the source code (the metaclass will order them in a
+        # shuffled order, the order of keys in the class dict).
+        # First, get the SignalModel and Predictors mixin classes.
+        for cls in self.__class__.__bases__:
+            if SignalModel in cls.__bases__:
+                self.signal_class = cls
+            elif PredictorSet in cls.__bases__:
+                self.pred_class = cls
+        # Get the names of params and predictors from the mixins.
+        # Get them from source if available, to preserve the order
+        # in which the user defined them.
+        # Be careful gathering params; the PredictorSet mixin class
+        # may have params.
+        try:
+            unordered = self.signal_class.param_names[:]
+            self.params = self._get_signal_names(unordered)
+        except:
+            self.params = []
+        try:
+            unordered = self.pred_class.param_names[:]
+        except:
+            unordered = []
+        oparams, self.predictors = self._get_pred_names(unordered)
+        self.params.extend(oparams)
+        # Make sure params are unique; i.e., that the Predictors class
+        # hasn&#39;t duplicated a param name.
+        if len(set(self.params)) != len(self.params):
+            raise InferenceError(&#39;A parameter name is duplicated within this inference!&#39;)
+
+    def _get_signal_names(self, signal_params):
+        &#34;&#34;&#34;Use the source for the SignalModel and Predictors mixins to
+        fix the order of param and predictor names.  If source is
+        unavailable, just grab the names from the mixin class dicts.&#34;&#34;&#34;
+        # Be careful gathering params; the Predictors mixin class
+        # may have params.
+        oparams = []
+        try:
+            source = inspect.getsourcelines(self.signal_class)[0]
+            for line in source:
+                line = line.strip()
+                for param in signal_params:
+                    # *** Use a regexp here to match any white space b/4 &#39;=&#39;.
+                    if line.startswith(param+&#39; =&#39;) or line.startswith(param+&#39;=&#39;):
+                        oparams.append(param)
+                        signal_params.remove(param)
+            if signal_params != []:
+                raise InferenceError(&#39;Some params not defined in SignalModel source!&#39;)
+        except IOError:  # Only in the unlikely event of interactive model def&#39;n
+            print(&#39;Could not locate SignalModel source; proceeding with unordered params.&#39;)
+            oparams = self.signal_class.param_names
+        except TypeError:  # This is needed due to an apparent bug in inspect (failure can raise TypeError).
+            print(&#39;Could not locate SignalModel source; proceeding with unordered params.&#39;)
+            print(&#39;(Note: This may be due to a bug in inspect.py)&#39;)
+            oparams = self.signal_class.param_names
+        return oparams
+
+    def _get_pred_names(self, pred_params):
+        &#34;&#34;&#34;Use the source for the SignalModel and Predictors mixins to
+        fix the order of param and predictor names.  If source is
+        unavailable, just grab the names from the mixin class dicts.&#34;&#34;&#34;
+        # Be careful gathering params; the Predictors mixin class
+        # may have params.
+        oparams = []
+        try:
+            source = inspect.getsourcelines(self.pred_class)[0]
+            if pred_params:
+                for line in source:
+                    line = line.strip()
+                    for param in pred_params:
+                        if line.startswith(param+&#39; =&#39;) or line.startswith(param+&#39;=&#39;):
+                            oparams.append(param)
+                            pred_params.remove(param)
+                if pred_params != []:
+                    raise InferenceError(&#39;Some params not defined in Predictors source!&#39;)
+            # Now do the same to get the Predictor order.
+            opreds = []
+            preds = self.pred_class.predictor_names[:]
+            for line in source:
+                line = line.strip()
+                for pred in preds:
+                    if line.startswith(pred+&#39; =&#39;) or line.startswith(pred+&#39;=&#39;):
+                        opreds.append(pred)
+                        preds.remove(pred)
+            if preds != []:
+                raise InferenceError(&#39;Some Predictor(s) not defined in Predictors source!&#39;)
+        except IOError:  # Only in the unlikely event of interactive pred. def&#39;n
+            print(&#39;Could not locate PredictorSet source; proceeding with unordered params.&#39;)
+            oparams.extend(self.pred_class.param_names)
+            opreds = self.pred_class.predictor_names
+        except:  # This is needed due to an apparent bug in inspect (failure can raise TypeError).
+            print(&#39;Could not locate PredictorSet source; proceeding with unordered params.&#39;)
+            oparams.extend(self.pred_class.param_names)
+            opreds = self.pred_class.predictor_names
+        return oparams, opreds
+        # Make sure params are unique; i.e., that the Predictors class
+        # hasn&#39;t duplicated a param name.
+        if len(set(self.params)) != len(self.params):
+            raise InferenceError(&#39;A parameter name is duplicated within this inference!&#39;)
+
+    def _on_param_status_change(self, param, old, new):
+        &#34;&#34;&#34;Maintain lists of fixed, varying, and stepping variables. Initialize
+        the stepping parameters whenever a parameter is changed to stepping.&#34;&#34;&#34;
+        # If old=new, don&#39;t delete and then append the param name from
+        # the relevant list; this will change the order of the params
+        # when the user intends only to adjust a step size, etc..
+        if old == new:
+            if new == stepping:
+                # If a stepping param is adjusted, reset all of them.
+                self.stepping_info[param] = nextd
+                self.reset_steps()
+            return
+        if old == undef:
+            if new == fixed:
+                self.fixed_params.append(param)
+            elif new == varying:
+                self.varying_params.append(param)
+            elif new == stepping:
+                self.stepping_params.append(param)
+                self.stepping_info[param] = nextd
+                self.reset_steps()
+        if old == fixed:
+            self.fixed_params.remove(param)
+            if new == varying:
+                self.varying_params.append(param)
+            elif new == stepping:
+                self.stepping_params.append(param)
+                self.stepping_info[param] = nextd
+                self.reset_steps()
+        if old == varying:
+            self.varying_params.remove(param)
+            if new == fixed:
+                self.fixed_params.append(param)
+            elif new == stepping:
+                self.stepping_params.append(param)
+                self.stepping_info[param] = nextd
+                self.reset_steps()
+        if old == stepping:
+            self.stepping_params.remove(param)
+            self.reset_steps()
+            del(self.stepping_info[param])
+            if new == fixed:
+                self.fixed_params.append(param)
+            elif new == varying:
+                self.varying_params.append(param)
+
+    def map_bounds(self):
+        &#34;&#34;&#34;
+        Use transformed versions of varying parameters in optimizations, mapping
+        the parameter bounds to infinity so the mapped parameter space is
+        unbounded.
+
+        This is an unsophisticated way to enable optimization with basic
+        optimizers when parameters have fixed parameter boundaries.
+        &#34;&#34;&#34;
+        self.use_unbounded = True
+
+    def unmap_bounds(self):
+        &#34;&#34;&#34;
+        Switch back to using the &#34;true&#34; (bounded) values of varying parameters
+        in optimization.
+        &#34;&#34;&#34;
+        self.use_unbounded = False
+
+    def reset_steps(self):
+        &#34;&#34;&#34;Reset the stepped parameters and their step directions.&#34;&#34;&#34;
+        # This is slightly wasteful: when x is set to step it is
+        # initialized, and this initializes it again.  Note that
+        # this will result in a duplicate call to on_param_change.
+        for param in self.stepping_params:
+            param.first_step()
+            self.stepping_info[param] = nextd
+
+    def next_step(self):
+        &#34;&#34;&#34;
+        Change the parameters to the next set on the stepped grid.
+
+        This is done in a &#34;zig-zag&#34; fashion, e.g., for two parameters, (x,y),
+        x is incremented up to its maximum value, then y is incremented once
+        *without* changing x, and subsequently x is stepped *down*.  This is
+        done to facilitate calculating profiles/projections on a grid.  For
+        such calculations, the current *varying* parameter values (which
+        will have been optimized at the previous grid point) will only be
+        a good starting point for nearby points on the grid.  If after
+        incrementing y we were to reset x to its minimum value, the current
+        varying parameters could be at a very bad location, greatly
+        prolonging optimization or even preventing it.
+        &#34;&#34;&#34;
+        last = self.stepping_params[-1]
+        for param in self.stepping_params:
+            drxn = self.stepping_info[param]
+            # print(&#39;Stepping param&#39;, param.name, drxn)
+            try:
+                # Try stepping a param in its current drxn;
+                # return at the 1st success.
+                if drxn == nextd:
+                    param.next_step()
+                elif drxn == prevd:
+                    param.prev_step()
+                return
+            except ParamRangeError:
+                # If we bumped into the end of the last stepping param&#39;s
+                # range, quit.  Otherwise, reverse the step drxn of this
+                # param and try stepping the next one.
+                if param == last:
+                    # *** Should we reset_steps() here?  It may screw up
+                    # an optimization if the user expects varying params
+                    # to be in a good start state (an unlikely sit&#39;n).
+                    self.reset_steps()
+                    raise StopStepping(&#34;Attempted to step beyond the last step!&#34;)
+                else:
+                    self.stepping_info[param] = reverse_direction(drxn)
+
+    def step_nums(self):
+        &#34;&#34;&#34;Return the current indices for stepping params.&#34;&#34;&#34;
+        nums = []
+        for param in self.stepping_params:
+            nums.append(param.step_num)
+        return tuple(nums)
+
+    def step_shape(self):
+        &#34;&#34;&#34;Return the numbers of steps for stepping params in a tuple.
+        This would be the &#34;shape&#34; of an array holding results on the
+        stepping grid.&#34;&#34;&#34;
+        shape = []
+        for param in self.stepping_params:
+            shape.append(param.steps)
+        return tuple(shape)
+
+    def _set_varying(self, *args):
+        &#34;&#34;&#34;Set the values of varying parameters.  The arguments are
+        assigned to the currently varying parameters in the order they
+        were declared varying.&#34;&#34;&#34;
+        if len(args) != len(self.varying_params):
+            raise ParamError(&#39;Wrong number of varying params!&#39;)
+        for param, val in zip(self.varying_params, args):
+            param.set_value(val)
+
+    def get_params(self):
+        &#34;&#34;&#34;Return a ParamValues instance storing the current param values
+        as attributes.&#34;&#34;&#34;
+        pv = ParamValues()
+        for name in self.params:
+            param = getattr(self, name)
+            # pv.store(name, param.get_value(), param.doc)
+            pv.store(name, param)
+        return pv
+
+    def set_params(self, pv):
+        &#34;&#34;&#34;Set the values of params from a ParamValues instance.
+        This is valid only if all params are either fixed or varying.&#34;&#34;&#34;
+        # *** Should this just skip stepped params rather than quit?
+        # *** Should it check there are no &#34;extras&#34; in the passed pv?
+        for name in self.params:
+            param = getattr(self, name)
+            if param.status == fixed:
+                param.fix(getattr(pv,name))
+            elif param.status == varying:
+                param.vary(getattr(pv,name))
+            else:
+                raise ParamError(&#39;Use set_params only when params are fixed or varying!&#39;)
+
+    # *** Make versions of show*() that return strings.
+
+    def show_status(self):
+        &#34;&#34;&#34;Print lists of fixed, stepped, and varying params.&#34;&#34;&#34;
+        f = [param.name for param in self.fixed_params]
+        s = [param.name for param in self.stepping_params]
+        v = [param.name for param in self.varying_params]
+        print(&#39;Fixed params:   &#39;, f)
+        print(&#39;Stepping params:&#39;, s)
+        print(&#39;Varying params: &#39;, v)
+
+    def show(self):
+        &#34;&#34;&#34;Print basic parameter info: name, value, doc.&#34;&#34;&#34;
+        # *** Provide explicit support for &#34;derived&#34; params, or
+        # expect the user to override this?  Explicit support as
+        # AutoNamed descriptors may be desirable to avoid forcing
+        # users to implement __init__, though derived params can
+        # likely be introduced in on_use rather than __init__.
+        # Maybe just try calling a show_extra() method the user can
+        # optionally define in their model class.
+        for name in self.params:
+            print(getattr(self, name).show())
+
+    def _score(self, args):
+        &#34;&#34;&#34;
+        The quantity *minimized* for inference, as a function of the values
+        of any varying parameters, passed in a sequence.  This is a kind of
+        &#34;curry&#34; of the score function defined by whatever predictor gets
+        mixed in with an inference subclass, intended for use by optimization
+        algorithms that require a function with a sequence argument.
+        &#34;&#34;&#34;
+        # *** Note this changes *all* varying parameters, even those whose
+        # actual value is not changed.  This could cause extra work in the
+        # user&#39;s on_use method, if it has overhead that is only done when
+        # a subset of params are changed.  Perhaps cache param values and
+        # check them before setting.  Alternately, require users to do this
+        # in on_use if it&#39;s an issue.  That&#39;s probably safest; it would also
+        # handle other situations (e.g., manual alteration of a subset of
+        # param values).
+        if self.use_unbounded:
+            for param, val in zip(self.varying_params, args):
+                param._unbounded_set_value(val)
+        else:
+            for param, val in zip(self.varying_params, args):
+                param.set_value(val)
+        # print args, self.objective()
+        if self.extremize == minimize:
+            return self.score()
+        else:
+            return -self.score()
+
+    def do_grid(self, vargrid=False, method=None, tol=None, nlog=None):
+        &#34;&#34;&#34;
+        Evaluate the inference on the grid defined by stepped params.
+
+        If there are no varying params, the score function is
+        evaluated on the grid and returned in a SimpleValueGrid.
+        The vargrid, method and tol arguments are ignored.
+
+        If there are varying params, the score function will be
+        extremized w.r.t. them over the grid and this &#34;profile&#34; will
+        be returned as a SimpleValueGrid.  If vargrid=True,
+        the optimized values of the varying parameters will also be
+        collected and returned as a SimpleVectorGrid.  The method and
+        tol arguments get passed to the resulting optimize() calls.
+        &#34;&#34;&#34;
+        results = ScalarGrid(self.stepping_params)
+        vdim = len(self.varying_params)
+        # if vargrid and (vdim == 0):
+        #    raise InferenceError, &#39;vargrid argument invalid with no varying params!&#39;
+        if self.varying_params and vargrid:
+            vresults = VectorGrid(self.stepping_params, self.varying_params)
+        opt_val = None
+        nstep = 0
+        # *** Put try/except around score/optimize so we can return a partial
+        # grid if there is a failure after successful calculations.
+        while True:
+            nstep += 1
+            ind = self.step_nums()
+            if nlog and nstep % nlog == 0:
+                print(&#39;Calculating grid step&#39;, nstep, &#39;(&#39;, ind, &#39;)...&#39;)
+            # Either optimize or just evaluate.
+            if self.varying_params:
+                param_vals, extremum, n = self.optimize(method=method, tol=tol)
+                results.values[ind] = extremum
+                if opt_val is None:
+                    opt_val = extremum
+                    opt_ind = ind
+                else:
+                    if self.extremize == maximize:
+                        if extremum &gt; opt_val:
+                            opt_val, opt_ind = extremum, ind
+                    else:
+                        if extremum &lt; opt_val:
+                            opt_val, opt_ind = extremum, ind
+                if vargrid:
+                    print(vresults.values[ind], param_vals)
+                    if vdim == 1:
+                        vresults.values[ind] = param_vals[0]
+                    else:
+                        vresults.values[ind] = param_vals
+            else:
+                results.values[ind] = self.score()
+            # Log results if requested.
+            if nlog and nstep % nlog == 0:
+                if self.varying_params:
+                    print(&#39;  -&gt;&#39;, param_vals, extremum, n)
+                else:
+                    print(&#39;  -&gt;&#39;, results.values[ind])
+            try:
+                self.next_step()
+            except StopStepping:
+                break
+        if self.varying_params:
+            results.opt_val = opt_val
+            results.opt_ind = opt_ind
+        if vargrid:
+            vresults.opt_ind = opt_ind
+            return results, vresults
+        else:
+            return results
+
+    def optimize(self, method=None, tol=None):
+        &#34;&#34;&#34;
+        Optimize with respect to varying params.
+
+        The call returns a 3-tuple (params, extremum, extra):
+          params = array of best-fit parameter values
+          extremum = the optimized statistic (min or max as appropriate)
+          extra = any add&#39;l value or values (in a tuple) returned by
+                  the specified minimization method (e.g., # iters)
+        &#34;&#34;&#34;
+        if method:
+            method = method.lower()
+        elif self.min_method:
+            method = self.min_method.lower()
+        else:
+            raise InferenceError(&#39;No minimization method has been specified!&#39;)
+        if tol is None:
+            if self.min_tol is None:
+                raise InferenceError(&#39;No minimization tolerance has been specified!&#39;)
+        # Most methods require a vector of starting param values and
+        # a scale for each; collect this info here (transformed if necessary).
+        p, d = [], []
+        if self.varying_params == []:
+            raise InferenceError(&#39;No parameters are set to vary for fitting!&#39;)
+        if self.use_unbounded:
+            for param in self.varying_params:
+                # Calculate delta for the unbounded version.
+                uv = param._unbounded_get_value()
+                v = param.get_value()
+                # We may need to try a step in both directions.
+                try:
+                    param.set_value(v+param.delta)
+                    uv2 = param._unbounded_get_value()
+                    d.append(uv2-uv)
+                except ParamRangeError:
+                    param.set_value(v-param.delta)
+                    uv2 = param._unbounded_get_value()
+                    d.append(uv-uv2)
+                param.set_value(v)
+                p.append(uv)
+        else:
+            for param in self.varying_params:
+                p.append(param.get_value())
+                d.append(param.delta)
+        p = array(p)
+        if method == &#39;powell&#39;:
+            # Use a diagonal matrix for Powell&#39;s start directions.
+            dd = identity(len(d)) * array(d, float)
+            # For Powell, extra = # of iters
+            params, extremum, extra = powell(self._score, p, drxns=dd,
+                                             ftol=1.e-3, maxit=300)
+            # Repeat from the 1st fit, with smaller scales and shuffling
+            # the directions to avoid Powell&#39;s too-common collapsing to a
+            # subspace.
+            dd = 0.2 * identity(len(d)) * array(d, float)
+            params, extremum, extra = powell(self._score, params[:], drxns=dd,
+                                             ftol=1.e-3, maxit=200, shuffle=True)
+        else:
+            raise InferenceError(&#39;Invalid minimization method specified!&#39;)
+        if self.extremize == maximize:  # adjust for sign reversal
+            extremum = -extremum
+        if self.use_unbounded:  # Convert unbounded values back to normal.
+            for i, param in enumerate(self.varying_params):
+                params[i] = param.get_value()
+        return params, extremum, extra
+
+    # *** Potentially confusing that fit returns different types of
+    # output for different param status, e.g., just a scalar for
+    # all fixed, but [(params), cost] for all varying.
+
+    def fit(self, vargrid=False, method=None, tol=None, nlog=None):
+        &#34;&#34;&#34;
+        Calculate a fit or fits of the signal model parameters.
+
+        If no parameters are stepping or varying, just calculate and report
+        the value of the score function (fit statistic).
+
+        If a subset of parameters are varying and the rest are fixed, optimize
+        with respect to the varying parameters.  Return (params, statistic),
+        where params is an array with the optimized parameter values, and
+        statistic is the optimized score.
+
+        If there are some stepping parameters and the rest are fixed, evaluate
+        the fit on the resulting parameter grid.  Return a SimpleValueGrid
+        containing the values of the fit statistic.
+
+        If there are both stepping and varying parameters, optimize
+        with respect to the varying parameters at each point on the
+        grid (i.e., find the profile fit).  By default, return
+        a SimpleValueGrid with the profile fit.  If vargrid is not
+        False, return (valuegrid, vargrid), where valuegrid is the
+        profile fit SimpleValueGrid, and vargrid is a SimpleVectorGrid
+        containing the optimized parameter values at each location
+        in the grid.  (Otherwise, vargrid is ignored.)
+        &#34;&#34;&#34;
+        if self.varying_params == [] and self.stepping_params == []:
+            return self.score()
+        elif self.stepping_params == []:
+            params, score, iters = self.optimize(method=method, tol=tol)
+            self.iters = iters
+            return params, score
+        else:
+            return self.do_grid(vargrid=vargrid, method=method, tol=tol, nlog=nlog)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="inference.pie.inference_base.ExtremizeDrxn"><code class="flex name class">
+<span>class <span class="ident">ExtremizeDrxn</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ExtremizeDrxn:
+    maximize, minimize = &#39;max&#39;, &#39;min&#39;</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="inference.pie.inference_base.ExtremizeDrxn.maximize"><code class="name">var <span class="ident">maximize</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="inference.pie.inference_base.ExtremizeDrxn.minimize"><code class="name">var <span class="ident">minimize</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="inference.pie.inference_base.Inference"><code class="flex name class">
+<span>class <span class="ident">Inference</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for inferences, managing basic parameter bookkeeping:
+fixing, stepping, and varying parameters.</p>
+<p>A subclass of Inference will typically get mixed in with a SignalModel
+subclass and a PredictorSet subclass, or a ProbModel subclass.
+Inference
+thus relies on methods present in these mixin classes.</p>
+<p>Note:
+If the inference inheriting this class defines an <strong>init</strong> method,
+it should call Inference.<strong>init</strong>() within that method.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Inference(HasAutoNamed):
+    &#34;&#34;&#34;
+    Base class for inferences, managing basic parameter bookkeeping:
+    fixing, stepping, and varying parameters.
+
+    A subclass of Inference will typically get mixed in with a SignalModel
+    subclass and a PredictorSet subclass, or a ProbModel subclass.  Inference
+    thus relies on methods present in these mixin classes.
+
+    Note:  If the inference inheriting this class defines an __init__ method,
+    it should call Inference.__init__() within that method.
+    &#34;&#34;&#34;
+
+    def __init__(self):
+        self.fixed_params = []
+        self.varying_params = []
+        self.stepping_params = []
+        self.stepping_info = {}  # vals = lists: [drxn, index, steps]
+
+        # This sets whether to use unbounded transforms of varying params.
+        self.use_unbounded = False
+
+        self.on_use_done = False
+
+        # ??? Keep lists of current values of various param types?
+
+        # Default minimization method &amp; tolerance: if a subclass
+        # hasn&#39;t defined these, set them to None.
+        # We don&#39;t provide a default method &amp; tolerance here
+        # because different inference methods may have different
+        # appropriate default methods.
+        if not hasattr(self, &#39;min_method&#39;):
+            self.min_method = None
+        if not hasattr(self, &#39;min_tol&#39;):
+            self.min_tol = None
+
+        # log_dens indicates whether the objective function can
+        # be interpreted as the negative log of a distribution
+        # on parameter space.  This gets used to determine if
+        # results on grids can be meaningfully integrated.
+        # if not hasattr(self, &#39;minus_log_df&#39;):
+        #    self.log_dens = False
+        if not hasattr(self, &#39;minus_log_df&#39;):
+            self.log_dens = False
+
+        # did_signals keeps track of whether we&#39;ve already evaluated
+        # the model.
+        # *** NOT YET IMPLEMENTED
+        # self.did_signals = False
+
+        # *** Provide hooks for storing state or calculating candidate state
+        # before storing it, to facilitate MCMC.
+
+        # Reorder the param names associated with this inference to reflect
+        # the order in the source code (the metaclass will order them in a
+        # shuffled order, the order of keys in the class dict).
+        # First, get the SignalModel and Predictors mixin classes.
+        for cls in self.__class__.__bases__:
+            if SignalModel in cls.__bases__:
+                self.signal_class = cls
+            elif PredictorSet in cls.__bases__:
+                self.pred_class = cls
+        # Get the names of params and predictors from the mixins.
+        # Get them from source if available, to preserve the order
+        # in which the user defined them.
+        # Be careful gathering params; the PredictorSet mixin class
+        # may have params.
+        try:
+            unordered = self.signal_class.param_names[:]
+            self.params = self._get_signal_names(unordered)
+        except:
+            self.params = []
+        try:
+            unordered = self.pred_class.param_names[:]
+        except:
+            unordered = []
+        oparams, self.predictors = self._get_pred_names(unordered)
+        self.params.extend(oparams)
+        # Make sure params are unique; i.e., that the Predictors class
+        # hasn&#39;t duplicated a param name.
+        if len(set(self.params)) != len(self.params):
+            raise InferenceError(&#39;A parameter name is duplicated within this inference!&#39;)
+
+    def _get_signal_names(self, signal_params):
+        &#34;&#34;&#34;Use the source for the SignalModel and Predictors mixins to
+        fix the order of param and predictor names.  If source is
+        unavailable, just grab the names from the mixin class dicts.&#34;&#34;&#34;
+        # Be careful gathering params; the Predictors mixin class
+        # may have params.
+        oparams = []
+        try:
+            source = inspect.getsourcelines(self.signal_class)[0]
+            for line in source:
+                line = line.strip()
+                for param in signal_params:
+                    # *** Use a regexp here to match any white space b/4 &#39;=&#39;.
+                    if line.startswith(param+&#39; =&#39;) or line.startswith(param+&#39;=&#39;):
+                        oparams.append(param)
+                        signal_params.remove(param)
+            if signal_params != []:
+                raise InferenceError(&#39;Some params not defined in SignalModel source!&#39;)
+        except IOError:  # Only in the unlikely event of interactive model def&#39;n
+            print(&#39;Could not locate SignalModel source; proceeding with unordered params.&#39;)
+            oparams = self.signal_class.param_names
+        except TypeError:  # This is needed due to an apparent bug in inspect (failure can raise TypeError).
+            print(&#39;Could not locate SignalModel source; proceeding with unordered params.&#39;)
+            print(&#39;(Note: This may be due to a bug in inspect.py)&#39;)
+            oparams = self.signal_class.param_names
+        return oparams
+
+    def _get_pred_names(self, pred_params):
+        &#34;&#34;&#34;Use the source for the SignalModel and Predictors mixins to
+        fix the order of param and predictor names.  If source is
+        unavailable, just grab the names from the mixin class dicts.&#34;&#34;&#34;
+        # Be careful gathering params; the Predictors mixin class
+        # may have params.
+        oparams = []
+        try:
+            source = inspect.getsourcelines(self.pred_class)[0]
+            if pred_params:
+                for line in source:
+                    line = line.strip()
+                    for param in pred_params:
+                        if line.startswith(param+&#39; =&#39;) or line.startswith(param+&#39;=&#39;):
+                            oparams.append(param)
+                            pred_params.remove(param)
+                if pred_params != []:
+                    raise InferenceError(&#39;Some params not defined in Predictors source!&#39;)
+            # Now do the same to get the Predictor order.
+            opreds = []
+            preds = self.pred_class.predictor_names[:]
+            for line in source:
+                line = line.strip()
+                for pred in preds:
+                    if line.startswith(pred+&#39; =&#39;) or line.startswith(pred+&#39;=&#39;):
+                        opreds.append(pred)
+                        preds.remove(pred)
+            if preds != []:
+                raise InferenceError(&#39;Some Predictor(s) not defined in Predictors source!&#39;)
+        except IOError:  # Only in the unlikely event of interactive pred. def&#39;n
+            print(&#39;Could not locate PredictorSet source; proceeding with unordered params.&#39;)
+            oparams.extend(self.pred_class.param_names)
+            opreds = self.pred_class.predictor_names
+        except:  # This is needed due to an apparent bug in inspect (failure can raise TypeError).
+            print(&#39;Could not locate PredictorSet source; proceeding with unordered params.&#39;)
+            oparams.extend(self.pred_class.param_names)
+            opreds = self.pred_class.predictor_names
+        return oparams, opreds
+        # Make sure params are unique; i.e., that the Predictors class
+        # hasn&#39;t duplicated a param name.
+        if len(set(self.params)) != len(self.params):
+            raise InferenceError(&#39;A parameter name is duplicated within this inference!&#39;)
+
+    def _on_param_status_change(self, param, old, new):
+        &#34;&#34;&#34;Maintain lists of fixed, varying, and stepping variables. Initialize
+        the stepping parameters whenever a parameter is changed to stepping.&#34;&#34;&#34;
+        # If old=new, don&#39;t delete and then append the param name from
+        # the relevant list; this will change the order of the params
+        # when the user intends only to adjust a step size, etc..
+        if old == new:
+            if new == stepping:
+                # If a stepping param is adjusted, reset all of them.
+                self.stepping_info[param] = nextd
+                self.reset_steps()
+            return
+        if old == undef:
+            if new == fixed:
+                self.fixed_params.append(param)
+            elif new == varying:
+                self.varying_params.append(param)
+            elif new == stepping:
+                self.stepping_params.append(param)
+                self.stepping_info[param] = nextd
+                self.reset_steps()
+        if old == fixed:
+            self.fixed_params.remove(param)
+            if new == varying:
+                self.varying_params.append(param)
+            elif new == stepping:
+                self.stepping_params.append(param)
+                self.stepping_info[param] = nextd
+                self.reset_steps()
+        if old == varying:
+            self.varying_params.remove(param)
+            if new == fixed:
+                self.fixed_params.append(param)
+            elif new == stepping:
+                self.stepping_params.append(param)
+                self.stepping_info[param] = nextd
+                self.reset_steps()
+        if old == stepping:
+            self.stepping_params.remove(param)
+            self.reset_steps()
+            del(self.stepping_info[param])
+            if new == fixed:
+                self.fixed_params.append(param)
+            elif new == varying:
+                self.varying_params.append(param)
+
+    def map_bounds(self):
+        &#34;&#34;&#34;
+        Use transformed versions of varying parameters in optimizations, mapping
+        the parameter bounds to infinity so the mapped parameter space is
+        unbounded.
+
+        This is an unsophisticated way to enable optimization with basic
+        optimizers when parameters have fixed parameter boundaries.
+        &#34;&#34;&#34;
+        self.use_unbounded = True
+
+    def unmap_bounds(self):
+        &#34;&#34;&#34;
+        Switch back to using the &#34;true&#34; (bounded) values of varying parameters
+        in optimization.
+        &#34;&#34;&#34;
+        self.use_unbounded = False
+
+    def reset_steps(self):
+        &#34;&#34;&#34;Reset the stepped parameters and their step directions.&#34;&#34;&#34;
+        # This is slightly wasteful: when x is set to step it is
+        # initialized, and this initializes it again.  Note that
+        # this will result in a duplicate call to on_param_change.
+        for param in self.stepping_params:
+            param.first_step()
+            self.stepping_info[param] = nextd
+
+    def next_step(self):
+        &#34;&#34;&#34;
+        Change the parameters to the next set on the stepped grid.
+
+        This is done in a &#34;zig-zag&#34; fashion, e.g., for two parameters, (x,y),
+        x is incremented up to its maximum value, then y is incremented once
+        *without* changing x, and subsequently x is stepped *down*.  This is
+        done to facilitate calculating profiles/projections on a grid.  For
+        such calculations, the current *varying* parameter values (which
+        will have been optimized at the previous grid point) will only be
+        a good starting point for nearby points on the grid.  If after
+        incrementing y we were to reset x to its minimum value, the current
+        varying parameters could be at a very bad location, greatly
+        prolonging optimization or even preventing it.
+        &#34;&#34;&#34;
+        last = self.stepping_params[-1]
+        for param in self.stepping_params:
+            drxn = self.stepping_info[param]
+            # print(&#39;Stepping param&#39;, param.name, drxn)
+            try:
+                # Try stepping a param in its current drxn;
+                # return at the 1st success.
+                if drxn == nextd:
+                    param.next_step()
+                elif drxn == prevd:
+                    param.prev_step()
+                return
+            except ParamRangeError:
+                # If we bumped into the end of the last stepping param&#39;s
+                # range, quit.  Otherwise, reverse the step drxn of this
+                # param and try stepping the next one.
+                if param == last:
+                    # *** Should we reset_steps() here?  It may screw up
+                    # an optimization if the user expects varying params
+                    # to be in a good start state (an unlikely sit&#39;n).
+                    self.reset_steps()
+                    raise StopStepping(&#34;Attempted to step beyond the last step!&#34;)
+                else:
+                    self.stepping_info[param] = reverse_direction(drxn)
+
+    def step_nums(self):
+        &#34;&#34;&#34;Return the current indices for stepping params.&#34;&#34;&#34;
+        nums = []
+        for param in self.stepping_params:
+            nums.append(param.step_num)
+        return tuple(nums)
+
+    def step_shape(self):
+        &#34;&#34;&#34;Return the numbers of steps for stepping params in a tuple.
+        This would be the &#34;shape&#34; of an array holding results on the
+        stepping grid.&#34;&#34;&#34;
+        shape = []
+        for param in self.stepping_params:
+            shape.append(param.steps)
+        return tuple(shape)
+
+    def _set_varying(self, *args):
+        &#34;&#34;&#34;Set the values of varying parameters.  The arguments are
+        assigned to the currently varying parameters in the order they
+        were declared varying.&#34;&#34;&#34;
+        if len(args) != len(self.varying_params):
+            raise ParamError(&#39;Wrong number of varying params!&#39;)
+        for param, val in zip(self.varying_params, args):
+            param.set_value(val)
+
+    def get_params(self):
+        &#34;&#34;&#34;Return a ParamValues instance storing the current param values
+        as attributes.&#34;&#34;&#34;
+        pv = ParamValues()
+        for name in self.params:
+            param = getattr(self, name)
+            # pv.store(name, param.get_value(), param.doc)
+            pv.store(name, param)
+        return pv
+
+    def set_params(self, pv):
+        &#34;&#34;&#34;Set the values of params from a ParamValues instance.
+        This is valid only if all params are either fixed or varying.&#34;&#34;&#34;
+        # *** Should this just skip stepped params rather than quit?
+        # *** Should it check there are no &#34;extras&#34; in the passed pv?
+        for name in self.params:
+            param = getattr(self, name)
+            if param.status == fixed:
+                param.fix(getattr(pv,name))
+            elif param.status == varying:
+                param.vary(getattr(pv,name))
+            else:
+                raise ParamError(&#39;Use set_params only when params are fixed or varying!&#39;)
+
+    # *** Make versions of show*() that return strings.
+
+    def show_status(self):
+        &#34;&#34;&#34;Print lists of fixed, stepped, and varying params.&#34;&#34;&#34;
+        f = [param.name for param in self.fixed_params]
+        s = [param.name for param in self.stepping_params]
+        v = [param.name for param in self.varying_params]
+        print(&#39;Fixed params:   &#39;, f)
+        print(&#39;Stepping params:&#39;, s)
+        print(&#39;Varying params: &#39;, v)
+
+    def show(self):
+        &#34;&#34;&#34;Print basic parameter info: name, value, doc.&#34;&#34;&#34;
+        # *** Provide explicit support for &#34;derived&#34; params, or
+        # expect the user to override this?  Explicit support as
+        # AutoNamed descriptors may be desirable to avoid forcing
+        # users to implement __init__, though derived params can
+        # likely be introduced in on_use rather than __init__.
+        # Maybe just try calling a show_extra() method the user can
+        # optionally define in their model class.
+        for name in self.params:
+            print(getattr(self, name).show())
+
+    def _score(self, args):
+        &#34;&#34;&#34;
+        The quantity *minimized* for inference, as a function of the values
+        of any varying parameters, passed in a sequence.  This is a kind of
+        &#34;curry&#34; of the score function defined by whatever predictor gets
+        mixed in with an inference subclass, intended for use by optimization
+        algorithms that require a function with a sequence argument.
+        &#34;&#34;&#34;
+        # *** Note this changes *all* varying parameters, even those whose
+        # actual value is not changed.  This could cause extra work in the
+        # user&#39;s on_use method, if it has overhead that is only done when
+        # a subset of params are changed.  Perhaps cache param values and
+        # check them before setting.  Alternately, require users to do this
+        # in on_use if it&#39;s an issue.  That&#39;s probably safest; it would also
+        # handle other situations (e.g., manual alteration of a subset of
+        # param values).
+        if self.use_unbounded:
+            for param, val in zip(self.varying_params, args):
+                param._unbounded_set_value(val)
+        else:
+            for param, val in zip(self.varying_params, args):
+                param.set_value(val)
+        # print args, self.objective()
+        if self.extremize == minimize:
+            return self.score()
+        else:
+            return -self.score()
+
+    def do_grid(self, vargrid=False, method=None, tol=None, nlog=None):
+        &#34;&#34;&#34;
+        Evaluate the inference on the grid defined by stepped params.
+
+        If there are no varying params, the score function is
+        evaluated on the grid and returned in a SimpleValueGrid.
+        The vargrid, method and tol arguments are ignored.
+
+        If there are varying params, the score function will be
+        extremized w.r.t. them over the grid and this &#34;profile&#34; will
+        be returned as a SimpleValueGrid.  If vargrid=True,
+        the optimized values of the varying parameters will also be
+        collected and returned as a SimpleVectorGrid.  The method and
+        tol arguments get passed to the resulting optimize() calls.
+        &#34;&#34;&#34;
+        results = ScalarGrid(self.stepping_params)
+        vdim = len(self.varying_params)
+        # if vargrid and (vdim == 0):
+        #    raise InferenceError, &#39;vargrid argument invalid with no varying params!&#39;
+        if self.varying_params and vargrid:
+            vresults = VectorGrid(self.stepping_params, self.varying_params)
+        opt_val = None
+        nstep = 0
+        # *** Put try/except around score/optimize so we can return a partial
+        # grid if there is a failure after successful calculations.
+        while True:
+            nstep += 1
+            ind = self.step_nums()
+            if nlog and nstep % nlog == 0:
+                print(&#39;Calculating grid step&#39;, nstep, &#39;(&#39;, ind, &#39;)...&#39;)
+            # Either optimize or just evaluate.
+            if self.varying_params:
+                param_vals, extremum, n = self.optimize(method=method, tol=tol)
+                results.values[ind] = extremum
+                if opt_val is None:
+                    opt_val = extremum
+                    opt_ind = ind
+                else:
+                    if self.extremize == maximize:
+                        if extremum &gt; opt_val:
+                            opt_val, opt_ind = extremum, ind
+                    else:
+                        if extremum &lt; opt_val:
+                            opt_val, opt_ind = extremum, ind
+                if vargrid:
+                    print(vresults.values[ind], param_vals)
+                    if vdim == 1:
+                        vresults.values[ind] = param_vals[0]
+                    else:
+                        vresults.values[ind] = param_vals
+            else:
+                results.values[ind] = self.score()
+            # Log results if requested.
+            if nlog and nstep % nlog == 0:
+                if self.varying_params:
+                    print(&#39;  -&gt;&#39;, param_vals, extremum, n)
+                else:
+                    print(&#39;  -&gt;&#39;, results.values[ind])
+            try:
+                self.next_step()
+            except StopStepping:
+                break
+        if self.varying_params:
+            results.opt_val = opt_val
+            results.opt_ind = opt_ind
+        if vargrid:
+            vresults.opt_ind = opt_ind
+            return results, vresults
+        else:
+            return results
+
+    def optimize(self, method=None, tol=None):
+        &#34;&#34;&#34;
+        Optimize with respect to varying params.
+
+        The call returns a 3-tuple (params, extremum, extra):
+          params = array of best-fit parameter values
+          extremum = the optimized statistic (min or max as appropriate)
+          extra = any add&#39;l value or values (in a tuple) returned by
+                  the specified minimization method (e.g., # iters)
+        &#34;&#34;&#34;
+        if method:
+            method = method.lower()
+        elif self.min_method:
+            method = self.min_method.lower()
+        else:
+            raise InferenceError(&#39;No minimization method has been specified!&#39;)
+        if tol is None:
+            if self.min_tol is None:
+                raise InferenceError(&#39;No minimization tolerance has been specified!&#39;)
+        # Most methods require a vector of starting param values and
+        # a scale for each; collect this info here (transformed if necessary).
+        p, d = [], []
+        if self.varying_params == []:
+            raise InferenceError(&#39;No parameters are set to vary for fitting!&#39;)
+        if self.use_unbounded:
+            for param in self.varying_params:
+                # Calculate delta for the unbounded version.
+                uv = param._unbounded_get_value()
+                v = param.get_value()
+                # We may need to try a step in both directions.
+                try:
+                    param.set_value(v+param.delta)
+                    uv2 = param._unbounded_get_value()
+                    d.append(uv2-uv)
+                except ParamRangeError:
+                    param.set_value(v-param.delta)
+                    uv2 = param._unbounded_get_value()
+                    d.append(uv-uv2)
+                param.set_value(v)
+                p.append(uv)
+        else:
+            for param in self.varying_params:
+                p.append(param.get_value())
+                d.append(param.delta)
+        p = array(p)
+        if method == &#39;powell&#39;:
+            # Use a diagonal matrix for Powell&#39;s start directions.
+            dd = identity(len(d)) * array(d, float)
+            # For Powell, extra = # of iters
+            params, extremum, extra = powell(self._score, p, drxns=dd,
+                                             ftol=1.e-3, maxit=300)
+            # Repeat from the 1st fit, with smaller scales and shuffling
+            # the directions to avoid Powell&#39;s too-common collapsing to a
+            # subspace.
+            dd = 0.2 * identity(len(d)) * array(d, float)
+            params, extremum, extra = powell(self._score, params[:], drxns=dd,
+                                             ftol=1.e-3, maxit=200, shuffle=True)
+        else:
+            raise InferenceError(&#39;Invalid minimization method specified!&#39;)
+        if self.extremize == maximize:  # adjust for sign reversal
+            extremum = -extremum
+        if self.use_unbounded:  # Convert unbounded values back to normal.
+            for i, param in enumerate(self.varying_params):
+                params[i] = param.get_value()
+        return params, extremum, extra
+
+    # *** Potentially confusing that fit returns different types of
+    # output for different param status, e.g., just a scalar for
+    # all fixed, but [(params), cost] for all varying.
+
+    def fit(self, vargrid=False, method=None, tol=None, nlog=None):
+        &#34;&#34;&#34;
+        Calculate a fit or fits of the signal model parameters.
+
+        If no parameters are stepping or varying, just calculate and report
+        the value of the score function (fit statistic).
+
+        If a subset of parameters are varying and the rest are fixed, optimize
+        with respect to the varying parameters.  Return (params, statistic),
+        where params is an array with the optimized parameter values, and
+        statistic is the optimized score.
+
+        If there are some stepping parameters and the rest are fixed, evaluate
+        the fit on the resulting parameter grid.  Return a SimpleValueGrid
+        containing the values of the fit statistic.
+
+        If there are both stepping and varying parameters, optimize
+        with respect to the varying parameters at each point on the
+        grid (i.e., find the profile fit).  By default, return
+        a SimpleValueGrid with the profile fit.  If vargrid is not
+        False, return (valuegrid, vargrid), where valuegrid is the
+        profile fit SimpleValueGrid, and vargrid is a SimpleVectorGrid
+        containing the optimized parameter values at each location
+        in the grid.  (Otherwise, vargrid is ignored.)
+        &#34;&#34;&#34;
+        if self.varying_params == [] and self.stepping_params == []:
+            return self.score()
+        elif self.stepping_params == []:
+            params, score, iters = self.optimize(method=method, tol=tol)
+            self.iters = iters
+            return params, score
+        else:
+            return self.do_grid(vargrid=vargrid, method=method, tol=tol, nlog=nlog)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="inference.pie.autoname.HasAutoNamed" href="autoname.html#inference.pie.autoname.HasAutoNamed">HasAutoNamed</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="inference.pie.bayes.BayesianInference" href="bayes.html#inference.pie.bayes.BayesianInference">BayesianInference</a></li>
+<li><a title="inference.pie.chisqr.ChisqrInference" href="chisqr.html#inference.pie.chisqr.ChisqrInference">ChisqrInference</a></li>
+<li><a title="inference.pie.maxlike.MaxLikeInference" href="maxlike.html#inference.pie.maxlike.MaxLikeInference">MaxLikeInference</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="inference.pie.inference_base.Inference.do_grid"><code class="name flex">
+<span>def <span class="ident">do_grid</span></span>(<span>self, vargrid=False, method=None, tol=None, nlog=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Evaluate the inference on the grid defined by stepped params.</p>
+<p>If there are no varying params, the score function is
+evaluated on the grid and returned in a SimpleValueGrid.
+The vargrid, method and tol arguments are ignored.</p>
+<p>If there are varying params, the score function will be
+extremized w.r.t. them over the grid and this "profile" will
+be returned as a SimpleValueGrid.
+If vargrid=True,
+the optimized values of the varying parameters will also be
+collected and returned as a SimpleVectorGrid.
+The method and
+tol arguments get passed to the resulting optimize() calls.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_grid(self, vargrid=False, method=None, tol=None, nlog=None):
+    &#34;&#34;&#34;
+    Evaluate the inference on the grid defined by stepped params.
+
+    If there are no varying params, the score function is
+    evaluated on the grid and returned in a SimpleValueGrid.
+    The vargrid, method and tol arguments are ignored.
+
+    If there are varying params, the score function will be
+    extremized w.r.t. them over the grid and this &#34;profile&#34; will
+    be returned as a SimpleValueGrid.  If vargrid=True,
+    the optimized values of the varying parameters will also be
+    collected and returned as a SimpleVectorGrid.  The method and
+    tol arguments get passed to the resulting optimize() calls.
+    &#34;&#34;&#34;
+    results = ScalarGrid(self.stepping_params)
+    vdim = len(self.varying_params)
+    # if vargrid and (vdim == 0):
+    #    raise InferenceError, &#39;vargrid argument invalid with no varying params!&#39;
+    if self.varying_params and vargrid:
+        vresults = VectorGrid(self.stepping_params, self.varying_params)
+    opt_val = None
+    nstep = 0
+    # *** Put try/except around score/optimize so we can return a partial
+    # grid if there is a failure after successful calculations.
+    while True:
+        nstep += 1
+        ind = self.step_nums()
+        if nlog and nstep % nlog == 0:
+            print(&#39;Calculating grid step&#39;, nstep, &#39;(&#39;, ind, &#39;)...&#39;)
+        # Either optimize or just evaluate.
+        if self.varying_params:
+            param_vals, extremum, n = self.optimize(method=method, tol=tol)
+            results.values[ind] = extremum
+            if opt_val is None:
+                opt_val = extremum
+                opt_ind = ind
+            else:
+                if self.extremize == maximize:
+                    if extremum &gt; opt_val:
+                        opt_val, opt_ind = extremum, ind
+                else:
+                    if extremum &lt; opt_val:
+                        opt_val, opt_ind = extremum, ind
+            if vargrid:
+                print(vresults.values[ind], param_vals)
+                if vdim == 1:
+                    vresults.values[ind] = param_vals[0]
+                else:
+                    vresults.values[ind] = param_vals
+        else:
+            results.values[ind] = self.score()
+        # Log results if requested.
+        if nlog and nstep % nlog == 0:
+            if self.varying_params:
+                print(&#39;  -&gt;&#39;, param_vals, extremum, n)
+            else:
+                print(&#39;  -&gt;&#39;, results.values[ind])
+        try:
+            self.next_step()
+        except StopStepping:
+            break
+    if self.varying_params:
+        results.opt_val = opt_val
+        results.opt_ind = opt_ind
+    if vargrid:
+        vresults.opt_ind = opt_ind
+        return results, vresults
+    else:
+        return results</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.inference_base.Inference.fit"><code class="name flex">
+<span>def <span class="ident">fit</span></span>(<span>self, vargrid=False, method=None, tol=None, nlog=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate a fit or fits of the signal model parameters.</p>
+<p>If no parameters are stepping or varying, just calculate and report
+the value of the score function (fit statistic).</p>
+<p>If a subset of parameters are varying and the rest are fixed, optimize
+with respect to the varying parameters.
+Return (params, statistic),
+where params is an array with the optimized parameter values, and
+statistic is the optimized score.</p>
+<p>If there are some stepping parameters and the rest are fixed, evaluate
+the fit on the resulting parameter grid.
+Return a SimpleValueGrid
+containing the values of the fit statistic.</p>
+<p>If there are both stepping and varying parameters, optimize
+with respect to the varying parameters at each point on the
+grid (i.e., find the profile fit).
+By default, return
+a SimpleValueGrid with the profile fit.
+If vargrid is not
+False, return (valuegrid, vargrid), where valuegrid is the
+profile fit SimpleValueGrid, and vargrid is a SimpleVectorGrid
+containing the optimized parameter values at each location
+in the grid.
+(Otherwise, vargrid is ignored.)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fit(self, vargrid=False, method=None, tol=None, nlog=None):
+    &#34;&#34;&#34;
+    Calculate a fit or fits of the signal model parameters.
+
+    If no parameters are stepping or varying, just calculate and report
+    the value of the score function (fit statistic).
+
+    If a subset of parameters are varying and the rest are fixed, optimize
+    with respect to the varying parameters.  Return (params, statistic),
+    where params is an array with the optimized parameter values, and
+    statistic is the optimized score.
+
+    If there are some stepping parameters and the rest are fixed, evaluate
+    the fit on the resulting parameter grid.  Return a SimpleValueGrid
+    containing the values of the fit statistic.
+
+    If there are both stepping and varying parameters, optimize
+    with respect to the varying parameters at each point on the
+    grid (i.e., find the profile fit).  By default, return
+    a SimpleValueGrid with the profile fit.  If vargrid is not
+    False, return (valuegrid, vargrid), where valuegrid is the
+    profile fit SimpleValueGrid, and vargrid is a SimpleVectorGrid
+    containing the optimized parameter values at each location
+    in the grid.  (Otherwise, vargrid is ignored.)
+    &#34;&#34;&#34;
+    if self.varying_params == [] and self.stepping_params == []:
+        return self.score()
+    elif self.stepping_params == []:
+        params, score, iters = self.optimize(method=method, tol=tol)
+        self.iters = iters
+        return params, score
+    else:
+        return self.do_grid(vargrid=vargrid, method=method, tol=tol, nlog=nlog)</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.inference_base.Inference.get_params"><code class="name flex">
+<span>def <span class="ident">get_params</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a ParamValues instance storing the current param values
+as attributes.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_params(self):
+    &#34;&#34;&#34;Return a ParamValues instance storing the current param values
+    as attributes.&#34;&#34;&#34;
+    pv = ParamValues()
+    for name in self.params:
+        param = getattr(self, name)
+        # pv.store(name, param.get_value(), param.doc)
+        pv.store(name, param)
+    return pv</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.inference_base.Inference.map_bounds"><code class="name flex">
+<span>def <span class="ident">map_bounds</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Use transformed versions of varying parameters in optimizations, mapping
+the parameter bounds to infinity so the mapped parameter space is
+unbounded.</p>
+<p>This is an unsophisticated way to enable optimization with basic
+optimizers when parameters have fixed parameter boundaries.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def map_bounds(self):
+    &#34;&#34;&#34;
+    Use transformed versions of varying parameters in optimizations, mapping
+    the parameter bounds to infinity so the mapped parameter space is
+    unbounded.
+
+    This is an unsophisticated way to enable optimization with basic
+    optimizers when parameters have fixed parameter boundaries.
+    &#34;&#34;&#34;
+    self.use_unbounded = True</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.inference_base.Inference.next_step"><code class="name flex">
+<span>def <span class="ident">next_step</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Change the parameters to the next set on the stepped grid.</p>
+<p>This is done in a "zig-zag" fashion, e.g., for two parameters, (x,y),
+x is incremented up to its maximum value, then y is incremented once
+<em>without</em> changing x, and subsequently x is stepped <em>down</em>.
+This is
+done to facilitate calculating profiles/projections on a grid.
+For
+such calculations, the current <em>varying</em> parameter values (which
+will have been optimized at the previous grid point) will only be
+a good starting point for nearby points on the grid.
+If after
+incrementing y we were to reset x to its minimum value, the current
+varying parameters could be at a very bad location, greatly
+prolonging optimization or even preventing it.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def next_step(self):
+    &#34;&#34;&#34;
+    Change the parameters to the next set on the stepped grid.
+
+    This is done in a &#34;zig-zag&#34; fashion, e.g., for two parameters, (x,y),
+    x is incremented up to its maximum value, then y is incremented once
+    *without* changing x, and subsequently x is stepped *down*.  This is
+    done to facilitate calculating profiles/projections on a grid.  For
+    such calculations, the current *varying* parameter values (which
+    will have been optimized at the previous grid point) will only be
+    a good starting point for nearby points on the grid.  If after
+    incrementing y we were to reset x to its minimum value, the current
+    varying parameters could be at a very bad location, greatly
+    prolonging optimization or even preventing it.
+    &#34;&#34;&#34;
+    last = self.stepping_params[-1]
+    for param in self.stepping_params:
+        drxn = self.stepping_info[param]
+        # print(&#39;Stepping param&#39;, param.name, drxn)
+        try:
+            # Try stepping a param in its current drxn;
+            # return at the 1st success.
+            if drxn == nextd:
+                param.next_step()
+            elif drxn == prevd:
+                param.prev_step()
+            return
+        except ParamRangeError:
+            # If we bumped into the end of the last stepping param&#39;s
+            # range, quit.  Otherwise, reverse the step drxn of this
+            # param and try stepping the next one.
+            if param == last:
+                # *** Should we reset_steps() here?  It may screw up
+                # an optimization if the user expects varying params
+                # to be in a good start state (an unlikely sit&#39;n).
+                self.reset_steps()
+                raise StopStepping(&#34;Attempted to step beyond the last step!&#34;)
+            else:
+                self.stepping_info[param] = reverse_direction(drxn)</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.inference_base.Inference.optimize"><code class="name flex">
+<span>def <span class="ident">optimize</span></span>(<span>self, method=None, tol=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Optimize with respect to varying params.</p>
+<p>The call returns a 3-tuple (params, extremum, extra):
+params = array of best-fit parameter values
+extremum = the optimized statistic (min or max as appropriate)
+extra = any add'l value or values (in a tuple) returned by
+the specified minimization method (e.g., # iters)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def optimize(self, method=None, tol=None):
+    &#34;&#34;&#34;
+    Optimize with respect to varying params.
+
+    The call returns a 3-tuple (params, extremum, extra):
+      params = array of best-fit parameter values
+      extremum = the optimized statistic (min or max as appropriate)
+      extra = any add&#39;l value or values (in a tuple) returned by
+              the specified minimization method (e.g., # iters)
+    &#34;&#34;&#34;
+    if method:
+        method = method.lower()
+    elif self.min_method:
+        method = self.min_method.lower()
+    else:
+        raise InferenceError(&#39;No minimization method has been specified!&#39;)
+    if tol is None:
+        if self.min_tol is None:
+            raise InferenceError(&#39;No minimization tolerance has been specified!&#39;)
+    # Most methods require a vector of starting param values and
+    # a scale for each; collect this info here (transformed if necessary).
+    p, d = [], []
+    if self.varying_params == []:
+        raise InferenceError(&#39;No parameters are set to vary for fitting!&#39;)
+    if self.use_unbounded:
+        for param in self.varying_params:
+            # Calculate delta for the unbounded version.
+            uv = param._unbounded_get_value()
+            v = param.get_value()
+            # We may need to try a step in both directions.
+            try:
+                param.set_value(v+param.delta)
+                uv2 = param._unbounded_get_value()
+                d.append(uv2-uv)
+            except ParamRangeError:
+                param.set_value(v-param.delta)
+                uv2 = param._unbounded_get_value()
+                d.append(uv-uv2)
+            param.set_value(v)
+            p.append(uv)
+    else:
+        for param in self.varying_params:
+            p.append(param.get_value())
+            d.append(param.delta)
+    p = array(p)
+    if method == &#39;powell&#39;:
+        # Use a diagonal matrix for Powell&#39;s start directions.
+        dd = identity(len(d)) * array(d, float)
+        # For Powell, extra = # of iters
+        params, extremum, extra = powell(self._score, p, drxns=dd,
+                                         ftol=1.e-3, maxit=300)
+        # Repeat from the 1st fit, with smaller scales and shuffling
+        # the directions to avoid Powell&#39;s too-common collapsing to a
+        # subspace.
+        dd = 0.2 * identity(len(d)) * array(d, float)
+        params, extremum, extra = powell(self._score, params[:], drxns=dd,
+                                         ftol=1.e-3, maxit=200, shuffle=True)
+    else:
+        raise InferenceError(&#39;Invalid minimization method specified!&#39;)
+    if self.extremize == maximize:  # adjust for sign reversal
+        extremum = -extremum
+    if self.use_unbounded:  # Convert unbounded values back to normal.
+        for i, param in enumerate(self.varying_params):
+            params[i] = param.get_value()
+    return params, extremum, extra</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.inference_base.Inference.reset_steps"><code class="name flex">
+<span>def <span class="ident">reset_steps</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reset the stepped parameters and their step directions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset_steps(self):
+    &#34;&#34;&#34;Reset the stepped parameters and their step directions.&#34;&#34;&#34;
+    # This is slightly wasteful: when x is set to step it is
+    # initialized, and this initializes it again.  Note that
+    # this will result in a duplicate call to on_param_change.
+    for param in self.stepping_params:
+        param.first_step()
+        self.stepping_info[param] = nextd</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.inference_base.Inference.set_params"><code class="name flex">
+<span>def <span class="ident">set_params</span></span>(<span>self, pv)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set the values of params from a ParamValues instance.
+This is valid only if all params are either fixed or varying.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_params(self, pv):
+    &#34;&#34;&#34;Set the values of params from a ParamValues instance.
+    This is valid only if all params are either fixed or varying.&#34;&#34;&#34;
+    # *** Should this just skip stepped params rather than quit?
+    # *** Should it check there are no &#34;extras&#34; in the passed pv?
+    for name in self.params:
+        param = getattr(self, name)
+        if param.status == fixed:
+            param.fix(getattr(pv,name))
+        elif param.status == varying:
+            param.vary(getattr(pv,name))
+        else:
+            raise ParamError(&#39;Use set_params only when params are fixed or varying!&#39;)</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.inference_base.Inference.show"><code class="name flex">
+<span>def <span class="ident">show</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Print basic parameter info: name, value, doc.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show(self):
+    &#34;&#34;&#34;Print basic parameter info: name, value, doc.&#34;&#34;&#34;
+    # *** Provide explicit support for &#34;derived&#34; params, or
+    # expect the user to override this?  Explicit support as
+    # AutoNamed descriptors may be desirable to avoid forcing
+    # users to implement __init__, though derived params can
+    # likely be introduced in on_use rather than __init__.
+    # Maybe just try calling a show_extra() method the user can
+    # optionally define in their model class.
+    for name in self.params:
+        print(getattr(self, name).show())</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.inference_base.Inference.show_status"><code class="name flex">
+<span>def <span class="ident">show_status</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Print lists of fixed, stepped, and varying params.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show_status(self):
+    &#34;&#34;&#34;Print lists of fixed, stepped, and varying params.&#34;&#34;&#34;
+    f = [param.name for param in self.fixed_params]
+    s = [param.name for param in self.stepping_params]
+    v = [param.name for param in self.varying_params]
+    print(&#39;Fixed params:   &#39;, f)
+    print(&#39;Stepping params:&#39;, s)
+    print(&#39;Varying params: &#39;, v)</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.inference_base.Inference.step_nums"><code class="name flex">
+<span>def <span class="ident">step_nums</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the current indices for stepping params.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def step_nums(self):
+    &#34;&#34;&#34;Return the current indices for stepping params.&#34;&#34;&#34;
+    nums = []
+    for param in self.stepping_params:
+        nums.append(param.step_num)
+    return tuple(nums)</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.inference_base.Inference.step_shape"><code class="name flex">
+<span>def <span class="ident">step_shape</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the numbers of steps for stepping params in a tuple.
+This would be the "shape" of an array holding results on the
+stepping grid.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def step_shape(self):
+    &#34;&#34;&#34;Return the numbers of steps for stepping params in a tuple.
+    This would be the &#34;shape&#34; of an array holding results on the
+    stepping grid.&#34;&#34;&#34;
+    shape = []
+    for param in self.stepping_params:
+        shape.append(param.steps)
+    return tuple(shape)</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.inference_base.Inference.unmap_bounds"><code class="name flex">
+<span>def <span class="ident">unmap_bounds</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Switch back to using the "true" (bounded) values of varying parameters
+in optimization.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unmap_bounds(self):
+    &#34;&#34;&#34;
+    Switch back to using the &#34;true&#34; (bounded) values of varying parameters
+    in optimization.
+    &#34;&#34;&#34;
+    self.use_unbounded = False</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="inference.pie.inference_base.InferenceError"><code class="flex name class">
+<span>class <span class="ident">InferenceError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class InferenceError(Exception):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="inference.pie" href="index.html">inference.pie</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="inference.pie.inference_base.ExtremizeDrxn" href="#inference.pie.inference_base.ExtremizeDrxn">ExtremizeDrxn</a></code></h4>
+<ul class="">
+<li><code><a title="inference.pie.inference_base.ExtremizeDrxn.maximize" href="#inference.pie.inference_base.ExtremizeDrxn.maximize">maximize</a></code></li>
+<li><code><a title="inference.pie.inference_base.ExtremizeDrxn.minimize" href="#inference.pie.inference_base.ExtremizeDrxn.minimize">minimize</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="inference.pie.inference_base.Inference" href="#inference.pie.inference_base.Inference">Inference</a></code></h4>
+<ul class="two-column">
+<li><code><a title="inference.pie.inference_base.Inference.do_grid" href="#inference.pie.inference_base.Inference.do_grid">do_grid</a></code></li>
+<li><code><a title="inference.pie.inference_base.Inference.fit" href="#inference.pie.inference_base.Inference.fit">fit</a></code></li>
+<li><code><a title="inference.pie.inference_base.Inference.get_params" href="#inference.pie.inference_base.Inference.get_params">get_params</a></code></li>
+<li><code><a title="inference.pie.inference_base.Inference.map_bounds" href="#inference.pie.inference_base.Inference.map_bounds">map_bounds</a></code></li>
+<li><code><a title="inference.pie.inference_base.Inference.next_step" href="#inference.pie.inference_base.Inference.next_step">next_step</a></code></li>
+<li><code><a title="inference.pie.inference_base.Inference.optimize" href="#inference.pie.inference_base.Inference.optimize">optimize</a></code></li>
+<li><code><a title="inference.pie.inference_base.Inference.reset_steps" href="#inference.pie.inference_base.Inference.reset_steps">reset_steps</a></code></li>
+<li><code><a title="inference.pie.inference_base.Inference.set_params" href="#inference.pie.inference_base.Inference.set_params">set_params</a></code></li>
+<li><code><a title="inference.pie.inference_base.Inference.show" href="#inference.pie.inference_base.Inference.show">show</a></code></li>
+<li><code><a title="inference.pie.inference_base.Inference.show_status" href="#inference.pie.inference_base.Inference.show_status">show_status</a></code></li>
+<li><code><a title="inference.pie.inference_base.Inference.step_nums" href="#inference.pie.inference_base.Inference.step_nums">step_nums</a></code></li>
+<li><code><a title="inference.pie.inference_base.Inference.step_shape" href="#inference.pie.inference_base.Inference.step_shape">step_shape</a></code></li>
+<li><code><a title="inference.pie.inference_base.Inference.unmap_bounds" href="#inference.pie.inference_base.Inference.unmap_bounds">unmap_bounds</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="inference.pie.inference_base.InferenceError" href="#inference.pie.inference_base.InferenceError">InferenceError</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,742 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>inference.integrate.cub2d API documentation</title>
+<meta name="description" content="2-D cubature using monomial rules compiled by Ronald Cools at: …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>inference.integrate.cub2d</code></h1>
+</header>
+<section id="section-intro">
+<p>2-D cubature using monomial rules compiled by Ronald Cools at:</p>
+<p>Encyclopaedia of Cubature Formulas (ECF)
+<a href="http://www.cs.kuleuven.be/~nines/research/ecf/">http://www.cs.kuleuven.be/~nines/research/ecf/</a></p>
+<p>This module implements selected rules from the ECF:</p>
+<ul>
+<li>
+<p>Rules on the [-1,1] square with positive weights, some with nodes strictly
+inside the square (Cool's quality designation "PI"), and some that include
+nodes on the boundary ("PB").</p>
+</li>
+<li>
+<p>The rules above, mapped to a rectangle.</p>
+</li>
+<li>
+<p>Rules for the whole plane with exp(-r^2) weight (built into the rule
+weights).</p>
+</li>
+</ul>
+<p>Rule names (in rule_dict, a dictionary of abscissas and weights) are of the
+following form:</p>
+<pre><code>&lt;region&gt;&lt;weight function&gt;_&lt;degree&gt;_&lt;points&gt;
+</code></pre>
+<p>optionally followed by a letter ('a', 'b' etc.) if more than one rule
+with the same specifications is offered.
+</p>
+<p><region> here is "c2" for the square (2-D cube) and e2 for the whole plane (the
+space E_2).</p>
+<p><weight function> here is r2 for exp(-r^2) weighting and absent for no
+weighting, e.g, for the c2 rules.
+For E_2, the ECF also offers exp(-r),
+but these are not yet implemented here.</p>
+<p>The rules exactly integrate sums of monomials (x^m * y^n) with degree
+m+n up to <degree>, using a total number of function evaluations given
+by <points>.
+</p>
+<p>For the E_2 rules, to give you some idea of the region spanned by the nodes
+for the various degrees, here are rough specs for the rules included here:</p>
+<p>Degree
+Largest abscissa
+3
+0.8
+5
+1.6
+7
+1.7
+9
+2.3, 2.1
+11
+2.8, 2.9
+13
+3.0, 3.1</p>
+<p>Selected rules are implemented as functions (besides the abscissa
+and weight arrays in rule_dict).</p>
+<p>To cite these rules, refer to the web site, which makes the following
+request:</p>
+<p>When material presented here is used, please refer to the following
+published articles:</p>
+<p>R. Cools.
+An Encyclopaedia of Cubature Formulas
+J. Complexity, 19: 445-453, 2003.
+Electronic version:
+<a href="http://dx.doi.org/10.1016/S0885-064X(03)00011-6">http://dx.doi.org/10.1016/S0885-064X(03)00011-6</a></p>
+<p>R. Cools.
+Monomial cubature rules since ``Stroud'': a compilation &ndash; part 2.
+J. Comput. Appl. Math., 112(1-2): 21&ndash;27, 1999.
+Electronic version:
+<a href="http://dx.doi.org/10.1016/S0377-0427(99)00229-0">http://dx.doi.org/10.1016/S0377-0427(99)00229-0</a></p>
+<p>R. Cools and P. Rabinowitz.
+Monomial cubature rules since ``Stroud'': a compilation.
+J. Comput. Appl. Math., 48:309-326, 1993.</p>
+<p>This implementation is authored by Tom Loredo and is released subject to
+the SciPy license.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+2-D cubature using monomial rules compiled by Ronald Cools at:
+
+Encyclopaedia of Cubature Formulas (ECF)
+http://www.cs.kuleuven.be/~nines/research/ecf/
+
+This module implements selected rules from the ECF:
+
+* Rules on the [-1,1] square with positive weights, some with nodes strictly
+  inside the square (Cool&#39;s quality designation &#34;PI&#34;), and some that include
+  nodes on the boundary (&#34;PB&#34;).
+
+* The rules above, mapped to a rectangle.
+
+* Rules for the whole plane with exp(-r^2) weight (built into the rule
+  weights).
+
+Rule names (in rule_dict, a dictionary of abscissas and weights) are of the 
+following form:
+
+    &lt;region&gt;&lt;weight function&gt;_&lt;degree&gt;_&lt;points&gt;
+
+optionally followed by a letter (&#39;a&#39;, &#39;b&#39; etc.) if more than one rule
+with the same specifications is offered.  
+
+&lt;region&gt; here is &#34;c2&#34; for the square (2-D cube) and e2 for the whole plane (the
+space E_2).
+
+&lt;weight function&gt; here is r2 for exp(-r^2) weighting and absent for no
+weighting, e.g, for the c2 rules.  For E_2, the ECF also offers exp(-r),
+but these are not yet implemented here.
+
+The rules exactly integrate sums of monomials (x^m * y^n) with degree
+m+n up to &lt;degree&gt;, using a total number of function evaluations given
+by &lt;points&gt;.  
+
+For the E_2 rules, to give you some idea of the region spanned by the nodes
+for the various degrees, here are rough specs for the rules included here:
+
+Degree  Largest abscissa
+3       0.8
+5       1.6
+7       1.7
+9       2.3, 2.1
+11      2.8, 2.9
+13      3.0, 3.1
+
+Selected rules are implemented as functions (besides the abscissa
+and weight arrays in rule_dict).
+
+To cite these rules, refer to the web site, which makes the following
+request:
+
+When material presented here is used, please refer to the following 
+published articles:
+
+R. Cools. 
+An Encyclopaedia of Cubature Formulas 
+J. Complexity, 19: 445-453, 2003. 
+Electronic version:  http://dx.doi.org/10.1016/S0885-064X(03)00011-6
+
+R. Cools. 
+Monomial cubature rules since ``Stroud&#39;&#39;: a compilation -- part 2. 
+J. Comput. Appl. Math., 112(1-2): 21--27, 1999. 
+Electronic version:  http://dx.doi.org/10.1016/S0377-0427(99)00229-0
+
+R. Cools and P. Rabinowitz. 
+Monomial cubature rules since ``Stroud&#39;&#39;: a compilation. 
+J. Comput. Appl. Math., 48:309-326, 1993.
+
+This implementation is authored by Tom Loredo and is released subject to 
+the SciPy license.
+&#34;&#34;&#34;
+
+from numpy import pi, sqrt, array
+
+# Import rules auto-generated from ECF web output; currently these are e2 rules.
+# Rules on the square are simple and coded directly in this file.
+from ._cub2d_auto import rule_dict
+
+__all__ = [&#39;rule_dict&#39;, &#39;NormWtCub2D&#39;, &#39;rect3d4pt&#39;, &#39;rect7d12pt&#39;,
+           &#39;square1d4pt&#39;, &#39;square3d4pt&#39;, &#39;square7d12pt&#39;]
+
+
+#==============================================================================
+# Useful constants
+#==============================================================================
+
+rt2 = sqrt(2)
+
+# Cool&#39;s rule c2-3-4a abscissas:
+gen_3d4pt = (0.816496580927726032732428024901963, 0.)
+
+# Cool&#39;s rule c2-7-12a abscissas &amp; weights:
+gen_7d12pt = [
+    (array([0.925820099772551461566566776583999, 0.]), 0.241975308641975308641975308641975),
+    (array([0.380554433208315656379106359086394, 0.380554433208315656379106359086394]), 0.520592916667394457139919432046731),
+    (array([0.805979782918598743707856181350744, 0.805979782918598743707856181350744]), 0.237431774690630234218105259311293)]
+
+
+#==============================================================================
+# Integrators derived from the &#34;raw&#34; 2-D rules
+#==============================================================================
+
+class NormWtCub2D(object):
+    &#34;&#34;&#34;
+    2-D cubature using a normal distribution weight function.
+
+    The default rule is &#39;e2r2_7_12&#39; of degree 7 with 12 nodes.  For other
+    choices, examine the keys of the dictionary rule_dict in this module.
+    See the module documentation for details about the rules.
+    &#34;&#34;&#34;
+
+    def __init__(self, locn, scale, rule=&#39;e2r2_7_12&#39;):
+        self.rule = rule
+        func, self.absc, self.wts = rule_dict[rule]
+        self.absc, self.wts = self.absc.copy(), self.wts.copy()  # don&#39;t modify originals!
+        if len(locn) != 2 or len(scale) != 2:
+            raise ValueError(&#39;locn and scale must be of length 2!&#39;)
+        self.absc[:,0] = locn[0] + rt2*scale[0]*self.absc[:,0]
+        self.absc[:,1] = locn[1] + rt2*scale[1]*self.absc[:,1]
+        self.wts = self.wts / pi
+
+    def __call__(self, func):
+        cub = 0.
+        for absc, wt in zip(self.absc, self.wts):
+            cub += wt * func(*absc)
+        return cub
+
+
+def rect3d4pt(f, xrange, yrange):
+    &#34;&#34;&#34;
+    Cubature of f(x,y) on a rectangle, of degree 3, using 4 points.
+    All nodes are strictly inside the rectangle.
+    &#34;&#34;&#34;
+    xl, xu = xrange
+    xm = 0.5*(xu+xl)
+    hx = 0.5*(xu-xl)
+    yl, yu = yrange
+    ym = 0.5*(yu+yl)
+    hy = 0.5*(yu-yl)
+    px = gen_3d4pt[0]*hx
+    py = gen_3d4pt[0]*hy
+    cub = f(px+xm,ym) + f(-px+xm,ym) + f(xm,py+ym) + f(xm,-py+ym)
+    return cub*hx*hy
+
+
+def rect7d12pt(f, xrange, yrange):
+    &#34;&#34;&#34;
+    Cubature of f(x,y) on a rectangle, of degree 7, using 12 points.
+    All nodes are strictly inside the rectangle.
+    &#34;&#34;&#34;
+    xl, xu = xrange
+    xm = 0.5*(xu+xl)
+    hx = 0.5*(xu-xl)
+    yl, yu = yrange
+    ym = 0.5*(yu+yl)
+    hy = 0.5*(yu-yl)
+    g, w = gen_7d12pt[0]
+    px = g[0]*hx
+    py = g[0]*hy
+    cub = w * (f(px+xm,ym) + f(-px+xm,ym) + f(xm,py+ym) + f(xm,-py+ym))
+    g, w = gen_7d12pt[1]
+    px = g[0]*hx
+    py = g[0]*hy
+    cub += w * (f(px+xm,py+ym) + f(px+xm,-py+ym) + f(-px+xm,py+ym) + f(-px+xm,-py+ym))
+    g, w = gen_7d12pt[2]
+    px = g[0]*hx
+    py = g[0]*hy
+    cub += w * (f(px+xm,py+ym) + f(px+xm,-py+ym) + f(-px+xm,py+ym) + f(-px+xm,-py+ym))
+    return cub*hx*hy
+
+
+#==============================================================================
+# 2-D monomial rules for the unit [-1,1] square
+#==============================================================================
+
+def square1d4pt(f):
+    &#34;&#34;&#34;
+    Cubature of f(x,y) on the unit [-1,1] square, of degree 1, using 4 points.
+    All nodes are on the corners.
+
+    This uses rule c2-1-4 from Ronald Cool&#39;s on-line Encyclopedia of
+    Cubature Formulas.  This is a trivial rule that simply sums the
+    corner contributions with unit weights.
+
+    Region: Cube 
+    Dimension: 2 
+    Degree: 1 
+    Points: 4 
+    Structure: Fully symmetric 
+    Rule struct: 0 0 1 0 
+    Product trapezoidal formula
+    Generator: [ Cornerpoints of the unit-cube ] 
+    ( 1., 1., ) 
+    Corresponding weight: 
+    1.,
+    &#34;&#34;&#34;
+    return f(1.,1.) + f(1.,-1.) + f(-1.,1.) + f(-1.,-1.)
+
+
+def square3d4pt(f):
+    &#34;&#34;&#34;
+    Cubature of f(x,y) on the unit [-1,1] square, of degree 3, using 4 points.
+    All nodes are strictly inside the square.
+
+    This uses rule c2-3-4a from Ronald Cool&#39;s on-line Encyclopedia of
+    Cubature Formulas.
+
+    Region: Cube 
+    Dimension: 2 
+    Degree: 3 
+    Points: 4 
+    Structure: Fully symmetric 
+    Rule struct: 0 1 0 0 
+    Generator: [ Fully symmetric ] 
+    ( 0.816496580927726032732428024901963, 0., ) 
+    Corresponding weight: 
+    1.,
+    &#34;&#34;&#34;
+    p = gen_3d4pt[0]
+    return f(p,0.) + f(-p,0.) + f(0.,p) + f(0.,-p)
+
+
+def square7d12pt(f):
+    &#34;&#34;&#34;
+    Cubature of f(x,y) on the unit [-1,1] square, of degree 7, using 12 points.
+    All nodes are strictly inside the square.
+
+    This uses rule c2-7-12a from Ronald Cool&#39;s on-line Encyclopedia of
+    Cubature Formulas.
+
+    Region: Cube 
+    Dimension: 2 
+    Degree: 7 
+    Points: 12 
+    Structure: Fully symmetric 
+    Rule struct: 0 1 2 0 
+    The points are the common zeros of the orthogonal polynomials
+    P4,1 = x3y - xy3
+
+    P4,2 = x4 - y4 - 6/7x2 + 6/7y2
+
+    P4,3 = x4 + 54/55x2y2 + y4 - 456/385x2 - 456/385y2 + 108/385
+
+
+    Generator: [ Fully symmetric ] 
+    ( 0.925820099772551461566566776583999, 0., ) 
+    Corresponding weight: 
+    0.241975308641975308641975308641975,
+    Generator: [ Fully symmetric ] 
+    ( 0.380554433208315656379106359086394, 0.380554433208315656379106359086394, ) 
+    Corresponding weight: 
+    0.520592916667394457139919432046731,
+
+    Generator: [ Fully symmetric ] 
+    ( 0.805979782918598743707856181350744, 0.805979782918598743707856181350744, ) 
+    Corresponding weight: 
+    0.237431774690630234218105259311293,
+    &#34;&#34;&#34;
+    g, w = gen_7d12pt[0]
+    p = g[0]
+    cub = w * (f(p,0.) + f(-p,0.) + f(0.,p) + f(0.,-p))
+    g, w = gen_7d12pt[1]
+    p = g[0]
+    cub += w * (f(p,p) + f(p,-p) + f(-p,p) + f(-p,-p))
+    g, w = gen_7d12pt[2]
+    p = g[0]
+    cub += w * (f(p,p) + f(p,-p) + f(-p,p) + f(-p,-p))
+    return cub
+
+
+#==============================================================================
+# Some yet-to-be implemented rule descriptions
+#==============================================================================
+
+&#34;&#34;&#34;
+Rule c2-3-5, quality PI
+Region: Cube 
+Dimension: 2 
+Degree: 3 
+Points: 5 
+Structure: Fully symmetric 
+Rule struct: 1 1 0 0 
+Generator: [ Intersections of the unit-cube and the axes ] 
+( 1., 0., ) 
+Corresponding weight: 
+0.666666666666666666666666666666666,
+Generator: [ Origin ] 
+( 0., 0., ) 
+Corresponding weight: 
+1.33333333333333333333333333333333,
+&#34;&#34;&#34;
+
+&#34;&#34;&#34;
+Rule c2-3-5a, quality PI
+Region: Cube 
+Dimension: 2 
+Degree: 3 
+Points: 5 
+Structure: Fully symmetric 
+Rule struct: 1 0 1 0 
+Generator: [ Cornerpoints of the unit-cube ] 
+( 1., 1., ) 
+Corresponding weight: 
+0.333333333333333333333333333333333,
+Generator: [ Origin ] 
+( 0., 0., ) 
+Corresponding weight: 
+2.66666666666666666666666666666666,
+&#34;&#34;&#34;</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="inference.integrate.cub2d.rect3d4pt"><code class="name flex">
+<span>def <span class="ident">rect3d4pt</span></span>(<span>f, xrange, yrange)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Cubature of f(x,y) on a rectangle, of degree 3, using 4 points.
+All nodes are strictly inside the rectangle.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rect3d4pt(f, xrange, yrange):
+    &#34;&#34;&#34;
+    Cubature of f(x,y) on a rectangle, of degree 3, using 4 points.
+    All nodes are strictly inside the rectangle.
+    &#34;&#34;&#34;
+    xl, xu = xrange
+    xm = 0.5*(xu+xl)
+    hx = 0.5*(xu-xl)
+    yl, yu = yrange
+    ym = 0.5*(yu+yl)
+    hy = 0.5*(yu-yl)
+    px = gen_3d4pt[0]*hx
+    py = gen_3d4pt[0]*hy
+    cub = f(px+xm,ym) + f(-px+xm,ym) + f(xm,py+ym) + f(xm,-py+ym)
+    return cub*hx*hy</code></pre>
+</details>
+</dd>
+<dt id="inference.integrate.cub2d.rect7d12pt"><code class="name flex">
+<span>def <span class="ident">rect7d12pt</span></span>(<span>f, xrange, yrange)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Cubature of f(x,y) on a rectangle, of degree 7, using 12 points.
+All nodes are strictly inside the rectangle.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rect7d12pt(f, xrange, yrange):
+    &#34;&#34;&#34;
+    Cubature of f(x,y) on a rectangle, of degree 7, using 12 points.
+    All nodes are strictly inside the rectangle.
+    &#34;&#34;&#34;
+    xl, xu = xrange
+    xm = 0.5*(xu+xl)
+    hx = 0.5*(xu-xl)
+    yl, yu = yrange
+    ym = 0.5*(yu+yl)
+    hy = 0.5*(yu-yl)
+    g, w = gen_7d12pt[0]
+    px = g[0]*hx
+    py = g[0]*hy
+    cub = w * (f(px+xm,ym) + f(-px+xm,ym) + f(xm,py+ym) + f(xm,-py+ym))
+    g, w = gen_7d12pt[1]
+    px = g[0]*hx
+    py = g[0]*hy
+    cub += w * (f(px+xm,py+ym) + f(px+xm,-py+ym) + f(-px+xm,py+ym) + f(-px+xm,-py+ym))
+    g, w = gen_7d12pt[2]
+    px = g[0]*hx
+    py = g[0]*hy
+    cub += w * (f(px+xm,py+ym) + f(px+xm,-py+ym) + f(-px+xm,py+ym) + f(-px+xm,-py+ym))
+    return cub*hx*hy</code></pre>
+</details>
+</dd>
+<dt id="inference.integrate.cub2d.square1d4pt"><code class="name flex">
+<span>def <span class="ident">square1d4pt</span></span>(<span>f)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Cubature of f(x,y) on the unit [-1,1] square, of degree 1, using 4 points.
+All nodes are on the corners.</p>
+<p>This uses rule c2-1-4 from Ronald Cool's on-line Encyclopedia of
+Cubature Formulas.
+This is a trivial rule that simply sums the
+corner contributions with unit weights.</p>
+<p>Region: Cube
+Dimension: 2
+Degree: 1
+Points: 4
+Structure: Fully symmetric
+Rule struct: 0 0 1 0
+Product trapezoidal formula
+Generator: [ Cornerpoints of the unit-cube ]
+( 1., 1., )
+Corresponding weight:
+1.,</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def square1d4pt(f):
+    &#34;&#34;&#34;
+    Cubature of f(x,y) on the unit [-1,1] square, of degree 1, using 4 points.
+    All nodes are on the corners.
+
+    This uses rule c2-1-4 from Ronald Cool&#39;s on-line Encyclopedia of
+    Cubature Formulas.  This is a trivial rule that simply sums the
+    corner contributions with unit weights.
+
+    Region: Cube 
+    Dimension: 2 
+    Degree: 1 
+    Points: 4 
+    Structure: Fully symmetric 
+    Rule struct: 0 0 1 0 
+    Product trapezoidal formula
+    Generator: [ Cornerpoints of the unit-cube ] 
+    ( 1., 1., ) 
+    Corresponding weight: 
+    1.,
+    &#34;&#34;&#34;
+    return f(1.,1.) + f(1.,-1.) + f(-1.,1.) + f(-1.,-1.)</code></pre>
+</details>
+</dd>
+<dt id="inference.integrate.cub2d.square3d4pt"><code class="name flex">
+<span>def <span class="ident">square3d4pt</span></span>(<span>f)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Cubature of f(x,y) on the unit [-1,1] square, of degree 3, using 4 points.
+All nodes are strictly inside the square.</p>
+<p>This uses rule c2-3-4a from Ronald Cool's on-line Encyclopedia of
+Cubature Formulas.</p>
+<p>Region: Cube
+Dimension: 2
+Degree: 3
+Points: 4
+Structure: Fully symmetric
+Rule struct: 0 1 0 0
+Generator: [ Fully symmetric ]
+( 0.816496580927726032732428024901963, 0., )
+Corresponding weight:
+1.,</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def square3d4pt(f):
+    &#34;&#34;&#34;
+    Cubature of f(x,y) on the unit [-1,1] square, of degree 3, using 4 points.
+    All nodes are strictly inside the square.
+
+    This uses rule c2-3-4a from Ronald Cool&#39;s on-line Encyclopedia of
+    Cubature Formulas.
+
+    Region: Cube 
+    Dimension: 2 
+    Degree: 3 
+    Points: 4 
+    Structure: Fully symmetric 
+    Rule struct: 0 1 0 0 
+    Generator: [ Fully symmetric ] 
+    ( 0.816496580927726032732428024901963, 0., ) 
+    Corresponding weight: 
+    1.,
+    &#34;&#34;&#34;
+    p = gen_3d4pt[0]
+    return f(p,0.) + f(-p,0.) + f(0.,p) + f(0.,-p)</code></pre>
+</details>
+</dd>
+<dt id="inference.integrate.cub2d.square7d12pt"><code class="name flex">
+<span>def <span class="ident">square7d12pt</span></span>(<span>f)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Cubature of f(x,y) on the unit [-1,1] square, of degree 7, using 12 points.
+All nodes are strictly inside the square.</p>
+<p>This uses rule c2-7-12a from Ronald Cool's on-line Encyclopedia of
+Cubature Formulas.</p>
+<p>Region: Cube
+Dimension: 2
+Degree: 7
+Points: 12
+Structure: Fully symmetric
+Rule struct: 0 1 2 0
+The points are the common zeros of the orthogonal polynomials
+P4,1 = x3y - xy3</p>
+<p>P4,2 = x4 - y4 - 6/7x2 + 6/7y2</p>
+<p>P4,3 = x4 + 54/55x2y2 + y4 - 456/385x2 - 456/385y2 + 108/385</p>
+<p>Generator: [ Fully symmetric ]
+( 0.925820099772551461566566776583999, 0., )
+Corresponding weight:
+0.241975308641975308641975308641975,
+Generator: [ Fully symmetric ]
+( 0.380554433208315656379106359086394, 0.380554433208315656379106359086394, )
+Corresponding weight:
+0.520592916667394457139919432046731,</p>
+<p>Generator: [ Fully symmetric ]
+( 0.805979782918598743707856181350744, 0.805979782918598743707856181350744, )
+Corresponding weight:
+0.237431774690630234218105259311293,</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def square7d12pt(f):
+    &#34;&#34;&#34;
+    Cubature of f(x,y) on the unit [-1,1] square, of degree 7, using 12 points.
+    All nodes are strictly inside the square.
+
+    This uses rule c2-7-12a from Ronald Cool&#39;s on-line Encyclopedia of
+    Cubature Formulas.
+
+    Region: Cube 
+    Dimension: 2 
+    Degree: 7 
+    Points: 12 
+    Structure: Fully symmetric 
+    Rule struct: 0 1 2 0 
+    The points are the common zeros of the orthogonal polynomials
+    P4,1 = x3y - xy3
+
+    P4,2 = x4 - y4 - 6/7x2 + 6/7y2
+
+    P4,3 = x4 + 54/55x2y2 + y4 - 456/385x2 - 456/385y2 + 108/385
+
+
+    Generator: [ Fully symmetric ] 
+    ( 0.925820099772551461566566776583999, 0., ) 
+    Corresponding weight: 
+    0.241975308641975308641975308641975,
+    Generator: [ Fully symmetric ] 
+    ( 0.380554433208315656379106359086394, 0.380554433208315656379106359086394, ) 
+    Corresponding weight: 
+    0.520592916667394457139919432046731,
+
+    Generator: [ Fully symmetric ] 
+    ( 0.805979782918598743707856181350744, 0.805979782918598743707856181350744, ) 
+    Corresponding weight: 
+    0.237431774690630234218105259311293,
+    &#34;&#34;&#34;
+    g, w = gen_7d12pt[0]
+    p = g[0]
+    cub = w * (f(p,0.) + f(-p,0.) + f(0.,p) + f(0.,-p))
+    g, w = gen_7d12pt[1]
+    p = g[0]
+    cub += w * (f(p,p) + f(p,-p) + f(-p,p) + f(-p,-p))
+    g, w = gen_7d12pt[2]
+    p = g[0]
+    cub += w * (f(p,p) + f(p,-p) + f(-p,p) + f(-p,-p))
+    return cub</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="inference.integrate.cub2d.NormWtCub2D"><code class="flex name class">
+<span>class <span class="ident">NormWtCub2D</span></span>
+<span>(</span><span>locn, scale, rule='e2r2_7_12')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>2-D cubature using a normal distribution weight function.</p>
+<p>The default rule is 'e2r2_7_12' of degree 7 with 12 nodes.
+For other
+choices, examine the keys of the dictionary rule_dict in this module.
+See the module documentation for details about the rules.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NormWtCub2D(object):
+    &#34;&#34;&#34;
+    2-D cubature using a normal distribution weight function.
+
+    The default rule is &#39;e2r2_7_12&#39; of degree 7 with 12 nodes.  For other
+    choices, examine the keys of the dictionary rule_dict in this module.
+    See the module documentation for details about the rules.
+    &#34;&#34;&#34;
+
+    def __init__(self, locn, scale, rule=&#39;e2r2_7_12&#39;):
+        self.rule = rule
+        func, self.absc, self.wts = rule_dict[rule]
+        self.absc, self.wts = self.absc.copy(), self.wts.copy()  # don&#39;t modify originals!
+        if len(locn) != 2 or len(scale) != 2:
+            raise ValueError(&#39;locn and scale must be of length 2!&#39;)
+        self.absc[:,0] = locn[0] + rt2*scale[0]*self.absc[:,0]
+        self.absc[:,1] = locn[1] + rt2*scale[1]*self.absc[:,1]
+        self.wts = self.wts / pi
+
+    def __call__(self, func):
+        cub = 0.
+        for absc, wt in zip(self.absc, self.wts):
+            cub += wt * func(*absc)
+        return cub</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="inference.integrate" href="index.html">inference.integrate</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="inference.integrate.cub2d.rect3d4pt" href="#inference.integrate.cub2d.rect3d4pt">rect3d4pt</a></code></li>
+<li><code><a title="inference.integrate.cub2d.rect7d12pt" href="#inference.integrate.cub2d.rect7d12pt">rect7d12pt</a></code></li>
+<li><code><a title="inference.integrate.cub2d.square1d4pt" href="#inference.integrate.cub2d.square1d4pt">square1d4pt</a></code></li>
+<li><code><a title="inference.integrate.cub2d.square3d4pt" href="#inference.integrate.cub2d.square3d4pt">square3d4pt</a></code></li>
+<li><code><a title="inference.integrate.cub2d.square7d12pt" href="#inference.integrate.cub2d.square7d12pt">square7d12pt</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="inference.integrate.cub2d.NormWtCub2D" href="#inference.integrate.cub2d.NormWtCub2D">NormWtCub2D</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

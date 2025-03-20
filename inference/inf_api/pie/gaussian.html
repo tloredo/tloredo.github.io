@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>inference.pie.gaussian API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>inference.pie.gaussian</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from .predictor import Predictor, PredictorHandler, DataError
+from numpy import array, concatenate
+import scipy.stats
+
+# A standard normal dist&#39;n (0 mean, unit variance).
+# stdnorm.rvs() returns a sample; stdnorm.rvs(n) returns n samples.
+stdnorm = scipy.stats.norm(loc=0, scale=1)
+
+
+# *** Perhaps this should be &#34;GaussianHandler&#34; with a virtual get_prdxns &amp;
+# set_data methods.  Binned and channel Predictors should be able to reuse
+# everything else.  Or must they all subclass PredictorHandler directly?
+
+class SampledGaussianHandler(PredictorHandler):
+    &#34;&#34;&#34;The handler that handles the method lookups for instances of a Predictor.
+
+    An instance of this class is returned when the Predictor is accessed.
+    Thus methods and attributes of this class appear as if they were
+    methods and attributes of the Predictor.  This implements instance-specific
+    state and behavior, even though the Predictor is a class variable.&#34;&#34;&#34;
+    
+    def init(self):
+        &#34;&#34;&#34;
+        Initialize data to point to the global data.
+        &#34;&#34;&#34;
+        # Make local references to the &#39;global&#39; data.
+        # If we ever modify the data (for simulation or sensitivity
+        # analysis), we&#39;ll make sure to not touch the original data.
+        # For &#39;templates&#39; we should just copy things right away.
+        self.locns, self.vals = self.pinst._locns, self.pinst._vals
+        self.sigmas = self.pinst._sigmas
+        self.ndata, self.dimen = self.pinst.ndata, self.pinst.dimen
+        self._using_globals = True  # ??? Do this here or in __init__?
+        
+    def localize_data(self):
+        &#34;&#34;&#34;
+        Change the instance&#39;s data to be copies of the current data rather
+            than references to it (e.g., to the original data stored in class
+            rather than instance variables).
+            &#34;&#34;&#34;
+        # Note this presumes the data have a copy method (as do numpy
+        # arrays).  For other data types we might need to use the copy
+        # or deepcopy modules.
+        if self._using_globals:
+            self.locns = self.locns.copy()
+            self.vals = self.vals.copy()
+            self.sigmas = self.sigmas.copy()
+            self._using_globals = False
+        
+    def changing_data(self):
+        &#34;&#34;&#34;
+        Note an operation that is changing the values of the data.
+        This means we need to localize the data (to avoid affecting
+        other instances of this Predictor), and also make sure we
+        clear any stored predictions.
+        &#34;&#34;&#34;
+        # *** Keep track of each prediction separately, so any
+        # re-evaluations calculate predictions only for changed data.
+        self.localize_data()
+        # self._data_changed  # ??? Do we need a global?
+        self.prdxns = None
+        
+    def get_prdxns(self):
+    # &gt;&gt;&gt;&gt;&gt;&gt; This is the ONLY place where signal() or signals()
+    # &gt;&gt;&gt;&gt;&gt;&gt; should be explicitly called!
+    # If calls are made anywhere else, make sure _on_use() gets
+    # called beforehand.
+    # *** Don&#39;t duplicate signal calls if not necessary.
+        self.owner._on_use()  # ??? Should this be in SignalModel (monitoring param changes)?
+        try:
+            self.prdxns = self.owner.signals(self.locns)
+        except NotImplementedError:
+            if self.dimen == 1:
+                self.prdxns = [self.owner.signal(locn) for locn in self.locns]
+            else:
+                self.prdxns = [self.owner.signal(*locn) for locn in self.locns]
+                
+    def log_like(self):
+    # *** Memoize:  Add ability to retrieve log_like value when already
+    # calculated.
+        self.get_prdxns()
+        self.resids = self.vals - self.prdxns
+        self._log_like = -0.5*sum((self.resids/self.sigmas)**2)
+        return self._log_like
+        
+    def chisqr(self):
+    # *** Memoize:  Add ability to retrieve chisqr value when already
+    # calculated.
+        self.get_prdxns()
+        self.resids = self.vals - self.prdxns
+        self._chisqr = sum((self.resids/self.sigmas)**2)
+        return self._chisqr
+        
+    def sim(self, locns=None, sigmas=None):  # ??? Switch based on args?
+        &#34;&#34;&#34;
+        Replace existing data with simulated values.
+        
+        With no arguments, new data values are simulated using the existing
+        locations and sigmas; they will replace the previous values.
+        
+        Note that the new data will be local to self (i.e., they will not
+        overwrite the global values defined in the predictor).
+        
+        If either locns or sigmas is present, the stored locns and/or
+        sigmas will be replaced with the passed values before simulation.
+        
+        If only one of them is present, its length must match the current
+        number of data.  If both are present, the number of data can be
+        different than that in the original data set.
+        &#34;&#34;&#34;
+        self.changing_data()
+        # Change the data locns/sigmas if necessary.
+        if locns and sigmas:
+            if len(locns) != len(sigmas):
+                raise ValueError(&#39;locns/sigmas length mismatch!&#39;)
+            self.locns = locns
+            self.sigmas = sigmas
+        elif locns:
+            if len(locns) != self.ndata:
+                raise ValueError(&#39;Incorrect number of locns!&#39;)
+            self.locns = locns
+        elif sigmas:
+            if len(sigmas) != self.ndata:
+                raise ValueError(&#39;Incorrect number of sigmas!&#39;)
+            self.sigmas = sigmas
+        self.get_prdxns()
+        # Sample data via Gaussians.
+        self.vals = self.prdxns + self.sigmas*stdnorm.rvs(self.ndata)
+    
+    # *** sim1, add_sim only simulate the NEW data.  But params could
+    # have changed since the last simulation, in which case there will be an
+    # internally inconsistency among the data.  We should test for this and
+    # raise an exception.
+    
+    def sim1(self, n, locn=None, sigma=None):
+        &#34;&#34;&#34;
+        Replace a single datum with a simulated value, optionally altering the
+        location and/or sigma for the datum.
+        &#34;&#34;&#34;
+        self.changing_data()
+        if locn:
+            # *** Verify locn dimension!
+            self.locns[n] = locn
+        if sigma:
+            self.sigmas[n] = sigma
+        self.get_prdxns()
+        # Sample datum via Gaussian.
+        self.vals[n] = self.prdxns[n] + self.sigmas[n]*stdnorm.rvs()
+        
+    def add_sim(self, locn=None, sigma=None, locns=None, sigmas=None):
+        &#34;&#34;&#34;
+        Simulate *additional* data.
+        
+        If two arguments are passed (locn, sigma), a single new datum is
+        simulated with the given location, sigma.
+        
+        If arrays are passed as locns &amp; sigmas, simulate the appropriate
+        mutiple additional data.
+        &#34;&#34;&#34;
+        self.changing_data()
+        # First adjust locns and sigmas.
+        if locn and sigma:
+            self.ndata += 1
+            self.locns = concatenate( (self.locns, (locn,)) )
+            self.sigmas = concatenate( (self.sigmas, (sigma,)) )
+        elif locns and sigmas:
+            if len(locns) != len(sigmas):
+                raise ValueError(&#39;locns/sigmas length mismatch!&#39;)
+            self.ndata += len(locns)
+            self.locns = concatenate( (self.locns, locns) )
+            self.sigmas = concatenate( (self.sigmas, sigmas) )
+        self.ndata += len(self.locns)
+        if len(self.locns.shape) == 1:
+            self.dimen = 1
+        elif len(self._locns.shape) == 2:
+            self.dimen = self.locns.shape[1]
+        else:
+            raise DataError(&#39;Locations should be scalars or 1-d arrays!&#39;)
+        # Update predictions.
+        self.get_prdxns()
+        
+
+# *** Add method to restore to original (not simulated) data?
+# May have to allow explicit caching to define &#34;original&#34; data
+# for simulation templates.
+
+
+    ## These are failed attempts to prevent user access to global data.
+    ## Probably should make the data hidden.
+    def __getitem__(self, key):
+        print(&#39;Attempting item access of&#39;, key)
+        
+    def __setitem__(self, key, value):
+        print(&#39;Attempting item change of&#39;, key)
+        
+        ##    def __getattribute__(self, name):
+        ##        print &#39;Attempting direct attribute access for&#39;, name
+        ##        if name in [&#39;locns&#39;, &#39;vals&#39;, &#39;sigmas&#39;] \
+        ##                and object.__getattribute__(self, &#39;usingGlobals&#39;):
+        ##           raise RuntimeError, &#39;Use .localize_data() before manipulating data!&#39;
+        ##        return object.__getattribute__(self, name)
+        
+        
+class SampledGaussian(Predictor):
+    &#34;&#34;&#34;
+    Predictor for data consisting of a function sampled at fixed, known points
+    and measured with noise with Gaussian uncertainties of known std dev&#39;n.
+    &#34;&#34;&#34;
+    
+    # This is implemented as a descriptor; its instances are meant to appear as
+    # *class* variables in Inference or PredictorSet (sub)classes.  This means
+    # that attributes of &#39;self&#39; are stored in those classes&#39; dictionaries, not
+    # in the dict of an instance of such classes.  Thus we use self only for
+    # storing copies of the &#39;original&#39; data associated with the predictor;
+    # this becomes &#39;global&#39; (i.e., cross-instance) data accessible to every
+    # instance of a given Predictor. Instance-specific state (modified data,
+    # predictions, etc.) is maintained in the instance dict via a handler.
+    #
+    # To emphasize that the original data is accessible to multiple
+    # instances and thus should be considered &#39;immutable,&#39; such data are
+    # stored in attributes with leading underscores.
+    
+    handler_class = SampledGaussianHandler
+    
+    def __init__(self, *args, **kwds):
+        print(&#39;args:&#39;, args)
+        try:
+            self.doc = kwds[&#39;doc&#39;]
+        except KeyError:
+            self.doc = None
+        if args:
+            self.set_data(*args)
+        else:
+        # *** Implement this; need locns, sigmas; or require explicit values=None.
+        # This will be for pure simulation studies.
+        # !!! This string confuses Eclipse&#39;s PyDev syntax colorizer for later strings.
+            raise NotImplementedError(&#39;&#34;Template&#34; predictors not yet implemented!&#39;)
+            
+    def set_data(self, *args):
+        &#34;&#34;&#34;
+        Set the data from arrays of locns, values &amp; sigmas or an array of triples.
+        
+        If three arguments are passed, they are interpreted as arrays of
+        locations, values, and sigmas respectively.
+        
+        If a single array is passed, it is interpreted as an array of 3-tuples,
+        with each tuple of the form (locn, value, sigma) for a datum.
+        &#34;&#34;&#34;
+        if len(args) == 3:
+            self._locns, self._vals, self._sigmas = args
+            if len(self._locns) != len(self._vals) or \
+            len(self._vals) != len(self._sigmas):
+                raise DataError(&#39;Mismatch in lengths of arguments!&#39;)
+        elif len(args) == 1:
+            all = args[0]
+            try:
+                rows, cols = all.shape
+                self.locns = all[:,0]
+                self.vals = all[:,1]
+                self.sigmas = all[:,2]
+            except AttributeError:
+            # If *all* is not an array, treat it as a list.
+            # Only the list format can handle &gt;1-d locns using
+            # a single set_data argument.
+            # *** Not really - the dimension is shape[1]-2.
+                self._locns, self._vals, self._sigmas = [], [], []
+                for row in all:
+                    self._locns.append(row[0])
+                    self._vals.append(row[1])
+                    self._sigmas.append(row[2])
+                self._locns = array(self.locns)
+                self._vals = array(self.vals)
+                self._sigmas = array(self.sigmas)
+            except:
+                raise DataError(&#39;Bad data array format!&#39;)
+                # *** Should ndata, dimen be _ndata...?  Or eliminate _...?
+                # Lean toward latter, since handler will catch accesses (test this!).
+        self.ndata = len(self._vals)
+        if len(self._locns.shape) == 1:
+            self.dimen = 1
+        elif len(self._locns.shape) == 2:
+            self.dimen = self.locns.shape[1]
+        else:
+            raise DataError(&#39;Locations should be scalars or 1-d arrays!&#39;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="inference.pie.gaussian.SampledGaussian"><code class="flex name class">
+<span>class <span class="ident">SampledGaussian</span></span>
+<span>(</span><span>*args, **kwds)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Predictor for data consisting of a function sampled at fixed, known points
+and measured with noise with Gaussian uncertainties of known std dev'n.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SampledGaussian(Predictor):
+    &#34;&#34;&#34;
+    Predictor for data consisting of a function sampled at fixed, known points
+    and measured with noise with Gaussian uncertainties of known std dev&#39;n.
+    &#34;&#34;&#34;
+    
+    # This is implemented as a descriptor; its instances are meant to appear as
+    # *class* variables in Inference or PredictorSet (sub)classes.  This means
+    # that attributes of &#39;self&#39; are stored in those classes&#39; dictionaries, not
+    # in the dict of an instance of such classes.  Thus we use self only for
+    # storing copies of the &#39;original&#39; data associated with the predictor;
+    # this becomes &#39;global&#39; (i.e., cross-instance) data accessible to every
+    # instance of a given Predictor. Instance-specific state (modified data,
+    # predictions, etc.) is maintained in the instance dict via a handler.
+    #
+    # To emphasize that the original data is accessible to multiple
+    # instances and thus should be considered &#39;immutable,&#39; such data are
+    # stored in attributes with leading underscores.
+    
+    handler_class = SampledGaussianHandler
+    
+    def __init__(self, *args, **kwds):
+        print(&#39;args:&#39;, args)
+        try:
+            self.doc = kwds[&#39;doc&#39;]
+        except KeyError:
+            self.doc = None
+        if args:
+            self.set_data(*args)
+        else:
+        # *** Implement this; need locns, sigmas; or require explicit values=None.
+        # This will be for pure simulation studies.
+        # !!! This string confuses Eclipse&#39;s PyDev syntax colorizer for later strings.
+            raise NotImplementedError(&#39;&#34;Template&#34; predictors not yet implemented!&#39;)
+            
+    def set_data(self, *args):
+        &#34;&#34;&#34;
+        Set the data from arrays of locns, values &amp; sigmas or an array of triples.
+        
+        If three arguments are passed, they are interpreted as arrays of
+        locations, values, and sigmas respectively.
+        
+        If a single array is passed, it is interpreted as an array of 3-tuples,
+        with each tuple of the form (locn, value, sigma) for a datum.
+        &#34;&#34;&#34;
+        if len(args) == 3:
+            self._locns, self._vals, self._sigmas = args
+            if len(self._locns) != len(self._vals) or \
+            len(self._vals) != len(self._sigmas):
+                raise DataError(&#39;Mismatch in lengths of arguments!&#39;)
+        elif len(args) == 1:
+            all = args[0]
+            try:
+                rows, cols = all.shape
+                self.locns = all[:,0]
+                self.vals = all[:,1]
+                self.sigmas = all[:,2]
+            except AttributeError:
+            # If *all* is not an array, treat it as a list.
+            # Only the list format can handle &gt;1-d locns using
+            # a single set_data argument.
+            # *** Not really - the dimension is shape[1]-2.
+                self._locns, self._vals, self._sigmas = [], [], []
+                for row in all:
+                    self._locns.append(row[0])
+                    self._vals.append(row[1])
+                    self._sigmas.append(row[2])
+                self._locns = array(self.locns)
+                self._vals = array(self.vals)
+                self._sigmas = array(self.sigmas)
+            except:
+                raise DataError(&#39;Bad data array format!&#39;)
+                # *** Should ndata, dimen be _ndata...?  Or eliminate _...?
+                # Lean toward latter, since handler will catch accesses (test this!).
+        self.ndata = len(self._vals)
+        if len(self._locns.shape) == 1:
+            self.dimen = 1
+        elif len(self._locns.shape) == 2:
+            self.dimen = self.locns.shape[1]
+        else:
+            raise DataError(&#39;Locations should be scalars or 1-d arrays!&#39;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="inference.pie.predictor.Predictor" href="predictor.html#inference.pie.predictor.Predictor">Predictor</a></li>
+<li><a title="inference.pie.autoname.AutoNamed" href="autoname.html#inference.pie.autoname.AutoNamed">AutoNamed</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="inference.pie.gaussian.SampledGaussian.handler_class"><code class="name">var <span class="ident">handler_class</span></code></dt>
+<dd>
+<div class="desc"><p>The handler that handles the method lookups for instances of a Predictor.</p>
+<p>An instance of this class is returned when the Predictor is accessed.
+Thus methods and attributes of this class appear as if they were
+methods and attributes of the Predictor.
+This implements instance-specific
+state and behavior, even though the Predictor is a class variable.</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="inference.pie.gaussian.SampledGaussian.set_data"><code class="name flex">
+<span>def <span class="ident">set_data</span></span>(<span>self, *args)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set the data from arrays of locns, values &amp; sigmas or an array of triples.</p>
+<p>If three arguments are passed, they are interpreted as arrays of
+locations, values, and sigmas respectively.</p>
+<p>If a single array is passed, it is interpreted as an array of 3-tuples,
+with each tuple of the form (locn, value, sigma) for a datum.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_data(self, *args):
+    &#34;&#34;&#34;
+    Set the data from arrays of locns, values &amp; sigmas or an array of triples.
+    
+    If three arguments are passed, they are interpreted as arrays of
+    locations, values, and sigmas respectively.
+    
+    If a single array is passed, it is interpreted as an array of 3-tuples,
+    with each tuple of the form (locn, value, sigma) for a datum.
+    &#34;&#34;&#34;
+    if len(args) == 3:
+        self._locns, self._vals, self._sigmas = args
+        if len(self._locns) != len(self._vals) or \
+        len(self._vals) != len(self._sigmas):
+            raise DataError(&#39;Mismatch in lengths of arguments!&#39;)
+    elif len(args) == 1:
+        all = args[0]
+        try:
+            rows, cols = all.shape
+            self.locns = all[:,0]
+            self.vals = all[:,1]
+            self.sigmas = all[:,2]
+        except AttributeError:
+        # If *all* is not an array, treat it as a list.
+        # Only the list format can handle &gt;1-d locns using
+        # a single set_data argument.
+        # *** Not really - the dimension is shape[1]-2.
+            self._locns, self._vals, self._sigmas = [], [], []
+            for row in all:
+                self._locns.append(row[0])
+                self._vals.append(row[1])
+                self._sigmas.append(row[2])
+            self._locns = array(self.locns)
+            self._vals = array(self.vals)
+            self._sigmas = array(self.sigmas)
+        except:
+            raise DataError(&#39;Bad data array format!&#39;)
+            # *** Should ndata, dimen be _ndata...?  Or eliminate _...?
+            # Lean toward latter, since handler will catch accesses (test this!).
+    self.ndata = len(self._vals)
+    if len(self._locns.shape) == 1:
+        self.dimen = 1
+    elif len(self._locns.shape) == 2:
+        self.dimen = self.locns.shape[1]
+    else:
+        raise DataError(&#39;Locations should be scalars or 1-d arrays!&#39;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="inference.pie.gaussian.SampledGaussianHandler"><code class="flex name class">
+<span>class <span class="ident">SampledGaussianHandler</span></span>
+<span>(</span><span>pinst, owner)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The handler that handles the method lookups for instances of a Predictor.</p>
+<p>An instance of this class is returned when the Predictor is accessed.
+Thus methods and attributes of this class appear as if they were
+methods and attributes of the Predictor.
+This implements instance-specific
+state and behavior, even though the Predictor is a class variable.</p>
+<p>Constructor, recording the instance that owns this handler,
+and the doc string for the associated parameter.</p>
+<p>pinst = the Predictor instance whose attributes this handler
+will handle.
+owner = the instance of the class in which the Predictor appears.
+This will typically be an Inference subclass.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SampledGaussianHandler(PredictorHandler):
+    &#34;&#34;&#34;The handler that handles the method lookups for instances of a Predictor.
+
+    An instance of this class is returned when the Predictor is accessed.
+    Thus methods and attributes of this class appear as if they were
+    methods and attributes of the Predictor.  This implements instance-specific
+    state and behavior, even though the Predictor is a class variable.&#34;&#34;&#34;
+    
+    def init(self):
+        &#34;&#34;&#34;
+        Initialize data to point to the global data.
+        &#34;&#34;&#34;
+        # Make local references to the &#39;global&#39; data.
+        # If we ever modify the data (for simulation or sensitivity
+        # analysis), we&#39;ll make sure to not touch the original data.
+        # For &#39;templates&#39; we should just copy things right away.
+        self.locns, self.vals = self.pinst._locns, self.pinst._vals
+        self.sigmas = self.pinst._sigmas
+        self.ndata, self.dimen = self.pinst.ndata, self.pinst.dimen
+        self._using_globals = True  # ??? Do this here or in __init__?
+        
+    def localize_data(self):
+        &#34;&#34;&#34;
+        Change the instance&#39;s data to be copies of the current data rather
+            than references to it (e.g., to the original data stored in class
+            rather than instance variables).
+            &#34;&#34;&#34;
+        # Note this presumes the data have a copy method (as do numpy
+        # arrays).  For other data types we might need to use the copy
+        # or deepcopy modules.
+        if self._using_globals:
+            self.locns = self.locns.copy()
+            self.vals = self.vals.copy()
+            self.sigmas = self.sigmas.copy()
+            self._using_globals = False
+        
+    def changing_data(self):
+        &#34;&#34;&#34;
+        Note an operation that is changing the values of the data.
+        This means we need to localize the data (to avoid affecting
+        other instances of this Predictor), and also make sure we
+        clear any stored predictions.
+        &#34;&#34;&#34;
+        # *** Keep track of each prediction separately, so any
+        # re-evaluations calculate predictions only for changed data.
+        self.localize_data()
+        # self._data_changed  # ??? Do we need a global?
+        self.prdxns = None
+        
+    def get_prdxns(self):
+    # &gt;&gt;&gt;&gt;&gt;&gt; This is the ONLY place where signal() or signals()
+    # &gt;&gt;&gt;&gt;&gt;&gt; should be explicitly called!
+    # If calls are made anywhere else, make sure _on_use() gets
+    # called beforehand.
+    # *** Don&#39;t duplicate signal calls if not necessary.
+        self.owner._on_use()  # ??? Should this be in SignalModel (monitoring param changes)?
+        try:
+            self.prdxns = self.owner.signals(self.locns)
+        except NotImplementedError:
+            if self.dimen == 1:
+                self.prdxns = [self.owner.signal(locn) for locn in self.locns]
+            else:
+                self.prdxns = [self.owner.signal(*locn) for locn in self.locns]
+                
+    def log_like(self):
+    # *** Memoize:  Add ability to retrieve log_like value when already
+    # calculated.
+        self.get_prdxns()
+        self.resids = self.vals - self.prdxns
+        self._log_like = -0.5*sum((self.resids/self.sigmas)**2)
+        return self._log_like
+        
+    def chisqr(self):
+    # *** Memoize:  Add ability to retrieve chisqr value when already
+    # calculated.
+        self.get_prdxns()
+        self.resids = self.vals - self.prdxns
+        self._chisqr = sum((self.resids/self.sigmas)**2)
+        return self._chisqr
+        
+    def sim(self, locns=None, sigmas=None):  # ??? Switch based on args?
+        &#34;&#34;&#34;
+        Replace existing data with simulated values.
+        
+        With no arguments, new data values are simulated using the existing
+        locations and sigmas; they will replace the previous values.
+        
+        Note that the new data will be local to self (i.e., they will not
+        overwrite the global values defined in the predictor).
+        
+        If either locns or sigmas is present, the stored locns and/or
+        sigmas will be replaced with the passed values before simulation.
+        
+        If only one of them is present, its length must match the current
+        number of data.  If both are present, the number of data can be
+        different than that in the original data set.
+        &#34;&#34;&#34;
+        self.changing_data()
+        # Change the data locns/sigmas if necessary.
+        if locns and sigmas:
+            if len(locns) != len(sigmas):
+                raise ValueError(&#39;locns/sigmas length mismatch!&#39;)
+            self.locns = locns
+            self.sigmas = sigmas
+        elif locns:
+            if len(locns) != self.ndata:
+                raise ValueError(&#39;Incorrect number of locns!&#39;)
+            self.locns = locns
+        elif sigmas:
+            if len(sigmas) != self.ndata:
+                raise ValueError(&#39;Incorrect number of sigmas!&#39;)
+            self.sigmas = sigmas
+        self.get_prdxns()
+        # Sample data via Gaussians.
+        self.vals = self.prdxns + self.sigmas*stdnorm.rvs(self.ndata)
+    
+    # *** sim1, add_sim only simulate the NEW data.  But params could
+    # have changed since the last simulation, in which case there will be an
+    # internally inconsistency among the data.  We should test for this and
+    # raise an exception.
+    
+    def sim1(self, n, locn=None, sigma=None):
+        &#34;&#34;&#34;
+        Replace a single datum with a simulated value, optionally altering the
+        location and/or sigma for the datum.
+        &#34;&#34;&#34;
+        self.changing_data()
+        if locn:
+            # *** Verify locn dimension!
+            self.locns[n] = locn
+        if sigma:
+            self.sigmas[n] = sigma
+        self.get_prdxns()
+        # Sample datum via Gaussian.
+        self.vals[n] = self.prdxns[n] + self.sigmas[n]*stdnorm.rvs()
+        
+    def add_sim(self, locn=None, sigma=None, locns=None, sigmas=None):
+        &#34;&#34;&#34;
+        Simulate *additional* data.
+        
+        If two arguments are passed (locn, sigma), a single new datum is
+        simulated with the given location, sigma.
+        
+        If arrays are passed as locns &amp; sigmas, simulate the appropriate
+        mutiple additional data.
+        &#34;&#34;&#34;
+        self.changing_data()
+        # First adjust locns and sigmas.
+        if locn and sigma:
+            self.ndata += 1
+            self.locns = concatenate( (self.locns, (locn,)) )
+            self.sigmas = concatenate( (self.sigmas, (sigma,)) )
+        elif locns and sigmas:
+            if len(locns) != len(sigmas):
+                raise ValueError(&#39;locns/sigmas length mismatch!&#39;)
+            self.ndata += len(locns)
+            self.locns = concatenate( (self.locns, locns) )
+            self.sigmas = concatenate( (self.sigmas, sigmas) )
+        self.ndata += len(self.locns)
+        if len(self.locns.shape) == 1:
+            self.dimen = 1
+        elif len(self._locns.shape) == 2:
+            self.dimen = self.locns.shape[1]
+        else:
+            raise DataError(&#39;Locations should be scalars or 1-d arrays!&#39;)
+        # Update predictions.
+        self.get_prdxns()
+        
+
+# *** Add method to restore to original (not simulated) data?
+# May have to allow explicit caching to define &#34;original&#34; data
+# for simulation templates.
+
+
+    ## These are failed attempts to prevent user access to global data.
+    ## Probably should make the data hidden.
+    def __getitem__(self, key):
+        print(&#39;Attempting item access of&#39;, key)
+        
+    def __setitem__(self, key, value):
+        print(&#39;Attempting item change of&#39;, key)
+        
+        ##    def __getattribute__(self, name):
+        ##        print &#39;Attempting direct attribute access for&#39;, name
+        ##        if name in [&#39;locns&#39;, &#39;vals&#39;, &#39;sigmas&#39;] \
+        ##                and object.__getattribute__(self, &#39;usingGlobals&#39;):
+        ##           raise RuntimeError, &#39;Use .localize_data() before manipulating data!&#39;
+        ##        return object.__getattribute__(self, name)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>inference.pie.predictor.PredictorHandler</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="inference.pie.gaussian.SampledGaussianHandler.add_sim"><code class="name flex">
+<span>def <span class="ident">add_sim</span></span>(<span>self, locn=None, sigma=None, locns=None, sigmas=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Simulate <em>additional</em> data.</p>
+<p>If two arguments are passed (locn, sigma), a single new datum is
+simulated with the given location, sigma.</p>
+<p>If arrays are passed as locns &amp; sigmas, simulate the appropriate
+mutiple additional data.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_sim(self, locn=None, sigma=None, locns=None, sigmas=None):
+    &#34;&#34;&#34;
+    Simulate *additional* data.
+    
+    If two arguments are passed (locn, sigma), a single new datum is
+    simulated with the given location, sigma.
+    
+    If arrays are passed as locns &amp; sigmas, simulate the appropriate
+    mutiple additional data.
+    &#34;&#34;&#34;
+    self.changing_data()
+    # First adjust locns and sigmas.
+    if locn and sigma:
+        self.ndata += 1
+        self.locns = concatenate( (self.locns, (locn,)) )
+        self.sigmas = concatenate( (self.sigmas, (sigma,)) )
+    elif locns and sigmas:
+        if len(locns) != len(sigmas):
+            raise ValueError(&#39;locns/sigmas length mismatch!&#39;)
+        self.ndata += len(locns)
+        self.locns = concatenate( (self.locns, locns) )
+        self.sigmas = concatenate( (self.sigmas, sigmas) )
+    self.ndata += len(self.locns)
+    if len(self.locns.shape) == 1:
+        self.dimen = 1
+    elif len(self._locns.shape) == 2:
+        self.dimen = self.locns.shape[1]
+    else:
+        raise DataError(&#39;Locations should be scalars or 1-d arrays!&#39;)
+    # Update predictions.
+    self.get_prdxns()</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.gaussian.SampledGaussianHandler.changing_data"><code class="name flex">
+<span>def <span class="ident">changing_data</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Note an operation that is changing the values of the data.
+This means we need to localize the data (to avoid affecting
+other instances of this Predictor), and also make sure we
+clear any stored predictions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def changing_data(self):
+    &#34;&#34;&#34;
+    Note an operation that is changing the values of the data.
+    This means we need to localize the data (to avoid affecting
+    other instances of this Predictor), and also make sure we
+    clear any stored predictions.
+    &#34;&#34;&#34;
+    # *** Keep track of each prediction separately, so any
+    # re-evaluations calculate predictions only for changed data.
+    self.localize_data()
+    # self._data_changed  # ??? Do we need a global?
+    self.prdxns = None</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.gaussian.SampledGaussianHandler.chisqr"><code class="name flex">
+<span>def <span class="ident">chisqr</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def chisqr(self):
+# *** Memoize:  Add ability to retrieve chisqr value when already
+# calculated.
+    self.get_prdxns()
+    self.resids = self.vals - self.prdxns
+    self._chisqr = sum((self.resids/self.sigmas)**2)
+    return self._chisqr</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.gaussian.SampledGaussianHandler.get_prdxns"><code class="name flex">
+<span>def <span class="ident">get_prdxns</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_prdxns(self):
+# &gt;&gt;&gt;&gt;&gt;&gt; This is the ONLY place where signal() or signals()
+# &gt;&gt;&gt;&gt;&gt;&gt; should be explicitly called!
+# If calls are made anywhere else, make sure _on_use() gets
+# called beforehand.
+# *** Don&#39;t duplicate signal calls if not necessary.
+    self.owner._on_use()  # ??? Should this be in SignalModel (monitoring param changes)?
+    try:
+        self.prdxns = self.owner.signals(self.locns)
+    except NotImplementedError:
+        if self.dimen == 1:
+            self.prdxns = [self.owner.signal(locn) for locn in self.locns]
+        else:
+            self.prdxns = [self.owner.signal(*locn) for locn in self.locns]</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.gaussian.SampledGaussianHandler.init"><code class="name flex">
+<span>def <span class="ident">init</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Initialize data to point to the global data.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init(self):
+    &#34;&#34;&#34;
+    Initialize data to point to the global data.
+    &#34;&#34;&#34;
+    # Make local references to the &#39;global&#39; data.
+    # If we ever modify the data (for simulation or sensitivity
+    # analysis), we&#39;ll make sure to not touch the original data.
+    # For &#39;templates&#39; we should just copy things right away.
+    self.locns, self.vals = self.pinst._locns, self.pinst._vals
+    self.sigmas = self.pinst._sigmas
+    self.ndata, self.dimen = self.pinst.ndata, self.pinst.dimen
+    self._using_globals = True  # ??? Do this here or in __init__?</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.gaussian.SampledGaussianHandler.localize_data"><code class="name flex">
+<span>def <span class="ident">localize_data</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Change the instance's data to be copies of the current data rather
+than references to it (e.g., to the original data stored in class
+rather than instance variables).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def localize_data(self):
+    &#34;&#34;&#34;
+    Change the instance&#39;s data to be copies of the current data rather
+        than references to it (e.g., to the original data stored in class
+        rather than instance variables).
+        &#34;&#34;&#34;
+    # Note this presumes the data have a copy method (as do numpy
+    # arrays).  For other data types we might need to use the copy
+    # or deepcopy modules.
+    if self._using_globals:
+        self.locns = self.locns.copy()
+        self.vals = self.vals.copy()
+        self.sigmas = self.sigmas.copy()
+        self._using_globals = False</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.gaussian.SampledGaussianHandler.log_like"><code class="name flex">
+<span>def <span class="ident">log_like</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_like(self):
+# *** Memoize:  Add ability to retrieve log_like value when already
+# calculated.
+    self.get_prdxns()
+    self.resids = self.vals - self.prdxns
+    self._log_like = -0.5*sum((self.resids/self.sigmas)**2)
+    return self._log_like</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.gaussian.SampledGaussianHandler.sim"><code class="name flex">
+<span>def <span class="ident">sim</span></span>(<span>self, locns=None, sigmas=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Replace existing data with simulated values.</p>
+<p>With no arguments, new data values are simulated using the existing
+locations and sigmas; they will replace the previous values.</p>
+<p>Note that the new data will be local to self (i.e., they will not
+overwrite the global values defined in the predictor).</p>
+<p>If either locns or sigmas is present, the stored locns and/or
+sigmas will be replaced with the passed values before simulation.</p>
+<p>If only one of them is present, its length must match the current
+number of data.
+If both are present, the number of data can be
+different than that in the original data set.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sim(self, locns=None, sigmas=None):  # ??? Switch based on args?
+    &#34;&#34;&#34;
+    Replace existing data with simulated values.
+    
+    With no arguments, new data values are simulated using the existing
+    locations and sigmas; they will replace the previous values.
+    
+    Note that the new data will be local to self (i.e., they will not
+    overwrite the global values defined in the predictor).
+    
+    If either locns or sigmas is present, the stored locns and/or
+    sigmas will be replaced with the passed values before simulation.
+    
+    If only one of them is present, its length must match the current
+    number of data.  If both are present, the number of data can be
+    different than that in the original data set.
+    &#34;&#34;&#34;
+    self.changing_data()
+    # Change the data locns/sigmas if necessary.
+    if locns and sigmas:
+        if len(locns) != len(sigmas):
+            raise ValueError(&#39;locns/sigmas length mismatch!&#39;)
+        self.locns = locns
+        self.sigmas = sigmas
+    elif locns:
+        if len(locns) != self.ndata:
+            raise ValueError(&#39;Incorrect number of locns!&#39;)
+        self.locns = locns
+    elif sigmas:
+        if len(sigmas) != self.ndata:
+            raise ValueError(&#39;Incorrect number of sigmas!&#39;)
+        self.sigmas = sigmas
+    self.get_prdxns()
+    # Sample data via Gaussians.
+    self.vals = self.prdxns + self.sigmas*stdnorm.rvs(self.ndata)</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.gaussian.SampledGaussianHandler.sim1"><code class="name flex">
+<span>def <span class="ident">sim1</span></span>(<span>self, n, locn=None, sigma=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Replace a single datum with a simulated value, optionally altering the
+location and/or sigma for the datum.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sim1(self, n, locn=None, sigma=None):
+    &#34;&#34;&#34;
+    Replace a single datum with a simulated value, optionally altering the
+    location and/or sigma for the datum.
+    &#34;&#34;&#34;
+    self.changing_data()
+    if locn:
+        # *** Verify locn dimension!
+        self.locns[n] = locn
+    if sigma:
+        self.sigmas[n] = sigma
+    self.get_prdxns()
+    # Sample datum via Gaussian.
+    self.vals[n] = self.prdxns[n] + self.sigmas[n]*stdnorm.rvs()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="inference.pie" href="index.html">inference.pie</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="inference.pie.gaussian.SampledGaussian" href="#inference.pie.gaussian.SampledGaussian">SampledGaussian</a></code></h4>
+<ul class="">
+<li><code><a title="inference.pie.gaussian.SampledGaussian.handler_class" href="#inference.pie.gaussian.SampledGaussian.handler_class">handler_class</a></code></li>
+<li><code><a title="inference.pie.gaussian.SampledGaussian.set_data" href="#inference.pie.gaussian.SampledGaussian.set_data">set_data</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="inference.pie.gaussian.SampledGaussianHandler" href="#inference.pie.gaussian.SampledGaussianHandler">SampledGaussianHandler</a></code></h4>
+<ul class="two-column">
+<li><code><a title="inference.pie.gaussian.SampledGaussianHandler.add_sim" href="#inference.pie.gaussian.SampledGaussianHandler.add_sim">add_sim</a></code></li>
+<li><code><a title="inference.pie.gaussian.SampledGaussianHandler.changing_data" href="#inference.pie.gaussian.SampledGaussianHandler.changing_data">changing_data</a></code></li>
+<li><code><a title="inference.pie.gaussian.SampledGaussianHandler.chisqr" href="#inference.pie.gaussian.SampledGaussianHandler.chisqr">chisqr</a></code></li>
+<li><code><a title="inference.pie.gaussian.SampledGaussianHandler.get_prdxns" href="#inference.pie.gaussian.SampledGaussianHandler.get_prdxns">get_prdxns</a></code></li>
+<li><code><a title="inference.pie.gaussian.SampledGaussianHandler.init" href="#inference.pie.gaussian.SampledGaussianHandler.init">init</a></code></li>
+<li><code><a title="inference.pie.gaussian.SampledGaussianHandler.localize_data" href="#inference.pie.gaussian.SampledGaussianHandler.localize_data">localize_data</a></code></li>
+<li><code><a title="inference.pie.gaussian.SampledGaussianHandler.log_like" href="#inference.pie.gaussian.SampledGaussianHandler.log_like">log_like</a></code></li>
+<li><code><a title="inference.pie.gaussian.SampledGaussianHandler.sim" href="#inference.pie.gaussian.SampledGaussianHandler.sim">sim</a></code></li>
+<li><code><a title="inference.pie.gaussian.SampledGaussianHandler.sim1" href="#inference.pie.gaussian.SampledGaussianHandler.sim1">sim1</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

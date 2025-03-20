@@ -1,0 +1,102 @@
+.title:before{
+margin-right:0.5em;
+content: "\025b6";  /* 025b6, 025b8 = big, small filled right tri */
+color:#ccc;
+}
+
+.title:hover{
+border-bottom:1px solid #ddd;
+border-right:1px solid #ddd;
+background:#e0e0e0 !important;
+
+}
+
+.title:hover:before {
+content: "\025B6";
+color:#222;
+}
+
+.title {
+	color: #00f;
+	font-size: 1em;
+	list-style: none;
+	font-family: Courier, fixed-width;	
+	cursor: hand;
+    background-color: #f4f4f4;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #e4e4e4;
+    border-right: 1px solid #e6e6e6;
+    padding-bottom: 3px;
+    padding-top: 3px;
+    padding-left: 10px;
+}
+
+.infotext{
+    font-family: Arial, Helvetica, sans-serif;
+    color:#000;
+    padding-bottom: .2em;
+    padding-top: .2em;
+    display:block;
+}
+
+/*---  from YUI resources, modified as needed ---*/
+
+dl.accordion {
+	margin: 0 0 .75em 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+dl.accordion dt.title-hover{
+	background:#cdcdcd;
+}
+
+html.accordion-js dt.title{
+	cursor: pointer;
+	zoom: 1;
+}
+
+html.accordion-js dd.excerpt{
+	display: none;
+	margin: 0;
+	padding: 0;
+}
+
+html.accordion-js dd.excerpt-expand {
+	display: block;
+	font-size: 1em;
+	list-style: none;
+	font-family: Courier, fixed-width;
+}
+
+html.accordion-js dd.excerpt-before-expand {
+	display: block;
+	position: relative;
+	z-index: -1;
+	opacity: 0;
+	height: auto !important;
+	visibility: hidden;
+	overflow: visible;
+}
+
+html.accordion-js dt.title-expand,
+html.accordion-js dt.title-expand:hover {
+	color: #fff;
+	background: #666 !important;
+}
+
+html.accordion-js dt.title-expand:before{
+margin-right:0.5em;
+content: "\025bc";  /* 025bc, 025be = big, small filled down tri */
+color:#fff;
+}
+
+html.accordion-js dd.excerpt-anim {
+	overflow: hidden;
+	display: block;	
+}
+
+dl.accordion dd.excerpt .bd{
+	padding: 0.5em;
+	border: Solid 1px #aaaaaa;
+}

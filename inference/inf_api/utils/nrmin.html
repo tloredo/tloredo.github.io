@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>inference.utils.nrmin API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>inference.utils.nrmin</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from numpy import array, identity, log, exp, clip
+
+
+class MinBracket:
+    &#34;&#34;&#34;Bracket a minimum of a function of one variable.&#34;&#34;&#34;
+
+    def __init__(self, f, x1, x2):
+        &#34;&#34;&#34;Pass the function and two starting points that
+        need not bracket the minimum.&#34;&#34;&#34;
+        GOLD = 1.618034
+        TINY = 1.e-20
+        MAXMAG = 100.
+        self.x1 = x1
+        self.f1 = f(x1)
+        self.xm = x2
+        self.fm = f(x2)
+        if (self.fm &gt; self.f1):
+            self.x1, self.xm = self.xm, self.x1
+            self.f1, self.fm = self.fm, self.f1
+        self.x2 = self.xm + GOLD*(self.xm - self.x1)
+        self.f2 = f(self.x2)
+        while 1:
+            if (self.fm &lt; self.f2):
+                break
+            d1 = (self.xm - self.x1)
+            d2 = (self.xm - self.x2)
+            r = d1*(self.fm - self.f2)
+            q = d2*(self.fm - self.f1)
+            u = 2.*(q - r)
+            if (abs(u) &lt; TINY):
+                if (u &gt;= 0):
+                    u = TINY
+                else:
+                    u = -TINY
+            u = self.xm - (d2*q - d1*r)/u
+            ulim = self.xm - MAXMAG*d2
+            if ((self.xm-u)*(u-self.x2) &gt; 0.):
+                fu = f(u)
+                if (fu &lt; self.f2):
+                    self.x1, self.xm = self.xm, u
+                    self.f1, self.fm = self.fm, fu
+                    break
+                elif (fu &gt; self.fm):
+                    self.x2, self.f2 = u, fu
+                    break
+                u = self.x2 - GOLD*d2
+                fu = f(u)
+            elif ((self.x2-u)*(u-ulim) &gt; 0.):
+                fu = f(u)
+                if (fu &lt; self.f2):
+                    self.xm, self.x2 = self.x2, u
+                    self.fm, self.f2 = self.f2, fu
+                    u = self.x2 - GOLD*d2
+                    fu = f(u)
+            elif ((u-ulim)*(ulim-self.x2) &gt;= 0.):
+                u = ulim
+                fu = f(u)
+            else:
+                u = self.x2 - GOLD*d2
+                fu = f(u)
+            self.x1, self.xm, self.x2 = self.xm, self.x2, u
+            self.f1, self.fm, self.f2 = self.fm, self.f2, fu
+#           print &#39;  Bracketing &#39;, iter, u, fu
+        if (self.x2 &lt; self.x1):
+            self.x1, self.x2 = self.x2, self.x1
+            self.f1, self.f2 = self.f2, self.f1
+
+
+# IterErr = &#34;Too many iterations!&#34;  # exceptions once could be strings...
+
+class IterErr(Exception):
+    pass
+
+
+def brent(f, bracket, tol=1.e-6, maxit=100):
+    &#34;&#34;&#34;Find a minimum of f(x) using Brent&#39;s method.&#34;&#34;&#34;
+    CGOLD = 0.3819660
+    EPS0 = 1.e-10
+    a = bracket.x1
+    b = bracket.x2
+    v = bracket.xm
+    w, x = v, v
+    fv = f(v)
+    fw, fx = fv, fv
+    e = 0.
+    iter = 0
+    while 1:
+        iter = iter + 1
+        if (iter &gt; maxit):
+            raise IterErr(&#39;Too many iterations!&#39;)
+        xm = 0.5*(a+b)
+        tol1 = tol*abs(x) + EPS0
+        tol2 = 2.*tol1
+        if (abs(x-xm) &lt;= (tol2-0.5*(b-a))):
+            return (x, fx)
+        if (abs(e) &gt; tol1):
+            xw = x - w
+            xv = x - v
+            r = xw*(fx-fv)
+            q = xv*(fx-fw)
+            p = xv*q - xw*r
+            q = 2.*(q-r)
+            if (q &gt; 0.):
+                p = -p
+            q = abs(q)
+            etemp = e
+            e = d
+            if (abs(p) &gt;= abs(0.5*q*etemp) or p &lt;= q*(a-x) or p &gt;= q*(b-x)):
+                if (x &gt;= xm):
+                    e = a-x
+                else:
+                    e = b-x
+                d = CGOLD*e
+            else:
+                d = p/q
+                u = x+d
+                if (u-a &lt; tol2 or b-u &lt; tol2):
+                    if (xm-x &lt; 0.):
+                        d = -tol1
+                    else:
+                        d = tol1
+        else:
+            if (x &gt;= xm):
+                e = a-x
+            else:
+                e = b-x
+            d = CGOLD*e
+        if (abs(d) &gt;= tol1):
+            u = x+d
+        elif (d &lt; 0):
+            u = x-tol1
+        else:
+            u = x+tol1
+        fu = f(u)
+#       print &#39;  Brent&#39;, iter, fu
+        if (fu &lt;= fx):
+            if (u &gt;= x):
+                a = x
+            else:
+                b = x
+            v, fv = w, fw
+            w, fw = x, fx
+            x, fx = u, fu
+        else:
+            if (u &lt; x):
+                a = u
+            else:
+                b = u
+            if (fu &lt;= fw or w == x):
+                v, fv = w, fw
+                w, fw = u, fu
+            elif (fu &lt;= fv or v == x or v == w):
+                v, fv = u, fu
+
+
+def linmin(func, pt, drxn, tol=1.e-4):
+    &#34;&#34;&#34;Minimize f along drxn, starting at pt.&#34;&#34;&#34;
+    def f1dim(x, f=func, p=pt, d=drxn):
+        pp = p + x*d
+        return f(pp)
+    brak = MinBracket(f1dim, 0., 1.)
+    l, f = brent(f1dim, brak, tol=tol)
+    drxn = l*drxn
+    pt = pt + drxn
+    return (pt, drxn, f)
+
+
+def powell(f, p, drxns=None, ftol=1.e-6, maxit=200, nlog=None, shuffle=False):
+    &#34;&#34;&#34;
+    Minimize a multivariate function using Powell&#39;s direction set method.
+        f = function of a 1-d array argument
+        p = starting pt
+        drxns = list of direction vectors (i.e., *rows* are directions)
+
+        shuffle = reorder the initial directions
+
+    Returns:
+        Minimizing point (array)
+        Function value at the minimum
+        Number of iterations
+    &#34;&#34;&#34;
+    n = len(p)
+    if drxns is None:
+        drxns = identity(n)
+        drxns = array(drxns, float)
+    if shuffle:
+        vec = drxns[0].copy()  # must copy!
+        for i in range(n-1):
+            drxns[i] = drxns[i+1]
+        drxns[-1] = vec
+    fret = f(p)
+    p0 = p
+    iter = 0
+    while 1:
+        iter = iter + 1
+        # print(&#39;Powell&#39;, iter)
+        fp = fret
+        ibig, delta = 0, 0.
+        for i in range(n):
+            vec = drxns[i]
+            fptt = fret
+            p, vec, fret = linmin(f, p, vec)
+            if abs(fptt-fret) &gt; delta:
+                delta = abs(fptt-fret)
+                ibig = i
+        if 2.*abs(fp-fret) &lt;= ftol*(abs(fp)+abs(fret)):
+            return (p, fret, iter)
+        if iter == maxit:
+            raise IterErr(&#39;Too many iterations!&#39;)
+        if nlog is not None and iter % nlog == 0:
+            print(&#39;Powell iteration&#39;, iter, fret)
+        ptt = 2.*p - p0
+        vec = p - p0
+        p0 = p
+        fptt = f(ptt)
+#       print iter, tuple(ptt), fptt
+        if fptt &gt;= fp:
+            continue
+        t = 2.*(fp - 2.*fret + fptt) * (fp-fret-delta)**2 - delta*(fp-fptt)**2
+        if t &gt;= 0.:
+            continue
+        p, vec, fret = linmin(f, p, vec)
+        drxns[ibig] = drxns[-1]
+        drxns[-1] = vec
+
+
+if __name__ == &#39;__main__&#39;:
+
+    def test_brent():
+        &#39;&#39;&#39;
+        Test brent on a smooth function with minumum at 2.
+        &#39;&#39;&#39;
+        def func(x): return -exp(-(x-2.)**2)
+
+        fbrak = MinBracket(func,0.,.1)
+        print(&#34;bracket: &#34;, fbrak.x1, fbrak.xm, fbrak.x2)
+        print(&#34;         &#34;, fbrak.f1, fbrak.fm, fbrak.f2)
+        print(brent(func, fbrak))
+
+    def test_linmin():
+        &#39;&#39;&#39;
+        Test linmin on a 2-D function with min at x0=2, x1=3.
+        &#39;&#39;&#39;
+        def func(x):
+            return -exp(-(x[0]-2.)**2 - (x[1]-3.)**2)
+        pt = array([1., 2.], float)
+        drxn = array([.1, .1])
+        print(linmin(func, pt, drxn))
+
+    # test_linmin()
+
+    def test_powell():
+        def func(x):
+            # return exp((.1*x[0]-2.)**2 + (.1*x[1]-3.)**2 + abs(x[0]*x[1]))
+            return exp((.1*x[0]-2.)**2 + (.1*x[1]-3.)**2)
+        pt = array([1., 2.], float)
+        print(powell(func, pt))
+
+    # test_powell()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="inference.utils.nrmin.brent"><code class="name flex">
+<span>def <span class="ident">brent</span></span>(<span>f, bracket, tol=1e-06, maxit=100)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find a minimum of f(x) using Brent's method.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def brent(f, bracket, tol=1.e-6, maxit=100):
+    &#34;&#34;&#34;Find a minimum of f(x) using Brent&#39;s method.&#34;&#34;&#34;
+    CGOLD = 0.3819660
+    EPS0 = 1.e-10
+    a = bracket.x1
+    b = bracket.x2
+    v = bracket.xm
+    w, x = v, v
+    fv = f(v)
+    fw, fx = fv, fv
+    e = 0.
+    iter = 0
+    while 1:
+        iter = iter + 1
+        if (iter &gt; maxit):
+            raise IterErr(&#39;Too many iterations!&#39;)
+        xm = 0.5*(a+b)
+        tol1 = tol*abs(x) + EPS0
+        tol2 = 2.*tol1
+        if (abs(x-xm) &lt;= (tol2-0.5*(b-a))):
+            return (x, fx)
+        if (abs(e) &gt; tol1):
+            xw = x - w
+            xv = x - v
+            r = xw*(fx-fv)
+            q = xv*(fx-fw)
+            p = xv*q - xw*r
+            q = 2.*(q-r)
+            if (q &gt; 0.):
+                p = -p
+            q = abs(q)
+            etemp = e
+            e = d
+            if (abs(p) &gt;= abs(0.5*q*etemp) or p &lt;= q*(a-x) or p &gt;= q*(b-x)):
+                if (x &gt;= xm):
+                    e = a-x
+                else:
+                    e = b-x
+                d = CGOLD*e
+            else:
+                d = p/q
+                u = x+d
+                if (u-a &lt; tol2 or b-u &lt; tol2):
+                    if (xm-x &lt; 0.):
+                        d = -tol1
+                    else:
+                        d = tol1
+        else:
+            if (x &gt;= xm):
+                e = a-x
+            else:
+                e = b-x
+            d = CGOLD*e
+        if (abs(d) &gt;= tol1):
+            u = x+d
+        elif (d &lt; 0):
+            u = x-tol1
+        else:
+            u = x+tol1
+        fu = f(u)
+#       print &#39;  Brent&#39;, iter, fu
+        if (fu &lt;= fx):
+            if (u &gt;= x):
+                a = x
+            else:
+                b = x
+            v, fv = w, fw
+            w, fw = x, fx
+            x, fx = u, fu
+        else:
+            if (u &lt; x):
+                a = u
+            else:
+                b = u
+            if (fu &lt;= fw or w == x):
+                v, fv = w, fw
+                w, fw = u, fu
+            elif (fu &lt;= fv or v == x or v == w):
+                v, fv = u, fu</code></pre>
+</details>
+</dd>
+<dt id="inference.utils.nrmin.linmin"><code class="name flex">
+<span>def <span class="ident">linmin</span></span>(<span>func, pt, drxn, tol=0.0001)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Minimize f along drxn, starting at pt.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def linmin(func, pt, drxn, tol=1.e-4):
+    &#34;&#34;&#34;Minimize f along drxn, starting at pt.&#34;&#34;&#34;
+    def f1dim(x, f=func, p=pt, d=drxn):
+        pp = p + x*d
+        return f(pp)
+    brak = MinBracket(f1dim, 0., 1.)
+    l, f = brent(f1dim, brak, tol=tol)
+    drxn = l*drxn
+    pt = pt + drxn
+    return (pt, drxn, f)</code></pre>
+</details>
+</dd>
+<dt id="inference.utils.nrmin.powell"><code class="name flex">
+<span>def <span class="ident">powell</span></span>(<span>f, p, drxns=None, ftol=1e-06, maxit=200, nlog=None, shuffle=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Minimize a multivariate function using Powell's direction set method.
+f = function of a 1-d array argument
+p = starting pt
+drxns = list of direction vectors (i.e., <em>rows</em> are directions)</p>
+<pre><code>shuffle = reorder the initial directions
+</code></pre>
+<h2 id="returns">Returns</h2>
+<p>Minimizing point (array)
+Function value at the minimum
+Number of iterations</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def powell(f, p, drxns=None, ftol=1.e-6, maxit=200, nlog=None, shuffle=False):
+    &#34;&#34;&#34;
+    Minimize a multivariate function using Powell&#39;s direction set method.
+        f = function of a 1-d array argument
+        p = starting pt
+        drxns = list of direction vectors (i.e., *rows* are directions)
+
+        shuffle = reorder the initial directions
+
+    Returns:
+        Minimizing point (array)
+        Function value at the minimum
+        Number of iterations
+    &#34;&#34;&#34;
+    n = len(p)
+    if drxns is None:
+        drxns = identity(n)
+        drxns = array(drxns, float)
+    if shuffle:
+        vec = drxns[0].copy()  # must copy!
+        for i in range(n-1):
+            drxns[i] = drxns[i+1]
+        drxns[-1] = vec
+    fret = f(p)
+    p0 = p
+    iter = 0
+    while 1:
+        iter = iter + 1
+        # print(&#39;Powell&#39;, iter)
+        fp = fret
+        ibig, delta = 0, 0.
+        for i in range(n):
+            vec = drxns[i]
+            fptt = fret
+            p, vec, fret = linmin(f, p, vec)
+            if abs(fptt-fret) &gt; delta:
+                delta = abs(fptt-fret)
+                ibig = i
+        if 2.*abs(fp-fret) &lt;= ftol*(abs(fp)+abs(fret)):
+            return (p, fret, iter)
+        if iter == maxit:
+            raise IterErr(&#39;Too many iterations!&#39;)
+        if nlog is not None and iter % nlog == 0:
+            print(&#39;Powell iteration&#39;, iter, fret)
+        ptt = 2.*p - p0
+        vec = p - p0
+        p0 = p
+        fptt = f(ptt)
+#       print iter, tuple(ptt), fptt
+        if fptt &gt;= fp:
+            continue
+        t = 2.*(fp - 2.*fret + fptt) * (fp-fret-delta)**2 - delta*(fp-fptt)**2
+        if t &gt;= 0.:
+            continue
+        p, vec, fret = linmin(f, p, vec)
+        drxns[ibig] = drxns[-1]
+        drxns[-1] = vec</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="inference.utils.nrmin.IterErr"><code class="flex name class">
+<span>class <span class="ident">IterErr</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class IterErr(Exception):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="inference.utils.nrmin.MinBracket"><code class="flex name class">
+<span>class <span class="ident">MinBracket</span></span>
+<span>(</span><span>f, x1, x2)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Bracket a minimum of a function of one variable.</p>
+<p>Pass the function and two starting points that
+need not bracket the minimum.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MinBracket:
+    &#34;&#34;&#34;Bracket a minimum of a function of one variable.&#34;&#34;&#34;
+
+    def __init__(self, f, x1, x2):
+        &#34;&#34;&#34;Pass the function and two starting points that
+        need not bracket the minimum.&#34;&#34;&#34;
+        GOLD = 1.618034
+        TINY = 1.e-20
+        MAXMAG = 100.
+        self.x1 = x1
+        self.f1 = f(x1)
+        self.xm = x2
+        self.fm = f(x2)
+        if (self.fm &gt; self.f1):
+            self.x1, self.xm = self.xm, self.x1
+            self.f1, self.fm = self.fm, self.f1
+        self.x2 = self.xm + GOLD*(self.xm - self.x1)
+        self.f2 = f(self.x2)
+        while 1:
+            if (self.fm &lt; self.f2):
+                break
+            d1 = (self.xm - self.x1)
+            d2 = (self.xm - self.x2)
+            r = d1*(self.fm - self.f2)
+            q = d2*(self.fm - self.f1)
+            u = 2.*(q - r)
+            if (abs(u) &lt; TINY):
+                if (u &gt;= 0):
+                    u = TINY
+                else:
+                    u = -TINY
+            u = self.xm - (d2*q - d1*r)/u
+            ulim = self.xm - MAXMAG*d2
+            if ((self.xm-u)*(u-self.x2) &gt; 0.):
+                fu = f(u)
+                if (fu &lt; self.f2):
+                    self.x1, self.xm = self.xm, u
+                    self.f1, self.fm = self.fm, fu
+                    break
+                elif (fu &gt; self.fm):
+                    self.x2, self.f2 = u, fu
+                    break
+                u = self.x2 - GOLD*d2
+                fu = f(u)
+            elif ((self.x2-u)*(u-ulim) &gt; 0.):
+                fu = f(u)
+                if (fu &lt; self.f2):
+                    self.xm, self.x2 = self.x2, u
+                    self.fm, self.f2 = self.f2, fu
+                    u = self.x2 - GOLD*d2
+                    fu = f(u)
+            elif ((u-ulim)*(ulim-self.x2) &gt;= 0.):
+                u = ulim
+                fu = f(u)
+            else:
+                u = self.x2 - GOLD*d2
+                fu = f(u)
+            self.x1, self.xm, self.x2 = self.xm, self.x2, u
+            self.f1, self.fm, self.f2 = self.fm, self.f2, fu
+#           print &#39;  Bracketing &#39;, iter, u, fu
+        if (self.x2 &lt; self.x1):
+            self.x1, self.x2 = self.x2, self.x1
+            self.f1, self.f2 = self.f2, self.f1</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="inference.utils" href="index.html">inference.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="inference.utils.nrmin.brent" href="#inference.utils.nrmin.brent">brent</a></code></li>
+<li><code><a title="inference.utils.nrmin.linmin" href="#inference.utils.nrmin.linmin">linmin</a></code></li>
+<li><code><a title="inference.utils.nrmin.powell" href="#inference.utils.nrmin.powell">powell</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="inference.utils.nrmin.IterErr" href="#inference.utils.nrmin.IterErr">IterErr</a></code></h4>
+</li>
+<li>
+<h4><code><a title="inference.utils.nrmin.MinBracket" href="#inference.utils.nrmin.MinBracket">MinBracket</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

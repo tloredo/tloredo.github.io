@@ -1,0 +1,330 @@
+/* CSS for Inference project web site
+   By Tom Loredo, 2007
+   Major revisions:  Feb-Mar 2008
+*/
+
+/* The basic two-column elements are adapted from BlueRobot.com. 
+   The single-level horizontal list navigation is adapted from Adam 
+   Kalsey's CSS tabs, archived at MaxDesign.com.au's Listamatic. 
+   The left column (section) style is inspired by dougscripts.com. 
+*/
+
+html, body {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	font-size: 100.01%;
+}
+
+/* Note:  On Safari, font shortcut with "100%" or "100.01%" will screw up some box rendering! */
+body {
+	/* font: 100.01%/1.25 arial, helvetica, sans-serif; */ 
+	font-size:  1em;
+	font-family:  arial, helvetica, sans-serif;
+	line-height:  1.2em;
+	background-color: #f9f9f9;  /* 225100 is v. dark green */
+}
+
+p, ul, ol {
+	margin: 0;
+	padding: 0;
+}
+
+ul, ol {
+	padding: 0 0 1em 2em;
+}
+
+blockquote {
+	margin: 22px 40px;
+	padding: 0;
+}
+
+/*.................................................................*/
+
+/* @group Header */
+
+/* Div defining font and line size throughout top sections, which
+   affects some element dimensions that would otherwise vary with
+   the user agent font size. */
+div#top {
+	font-size: 13px;
+	font-family:  arial, helvetica, sans-serif;
+	line-height:  19px;
+}
+
+div#header {
+	/* background: #707070 url(import_inference-small-trim.png) no-repeat; */
+	text-align: center;
+	height: 125px;
+}
+
+/* Put padding and border in a separate, inner div, to
+   work around the IE/Win v5 and 5.5 box bug. */
+#header div {
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	/* border: 5px solid #000; */
+	border-style: solid;
+	border-color: black;
+	border-width: 0px 0px 0px 0px;
+	background-color: #0a0;
+}
+
+#header img {
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+    border: none;
+    height: 125px;
+}
+
+
+/* @end */
+
+/*.................................................................*/
+
+/* @group Main Content */
+
+#maincontent {
+	margin: 0px 50px 1.5em 180px;
+	padding: 10px;
+	max-width: 45em;
+}
+
+#maincontent h1 {
+	padding: 10px 0 .15em 0;
+}
+
+#maincontent h2 {
+	padding: .5em 0 0 0;
+}
+
+#maincontent h3 {
+	font-weight: bold;
+}
+
+#maincontent p {
+	margin: 0;
+	padding: 0 0 .75em 0;
+}
+
+#maincontent ul, ol {
+	padding: 0 0 .3em 1.5em;
+}
+
+#maincontent li {
+	padding: .2em 0;
+}
+
+/* @end */
+
+/*.................................................................*/
+
+/* @group Page TOC */
+
+#pagetoc {
+	padding: .3em;
+	margin: .7em 2em .5em 2em;
+	min-width: 10em;
+	max-width: 20em;
+	float: right;
+	border-style: solid;
+	border-width: 1px;
+}
+
+#pagetoc h2 {
+	font-size: 1.2em;
+	letter-spacing: 0px;
+	padding: 0;
+	margin: .2em .3em 0 .3em;
+	text-align: center;
+}
+
+#pagetoc ul {
+	text-align: left;
+	padding: 0;
+	margin: 0.3em;
+	list-style-type: none;
+}
+
+#pagetoc li {
+	margin: 0;
+	padding: 0 0 0 2em;
+	text-indent: -2em;
+}
+
+/* @end */
+
+/*.................................................................*/
+
+/* @group Site Navigation */
+
+#navcontainer {
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+	margin: 0px auto 0px auto;
+	padding: 0;
+	padding-bottom: 0px;
+	background-color:  #0a0;
+	height: 18px;
+	border-bottom: 1px solid #000;
+}
+
+
+#navcontainer ul {
+	margin: 0;
+	padding: 0px 0px;
+}
+
+#navcontainer li {
+	display: inline;
+	margin: 0;
+	padding: 0;
+	/* border: 1px solid #000; */
+}
+
+#navcontainer a:link, #navcontainer a:visited {
+	background: #ccc;  /* e6dcc2 is cream */
+	border: 1px solid #000;
+	border-bottom: 1px solid #000;
+	color: #333;  /* 030 is dark green */
+	/* float: left; */
+	margin: 0px 5px;
+	padding: 2px 10px 1px 10px;
+	text-decoration: none;
+	font-weight: bold;
+    outline: none;
+}
+
+#navcontainer a:link#current, #navcontainer a:visited#current {
+	background: #f9f9f9;
+	/* border:  0px solid #ccc; */
+	border-bottom: 1px solid #f9f9f9; /* "Erase" bottom border */
+	color: #060;
+	font-weight: bold;
+}
+
+#navcontainer a:hover {
+	color: #060;
+}
+
+/* @end */
+
+/*.................................................................*/
+
+/* @group Section Stuff */
+
+#sidebar {
+	position: absolute;
+	top: 180px;
+	left: 10px;
+	width: 155px;
+	font-size: .9em;
+	line-height: 1.2em;
+}
+
+#sidebar div {
+	margin: 0 0 1em 0;
+	padding: 5px;
+/* border: 1px solid #999; */
+	width: 100%;
+	background-color: #666;
+}
+
+#sidebar h4 {
+	font-weight: bold;
+	font-style: italic;
+	text-align: center;
+	color: #fff;
+	background-color: #333;
+	border: 1px solid #ccc;
+	margin: .7em 0 .4em 0;
+}
+
+#sidebar ul {
+	text-align: left;
+	padding: 1.2em 1.3em 1.2em 1.3em;
+	margin: 0;
+	line-height: 1.5em;
+	list-style-type: square;
+	color: #f90;
+	font-weight: bold;
+}
+
+#sidebar li {
+	margin: 0;
+	padding: 0;
+}
+
+#sidebar a:link,
+#sidebar a:visited {
+	color: #ccc;
+	background-color: transparent;
+	text-decoration: none;
+	border-bottom: none;
+}
+
+#sidebar a:hover,
+#sidebar a:active {
+	color: #fff;
+	background-color: transparent;
+
+/* #555; */
+	text-decoration: none;
+	border-bottom: none;
+}
+
+/* @end */
+
+/*.................................................................*/
+
+/* @group Download */
+
+#download {
+	position: absolute;
+	top: 180px;
+	left: 15px;
+	width: 130px;
+	background-color: #ccc;
+	line-height: 17px;
+}
+
+#download div {
+	padding: 10px;
+	border: 1px solid #999;
+}
+
+/* @end */
+
+/* @group Footer */
+
+div#footer {
+	margin: 0px 50px 0px 170px;
+	padding: 10px;
+	max-width: 48em;
+}
+
+p.rendertime {
+	font-family:  arial, helvetica, sans-serif;
+	font-size: .7em;
+	line-height:  .8em;
+	text-align: right;
+}
+
+
+/* @end */
+
+span.modname {
+    font-family: Courier, fixed-width;
+    font-weight: bold;
+}
+
+div.warning {
+    margin: 1em auto;
+    width:  85%;
+    padding: .7em 1em;
+    border: 1px solid #999;
+    font-style: italic;
+    font-size:  .9em;
+    line-height: 1.2em;
+}

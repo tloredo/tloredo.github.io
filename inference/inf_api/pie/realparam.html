@@ -1,0 +1,1200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>inference.pie.realparam API documentation</title>
+<meta name="description" content="Real-valued (i.e., float-valued) parameters." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>inference.pie.realparam</code></h1>
+</header>
+<section id="section-intro">
+<p>Real-valued (i.e., float-valued) parameters.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Real-valued (i.e., float-valued) parameters.
+&#34;&#34;&#34;
+
+from .param import *
+from scipy import exp, log, isinf, isnan
+
+from .logger import pielog
+
+
+class RealParamValue(float):
+    &#34;&#34;&#34;A float-like object returned on access to a real-valued parameter.
+
+    This is a Python float that forwards non-float attribute access to
+    a handler that holds additional parameter state, such as the allowed
+    range, the parameter status (fixed, varying, stepped...), etc..
+
+    Signature:  v = RealParamValue(value, handler)
+
+      value = float value to be returned by &#34;normal&#34; value access
+      handler = handler instance that will handle access to anything
+                not part of a Python float
+    &#34;&#34;&#34;
+
+    def __new__(cls, value, handler):
+        rpv = float.__new__(cls, value)
+        rpv.init(handler)
+        return rpv
+
+    def __init__(self, *args, **kwds):
+        &#34;&#34;&#34;As with float(), this is a no-op to preserve immutability.&#34;&#34;&#34;
+        pass
+
+    def init(self, handler):
+        self.handler = handler
+
+    def copy_value(self):
+        &#34;&#34;&#34;
+        Return the &#34;bare&#34; float value of this instance, for purposes
+        of storing a read-only copy of the parameter value rather than the
+        entire instance.
+        &#34;&#34;&#34;
+        # We can&#39;t simply call copy.copy(rpv) with rpv a RealParamValue
+        # instance.  copy.copy would need a handler to pass to the
+        # __new__ method to create the copy.
+        return float(self)
+
+    def __getattr__(self, name):
+        &#34;&#34;&#34;Catch accesses to anything not in a normal float and pass
+        them to the handler.&#34;&#34;&#34;
+        return getattr(self.handler, name)
+
+
+# In the following, the names chosen for end-user methods tend to
+# avoid &#34;_&#34; (e.g., linstep i/o lin_step), while &#34;internal&#34; methods more
+# often use &#34;_&#34; for legibility.  This is to reduce typing for users
+# and reflects SciPy &#34;style&#34; for user methods.
+
+class RealParamHandler(ScalarParamHandler):
+    &#34;&#34;&#34;Handler that takes care of access to RealParam attributes other
+    than the basic float value.&#34;&#34;&#34;
+
+    value_class = RealParamValue
+
+    def init(self):
+        self.bounded = None
+        self.delta = None
+        self.status = undef
+
+    def set_value(self, value):
+        &#34;&#34;&#34;Set the value of a varying parameter.&#34;&#34;&#34;
+        if self.status != varying:
+            raise ParamError(&#39;Parameter must be varying to set with set_value!&#39;)
+        if self.bounded:
+            if value &gt;= self.lo and value &lt;= self.hi:
+                self._set_value(value)
+            else:
+                print(&#39;set_value -- attempted out-of-range set:&#39;, self.name, value)
+                raise ParamRangeError(&#34;Value out of parameter&#39;s allowed range!&#34;)
+        else:
+            self._set_value(value)
+
+    def get_value(self):
+        if self.status == undef:
+            raise ValueError(&#39;Parameter undefined!&#39;)
+        return self._value
+
+    def fix(self, value=None):
+        &#34;&#34;&#34;
+        Fix the value of a parameter to the passed value, or to its
+        current value if no value is passed (e.g., freeze a varying param).
+        &#34;&#34;&#34;
+        # *** Should this perhaps be &#34;freeze&#34;?
+        if value == None:
+            # If no value given, fix it at its current value.
+            if self.status == undef:
+                raise ParamError(&#39;Cannot fix a param with an undefined value!&#39;)
+            # Note that this is a case where a param status changes
+            # without the value changing.
+        elif self.bounded:
+            if value &gt;= self.lo and value &lt;= self.hi:
+                self._set_value(value)
+            else:
+                raise ParamRangeError(&#34;Value out of parameter&#39;s allowed range!&#34;)
+        else:
+            self._set_value(value)
+        self._set_status(fixed)
+
+    def range(self, *range):
+        if len(range) == 2:  # Two values were passed.
+            self.lo, self.hi = float(min(range)), float(max(range))
+        elif len(range) == 1:  # A 2-tuple was passed.
+            self.lo, self.hi = float(min(range[0])), float(max(range[0]))
+        else:
+            raise ValueError(&#39;Range must be a pair of scalars or a 2-element sequence!&#39;)
+        self.bounded = 1
+
+    # *** Perhaps make these so a single (unnamed) arg -&gt; set n over current range.
+
+    def linstep(self, lo=None, hi=None, n=10):
+        &#34;&#34;&#34;Step from lo to hi (inclusive) in n equal steps.&#34;&#34;&#34;
+        if self.bounded and lo != None:
+            if lo &lt; self.lo or lo &gt; self.hi:
+                raise ParamRangeError(&#34;lo step out of parameter&#39;s allowed range!&#34;)
+        if self.bounded and hi != None:
+            if hi &lt; self.lo or hi &gt; self.hi:
+                raise ParamRangeError(&#34;hi step out of parameter&#39;s allowed range!&#34;)
+        self.stype = lin_steps
+        if lo is None:
+            self.slo = self.lo
+        else:
+            self.slo = lo
+        if hi is None:
+            self.shi = self.hi
+        else:
+            self.shi = hi
+        self.steps = n
+        self.delta = (hi-lo)/(n-1.)
+        self.step_num = 0
+        self._set_value(lo)
+        self._set_status(stepping)
+
+    def step(self, lo=None, hi=None, n=10):
+        &#34;&#34;&#34;Step from lo to hi (inclusive) in n equal steps.&#34;&#34;&#34;
+        self.linstep(lo, hi, n)
+
+    def logstep(self, lo=None, hi=None, n=10):
+        &#34;&#34;&#34;Step from lo to hi (inclusive) in n logarithmic steps.&#34;&#34;&#34;
+        if self.bounded and lo != None:
+            if lo &lt; self.lo or lo &gt; self.hi:
+                raise ParamRangeError(&#34;lo step out of parameter&#39;s allowed range!&#34;)
+        if self.bounded and hi != None:
+            if hi &lt; self.lo or hi &gt; self.hi:
+                raise ParamRangeError(&#34;hi step out of parameter&#39;s allowed range!&#34;)
+        if lo*hi &lt;= 0.:
+            raise ValueError(&#39;Illegal (lo,hi) for log stepping (need same sign)!&#39;)
+        self.stype = log_steps
+        if lo:
+            self.slo = lo
+        else:
+            self.slo = self.lo
+        if hi:
+            self.shi = hi
+        else:
+            self.shi = self.hi
+        self.steps = n
+        self.fac = exp(log(hi/lo)/(n-1.))
+        self.step_num = 0
+        self._set_value(lo)
+        self._set_status(stepping)
+
+    def next_step(self):
+        if self.status != stepping:
+            raise ParamError(&#39;Parameter is not set to step!&#39;)
+        if self.step_num == self.steps-1:
+            raise ParamRangeError(&#39;Requested step beyond range!&#39;)
+        self.step_num += 1
+        if self.stype == lin_steps:
+            if self.step_num == self.steps-1:
+                self._set_value(self.shi)
+            else:
+                self._set_value(self._value+self.delta)
+        elif self.stype == log_steps:
+            if self.step_num == self.steps-1:
+                self._set_value(self.shi)
+            else:
+                self._set_value(self._value*self.fac)
+        # self._notify_of_step()
+        # print(&#39;  next:&#39;, self.name, self.step_num, self._value)
+
+    def prev_step(self):
+        if self.status != stepping:
+            raise ParamError(&#39;Parameter is not set to step!&#39;)
+        if self.step_num == 0:
+            raise ParamRangeError(&#39;Requested step beyond range!&#39;)
+        self.step_num -= 1
+        if self.stype == lin_steps:
+            if self.step_num == 0:
+                self._set_value(self.slo)
+            else:
+                self._set_value(self._value-self.delta)
+        elif self.stype == log_steps:
+            if self.step_num == 0:
+                self._set_value(self.slo)
+            else:
+                self._set_value(self._value/self.fac)
+        # self._notify_of_step()
+        # print(&#39;  prev:&#39;, self.name, self.step_num, self._value)
+
+    def first_step(self):
+        if self.status != stepping:
+            raise RuntimeError(&#39;Parameter is not set to step!&#39;)
+        self.step_num = 0
+        self._set_value(self.slo)
+        # self._notify_of_step()
+
+    def last_step(self):
+        if self.status != stepping:
+            raise RuntimeError(&#39;Parameter is not set to step!&#39;)
+        self.step_num = self.steps-1
+        self._set_value(self.shi)
+        # self._notify_of_step()
+
+    def step_index(self):
+        if self.status != stepping:
+            raise RuntimeError(&#39;Parameter is not set to step!&#39;)
+        return self.step_num
+
+    def vary(self, start=None, delta=None, range=None):
+        if not range:
+            if not self.bounded:
+                raise ValueError(&#39;Need a range for varying parameter!&#39;)
+        else:
+            self.range(range)
+        if delta is not None:
+            self.delta = delta
+        else:  # *** Perhaps use a default delta (&amp; warn if so)?
+            if self.delta == None:
+                raise ValueError(&#39;Need a delta for varying parameter!&#39;)
+        self._set_status(varying)
+        # *** Can harm be done by setting status before verifying
+        # the start value?
+        if start != None:
+            self.set_value(start)  # Note: this will verify in range.
+        elif self._value == None:
+            raise ValueError(&#39;Need a start value for varying parameter!&#39;)
+
+    def check(self, percent=1.):
+        if self.status != varying:
+            raise RuntimeError(&#39;Check only valid for varying parameter!&#39;)
+        pc = 100.*min(self._value-self.lo, self.hi-self._value)/(self.hi-self.lo)
+        return pc &gt;= percent
+
+    def _unbounded_get_value(self):
+        &#34;&#34;&#34;Return a varying param&#39;s value mapped so its range is (-inf,inf).&#34;&#34;&#34;
+        if self.status == undef:
+            raise ValueError(&#39;Parameter undefined!&#39;)
+        if self.status != varying:
+            raise RuntimeError(&#39;Unbounded access valid only for varying parameter!&#39;)
+        if not self.bounded:
+            raise ValueError(&#39;No bounds defined for parameter!&#39;)
+        else:
+            # Handle roundoff error near boundaries.
+            # *** Make the constants platform-independent.
+            # if self._value &lt;= self.lo:
+            # return -1.e-323
+            # elif self._value &gt;= self.hi:
+            # return 1.e308
+            # else:
+            return log(self._value-self.lo) - log(self.hi-self._value)
+
+    def _unbounded_set_value(self, uvalue):
+        &#34;&#34;&#34;Set a varying param&#39;s value via a transformed parameter that has
+        its range mapped to (-inf,inf).&#34;&#34;&#34;
+        if self.status != varying:
+            raise ParamError(&#39;Unbounded access valid only for varying parameter!&#39;)
+        # *** Is this test redundant?
+        if not self.bounded:
+            raise ParamError(&#39;No bounds defined for parameter!&#39;)
+        else:
+            expv = exp(uvalue)
+            if isinf(expv) or isnan(expv):
+                if uvalue &gt; 0:
+                    self._set_value(self.hi)
+                else:
+                    self._set_value(self.lo)
+            else:
+                # Use _set_value, since this should be in range.  In fact,
+                # I&#39;ve found just-barely out-of-range results (presumably due
+                # to roundoff at limits) that trigger exceptions using set_value.
+                self._set_value((self.lo + self.hi*expv)/(1. + expv))
+
+    def show(self):
+        &#34;&#34;&#34;Return a string containing the name, value, and doc for the param.&#34;&#34;&#34;
+        s = self.name + &#34; = &#34; + str(self._value)
+        if self.doc:
+            s += &#39; (&#39; + self.doc + &#39;)&#39;
+        return s
+
+
+class RealParam(Param):
+    &#34;&#34;&#34;
+    A real-valued (i.e., float-valued) parameter.
+
+    Accessing an instance of this class returns an object that behaves like
+    a float in calculations, but carries additional state and methods making
+    it behave like a model parameter (e.g., ranges, parameter nature, etc.).
+
+    RealParam is implemented as an autonamed descriptor (by subclassing Param).
+    &#34;&#34;&#34;
+
+    handler_class = RealParamHandler
+
+    def __init__(self, value, doc=&#39;Undocumented real parameter.&#39;):
+        # Note: these are stored in the *class* (not instance) dict (i.e., the
+        # RealParam instance is a class variable, not an instance variable).
+        # They will be copied to the instance via the handler.
+        self.default = value
+        self.doc = doc</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="inference.pie.realparam.RealParam"><code class="flex name class">
+<span>class <span class="ident">RealParam</span></span>
+<span>(</span><span>value, doc='Undocumented real parameter.')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A real-valued (i.e., float-valued) parameter.</p>
+<p>Accessing an instance of this class returns an object that behaves like
+a float in calculations, but carries additional state and methods making
+it behave like a model parameter (e.g., ranges, parameter nature, etc.).</p>
+<p>RealParam is implemented as an autonamed descriptor (by subclassing Param).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RealParam(Param):
+    &#34;&#34;&#34;
+    A real-valued (i.e., float-valued) parameter.
+
+    Accessing an instance of this class returns an object that behaves like
+    a float in calculations, but carries additional state and methods making
+    it behave like a model parameter (e.g., ranges, parameter nature, etc.).
+
+    RealParam is implemented as an autonamed descriptor (by subclassing Param).
+    &#34;&#34;&#34;
+
+    handler_class = RealParamHandler
+
+    def __init__(self, value, doc=&#39;Undocumented real parameter.&#39;):
+        # Note: these are stored in the *class* (not instance) dict (i.e., the
+        # RealParam instance is a class variable, not an instance variable).
+        # They will be copied to the instance via the handler.
+        self.default = value
+        self.doc = doc</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="inference.pie.param.Param" href="param.html#inference.pie.param.Param">Param</a></li>
+<li><a title="inference.pie.autoname.AutoNamed" href="autoname.html#inference.pie.autoname.AutoNamed">AutoNamed</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="inference.pie.realparam.RealParam.handler_class"><code class="name">var <span class="ident">handler_class</span></code></dt>
+<dd>
+<div class="desc"><p>Handler that takes care of access to RealParam attributes other
+than the basic float value.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="inference.pie.realparam.RealParamHandler"><code class="flex name class">
+<span>class <span class="ident">RealParamHandler</span></span>
+<span>(</span><span>param_inst, owner)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Handler that takes care of access to RealParam attributes other
+than the basic float value.</p>
+<p>Constructor, recording the instance that owns &amp; accesses this handler,
+and the doc string for the associated parameter.
+<strong><em> Subclasses should not override <strong>init</strong>; if they do,
+they must call ParamHandler.<strong>init</strong> or implement the following. </em></strong></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RealParamHandler(ScalarParamHandler):
+    &#34;&#34;&#34;Handler that takes care of access to RealParam attributes other
+    than the basic float value.&#34;&#34;&#34;
+
+    value_class = RealParamValue
+
+    def init(self):
+        self.bounded = None
+        self.delta = None
+        self.status = undef
+
+    def set_value(self, value):
+        &#34;&#34;&#34;Set the value of a varying parameter.&#34;&#34;&#34;
+        if self.status != varying:
+            raise ParamError(&#39;Parameter must be varying to set with set_value!&#39;)
+        if self.bounded:
+            if value &gt;= self.lo and value &lt;= self.hi:
+                self._set_value(value)
+            else:
+                print(&#39;set_value -- attempted out-of-range set:&#39;, self.name, value)
+                raise ParamRangeError(&#34;Value out of parameter&#39;s allowed range!&#34;)
+        else:
+            self._set_value(value)
+
+    def get_value(self):
+        if self.status == undef:
+            raise ValueError(&#39;Parameter undefined!&#39;)
+        return self._value
+
+    def fix(self, value=None):
+        &#34;&#34;&#34;
+        Fix the value of a parameter to the passed value, or to its
+        current value if no value is passed (e.g., freeze a varying param).
+        &#34;&#34;&#34;
+        # *** Should this perhaps be &#34;freeze&#34;?
+        if value == None:
+            # If no value given, fix it at its current value.
+            if self.status == undef:
+                raise ParamError(&#39;Cannot fix a param with an undefined value!&#39;)
+            # Note that this is a case where a param status changes
+            # without the value changing.
+        elif self.bounded:
+            if value &gt;= self.lo and value &lt;= self.hi:
+                self._set_value(value)
+            else:
+                raise ParamRangeError(&#34;Value out of parameter&#39;s allowed range!&#34;)
+        else:
+            self._set_value(value)
+        self._set_status(fixed)
+
+    def range(self, *range):
+        if len(range) == 2:  # Two values were passed.
+            self.lo, self.hi = float(min(range)), float(max(range))
+        elif len(range) == 1:  # A 2-tuple was passed.
+            self.lo, self.hi = float(min(range[0])), float(max(range[0]))
+        else:
+            raise ValueError(&#39;Range must be a pair of scalars or a 2-element sequence!&#39;)
+        self.bounded = 1
+
+    # *** Perhaps make these so a single (unnamed) arg -&gt; set n over current range.
+
+    def linstep(self, lo=None, hi=None, n=10):
+        &#34;&#34;&#34;Step from lo to hi (inclusive) in n equal steps.&#34;&#34;&#34;
+        if self.bounded and lo != None:
+            if lo &lt; self.lo or lo &gt; self.hi:
+                raise ParamRangeError(&#34;lo step out of parameter&#39;s allowed range!&#34;)
+        if self.bounded and hi != None:
+            if hi &lt; self.lo or hi &gt; self.hi:
+                raise ParamRangeError(&#34;hi step out of parameter&#39;s allowed range!&#34;)
+        self.stype = lin_steps
+        if lo is None:
+            self.slo = self.lo
+        else:
+            self.slo = lo
+        if hi is None:
+            self.shi = self.hi
+        else:
+            self.shi = hi
+        self.steps = n
+        self.delta = (hi-lo)/(n-1.)
+        self.step_num = 0
+        self._set_value(lo)
+        self._set_status(stepping)
+
+    def step(self, lo=None, hi=None, n=10):
+        &#34;&#34;&#34;Step from lo to hi (inclusive) in n equal steps.&#34;&#34;&#34;
+        self.linstep(lo, hi, n)
+
+    def logstep(self, lo=None, hi=None, n=10):
+        &#34;&#34;&#34;Step from lo to hi (inclusive) in n logarithmic steps.&#34;&#34;&#34;
+        if self.bounded and lo != None:
+            if lo &lt; self.lo or lo &gt; self.hi:
+                raise ParamRangeError(&#34;lo step out of parameter&#39;s allowed range!&#34;)
+        if self.bounded and hi != None:
+            if hi &lt; self.lo or hi &gt; self.hi:
+                raise ParamRangeError(&#34;hi step out of parameter&#39;s allowed range!&#34;)
+        if lo*hi &lt;= 0.:
+            raise ValueError(&#39;Illegal (lo,hi) for log stepping (need same sign)!&#39;)
+        self.stype = log_steps
+        if lo:
+            self.slo = lo
+        else:
+            self.slo = self.lo
+        if hi:
+            self.shi = hi
+        else:
+            self.shi = self.hi
+        self.steps = n
+        self.fac = exp(log(hi/lo)/(n-1.))
+        self.step_num = 0
+        self._set_value(lo)
+        self._set_status(stepping)
+
+    def next_step(self):
+        if self.status != stepping:
+            raise ParamError(&#39;Parameter is not set to step!&#39;)
+        if self.step_num == self.steps-1:
+            raise ParamRangeError(&#39;Requested step beyond range!&#39;)
+        self.step_num += 1
+        if self.stype == lin_steps:
+            if self.step_num == self.steps-1:
+                self._set_value(self.shi)
+            else:
+                self._set_value(self._value+self.delta)
+        elif self.stype == log_steps:
+            if self.step_num == self.steps-1:
+                self._set_value(self.shi)
+            else:
+                self._set_value(self._value*self.fac)
+        # self._notify_of_step()
+        # print(&#39;  next:&#39;, self.name, self.step_num, self._value)
+
+    def prev_step(self):
+        if self.status != stepping:
+            raise ParamError(&#39;Parameter is not set to step!&#39;)
+        if self.step_num == 0:
+            raise ParamRangeError(&#39;Requested step beyond range!&#39;)
+        self.step_num -= 1
+        if self.stype == lin_steps:
+            if self.step_num == 0:
+                self._set_value(self.slo)
+            else:
+                self._set_value(self._value-self.delta)
+        elif self.stype == log_steps:
+            if self.step_num == 0:
+                self._set_value(self.slo)
+            else:
+                self._set_value(self._value/self.fac)
+        # self._notify_of_step()
+        # print(&#39;  prev:&#39;, self.name, self.step_num, self._value)
+
+    def first_step(self):
+        if self.status != stepping:
+            raise RuntimeError(&#39;Parameter is not set to step!&#39;)
+        self.step_num = 0
+        self._set_value(self.slo)
+        # self._notify_of_step()
+
+    def last_step(self):
+        if self.status != stepping:
+            raise RuntimeError(&#39;Parameter is not set to step!&#39;)
+        self.step_num = self.steps-1
+        self._set_value(self.shi)
+        # self._notify_of_step()
+
+    def step_index(self):
+        if self.status != stepping:
+            raise RuntimeError(&#39;Parameter is not set to step!&#39;)
+        return self.step_num
+
+    def vary(self, start=None, delta=None, range=None):
+        if not range:
+            if not self.bounded:
+                raise ValueError(&#39;Need a range for varying parameter!&#39;)
+        else:
+            self.range(range)
+        if delta is not None:
+            self.delta = delta
+        else:  # *** Perhaps use a default delta (&amp; warn if so)?
+            if self.delta == None:
+                raise ValueError(&#39;Need a delta for varying parameter!&#39;)
+        self._set_status(varying)
+        # *** Can harm be done by setting status before verifying
+        # the start value?
+        if start != None:
+            self.set_value(start)  # Note: this will verify in range.
+        elif self._value == None:
+            raise ValueError(&#39;Need a start value for varying parameter!&#39;)
+
+    def check(self, percent=1.):
+        if self.status != varying:
+            raise RuntimeError(&#39;Check only valid for varying parameter!&#39;)
+        pc = 100.*min(self._value-self.lo, self.hi-self._value)/(self.hi-self.lo)
+        return pc &gt;= percent
+
+    def _unbounded_get_value(self):
+        &#34;&#34;&#34;Return a varying param&#39;s value mapped so its range is (-inf,inf).&#34;&#34;&#34;
+        if self.status == undef:
+            raise ValueError(&#39;Parameter undefined!&#39;)
+        if self.status != varying:
+            raise RuntimeError(&#39;Unbounded access valid only for varying parameter!&#39;)
+        if not self.bounded:
+            raise ValueError(&#39;No bounds defined for parameter!&#39;)
+        else:
+            # Handle roundoff error near boundaries.
+            # *** Make the constants platform-independent.
+            # if self._value &lt;= self.lo:
+            # return -1.e-323
+            # elif self._value &gt;= self.hi:
+            # return 1.e308
+            # else:
+            return log(self._value-self.lo) - log(self.hi-self._value)
+
+    def _unbounded_set_value(self, uvalue):
+        &#34;&#34;&#34;Set a varying param&#39;s value via a transformed parameter that has
+        its range mapped to (-inf,inf).&#34;&#34;&#34;
+        if self.status != varying:
+            raise ParamError(&#39;Unbounded access valid only for varying parameter!&#39;)
+        # *** Is this test redundant?
+        if not self.bounded:
+            raise ParamError(&#39;No bounds defined for parameter!&#39;)
+        else:
+            expv = exp(uvalue)
+            if isinf(expv) or isnan(expv):
+                if uvalue &gt; 0:
+                    self._set_value(self.hi)
+                else:
+                    self._set_value(self.lo)
+            else:
+                # Use _set_value, since this should be in range.  In fact,
+                # I&#39;ve found just-barely out-of-range results (presumably due
+                # to roundoff at limits) that trigger exceptions using set_value.
+                self._set_value((self.lo + self.hi*expv)/(1. + expv))
+
+    def show(self):
+        &#34;&#34;&#34;Return a string containing the name, value, and doc for the param.&#34;&#34;&#34;
+        s = self.name + &#34; = &#34; + str(self._value)
+        if self.doc:
+            s += &#39; (&#39; + self.doc + &#39;)&#39;
+        return s</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="inference.pie.param.ScalarParamHandler" href="param.html#inference.pie.param.ScalarParamHandler">ScalarParamHandler</a></li>
+<li><a title="inference.pie.param.ParamHandler" href="param.html#inference.pie.param.ParamHandler">ParamHandler</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="inference.pie.realparam.RealParamHandler.value_class"><code class="name">var <span class="ident">value_class</span></code></dt>
+<dd>
+<div class="desc"><p>A float-like object returned on access to a real-valued parameter.</p>
+<p>This is a Python float that forwards non-float attribute access to
+a handler that holds additional parameter state, such as the allowed
+range, the parameter status (fixed, varying, stepped&hellip;), etc..</p>
+<p>Signature:
+v = RealParamValue(value, handler)</p>
+<p>value = float value to be returned by "normal" value access
+handler = handler instance that will handle access to anything
+not part of a Python float</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="inference.pie.realparam.RealParamHandler.check"><code class="name flex">
+<span>def <span class="ident">check</span></span>(<span>self, percent=1.0)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check(self, percent=1.):
+    if self.status != varying:
+        raise RuntimeError(&#39;Check only valid for varying parameter!&#39;)
+    pc = 100.*min(self._value-self.lo, self.hi-self._value)/(self.hi-self.lo)
+    return pc &gt;= percent</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.realparam.RealParamHandler.first_step"><code class="name flex">
+<span>def <span class="ident">first_step</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def first_step(self):
+    if self.status != stepping:
+        raise RuntimeError(&#39;Parameter is not set to step!&#39;)
+    self.step_num = 0
+    self._set_value(self.slo)
+    # self._notify_of_step()</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.realparam.RealParamHandler.fix"><code class="name flex">
+<span>def <span class="ident">fix</span></span>(<span>self, value=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fix the value of a parameter to the passed value, or to its
+current value if no value is passed (e.g., freeze a varying param).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fix(self, value=None):
+    &#34;&#34;&#34;
+    Fix the value of a parameter to the passed value, or to its
+    current value if no value is passed (e.g., freeze a varying param).
+    &#34;&#34;&#34;
+    # *** Should this perhaps be &#34;freeze&#34;?
+    if value == None:
+        # If no value given, fix it at its current value.
+        if self.status == undef:
+            raise ParamError(&#39;Cannot fix a param with an undefined value!&#39;)
+        # Note that this is a case where a param status changes
+        # without the value changing.
+    elif self.bounded:
+        if value &gt;= self.lo and value &lt;= self.hi:
+            self._set_value(value)
+        else:
+            raise ParamRangeError(&#34;Value out of parameter&#39;s allowed range!&#34;)
+    else:
+        self._set_value(value)
+    self._set_status(fixed)</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.realparam.RealParamHandler.get_value"><code class="name flex">
+<span>def <span class="ident">get_value</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_value(self):
+    if self.status == undef:
+        raise ValueError(&#39;Parameter undefined!&#39;)
+    return self._value</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.realparam.RealParamHandler.last_step"><code class="name flex">
+<span>def <span class="ident">last_step</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def last_step(self):
+    if self.status != stepping:
+        raise RuntimeError(&#39;Parameter is not set to step!&#39;)
+    self.step_num = self.steps-1
+    self._set_value(self.shi)
+    # self._notify_of_step()</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.realparam.RealParamHandler.linstep"><code class="name flex">
+<span>def <span class="ident">linstep</span></span>(<span>self, lo=None, hi=None, n=10)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Step from lo to hi (inclusive) in n equal steps.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def linstep(self, lo=None, hi=None, n=10):
+    &#34;&#34;&#34;Step from lo to hi (inclusive) in n equal steps.&#34;&#34;&#34;
+    if self.bounded and lo != None:
+        if lo &lt; self.lo or lo &gt; self.hi:
+            raise ParamRangeError(&#34;lo step out of parameter&#39;s allowed range!&#34;)
+    if self.bounded and hi != None:
+        if hi &lt; self.lo or hi &gt; self.hi:
+            raise ParamRangeError(&#34;hi step out of parameter&#39;s allowed range!&#34;)
+    self.stype = lin_steps
+    if lo is None:
+        self.slo = self.lo
+    else:
+        self.slo = lo
+    if hi is None:
+        self.shi = self.hi
+    else:
+        self.shi = hi
+    self.steps = n
+    self.delta = (hi-lo)/(n-1.)
+    self.step_num = 0
+    self._set_value(lo)
+    self._set_status(stepping)</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.realparam.RealParamHandler.logstep"><code class="name flex">
+<span>def <span class="ident">logstep</span></span>(<span>self, lo=None, hi=None, n=10)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Step from lo to hi (inclusive) in n logarithmic steps.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def logstep(self, lo=None, hi=None, n=10):
+    &#34;&#34;&#34;Step from lo to hi (inclusive) in n logarithmic steps.&#34;&#34;&#34;
+    if self.bounded and lo != None:
+        if lo &lt; self.lo or lo &gt; self.hi:
+            raise ParamRangeError(&#34;lo step out of parameter&#39;s allowed range!&#34;)
+    if self.bounded and hi != None:
+        if hi &lt; self.lo or hi &gt; self.hi:
+            raise ParamRangeError(&#34;hi step out of parameter&#39;s allowed range!&#34;)
+    if lo*hi &lt;= 0.:
+        raise ValueError(&#39;Illegal (lo,hi) for log stepping (need same sign)!&#39;)
+    self.stype = log_steps
+    if lo:
+        self.slo = lo
+    else:
+        self.slo = self.lo
+    if hi:
+        self.shi = hi
+    else:
+        self.shi = self.hi
+    self.steps = n
+    self.fac = exp(log(hi/lo)/(n-1.))
+    self.step_num = 0
+    self._set_value(lo)
+    self._set_status(stepping)</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.realparam.RealParamHandler.next_step"><code class="name flex">
+<span>def <span class="ident">next_step</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def next_step(self):
+    if self.status != stepping:
+        raise ParamError(&#39;Parameter is not set to step!&#39;)
+    if self.step_num == self.steps-1:
+        raise ParamRangeError(&#39;Requested step beyond range!&#39;)
+    self.step_num += 1
+    if self.stype == lin_steps:
+        if self.step_num == self.steps-1:
+            self._set_value(self.shi)
+        else:
+            self._set_value(self._value+self.delta)
+    elif self.stype == log_steps:
+        if self.step_num == self.steps-1:
+            self._set_value(self.shi)
+        else:
+            self._set_value(self._value*self.fac)
+    # self._notify_of_step()
+    # print(&#39;  next:&#39;, self.name, self.step_num, self._value)</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.realparam.RealParamHandler.prev_step"><code class="name flex">
+<span>def <span class="ident">prev_step</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prev_step(self):
+    if self.status != stepping:
+        raise ParamError(&#39;Parameter is not set to step!&#39;)
+    if self.step_num == 0:
+        raise ParamRangeError(&#39;Requested step beyond range!&#39;)
+    self.step_num -= 1
+    if self.stype == lin_steps:
+        if self.step_num == 0:
+            self._set_value(self.slo)
+        else:
+            self._set_value(self._value-self.delta)
+    elif self.stype == log_steps:
+        if self.step_num == 0:
+            self._set_value(self.slo)
+        else:
+            self._set_value(self._value/self.fac)
+    # self._notify_of_step()
+    # print(&#39;  prev:&#39;, self.name, self.step_num, self._value)</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.realparam.RealParamHandler.range"><code class="name flex">
+<span>def <span class="ident">range</span></span>(<span>self, *range)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def range(self, *range):
+    if len(range) == 2:  # Two values were passed.
+        self.lo, self.hi = float(min(range)), float(max(range))
+    elif len(range) == 1:  # A 2-tuple was passed.
+        self.lo, self.hi = float(min(range[0])), float(max(range[0]))
+    else:
+        raise ValueError(&#39;Range must be a pair of scalars or a 2-element sequence!&#39;)
+    self.bounded = 1</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.realparam.RealParamHandler.set_value"><code class="name flex">
+<span>def <span class="ident">set_value</span></span>(<span>self, value)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set the value of a varying parameter.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_value(self, value):
+    &#34;&#34;&#34;Set the value of a varying parameter.&#34;&#34;&#34;
+    if self.status != varying:
+        raise ParamError(&#39;Parameter must be varying to set with set_value!&#39;)
+    if self.bounded:
+        if value &gt;= self.lo and value &lt;= self.hi:
+            self._set_value(value)
+        else:
+            print(&#39;set_value -- attempted out-of-range set:&#39;, self.name, value)
+            raise ParamRangeError(&#34;Value out of parameter&#39;s allowed range!&#34;)
+    else:
+        self._set_value(value)</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.realparam.RealParamHandler.show"><code class="name flex">
+<span>def <span class="ident">show</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a string containing the name, value, and doc for the param.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show(self):
+    &#34;&#34;&#34;Return a string containing the name, value, and doc for the param.&#34;&#34;&#34;
+    s = self.name + &#34; = &#34; + str(self._value)
+    if self.doc:
+        s += &#39; (&#39; + self.doc + &#39;)&#39;
+    return s</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.realparam.RealParamHandler.step"><code class="name flex">
+<span>def <span class="ident">step</span></span>(<span>self, lo=None, hi=None, n=10)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Step from lo to hi (inclusive) in n equal steps.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def step(self, lo=None, hi=None, n=10):
+    &#34;&#34;&#34;Step from lo to hi (inclusive) in n equal steps.&#34;&#34;&#34;
+    self.linstep(lo, hi, n)</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.realparam.RealParamHandler.step_index"><code class="name flex">
+<span>def <span class="ident">step_index</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def step_index(self):
+    if self.status != stepping:
+        raise RuntimeError(&#39;Parameter is not set to step!&#39;)
+    return self.step_num</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.realparam.RealParamHandler.vary"><code class="name flex">
+<span>def <span class="ident">vary</span></span>(<span>self, start=None, delta=None, range=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vary(self, start=None, delta=None, range=None):
+    if not range:
+        if not self.bounded:
+            raise ValueError(&#39;Need a range for varying parameter!&#39;)
+    else:
+        self.range(range)
+    if delta is not None:
+        self.delta = delta
+    else:  # *** Perhaps use a default delta (&amp; warn if so)?
+        if self.delta == None:
+            raise ValueError(&#39;Need a delta for varying parameter!&#39;)
+    self._set_status(varying)
+    # *** Can harm be done by setting status before verifying
+    # the start value?
+    if start != None:
+        self.set_value(start)  # Note: this will verify in range.
+    elif self._value == None:
+        raise ValueError(&#39;Need a start value for varying parameter!&#39;)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="inference.pie.param.ScalarParamHandler" href="param.html#inference.pie.param.ScalarParamHandler">ScalarParamHandler</a></b></code>:
+<ul class="hlist">
+<li><code><a title="inference.pie.param.ScalarParamHandler.init" href="param.html#inference.pie.param.ParamHandler.init">init</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="inference.pie.realparam.RealParamValue"><code class="flex name class">
+<span>class <span class="ident">RealParamValue</span></span>
+<span>(</span><span>*args, **kwds)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A float-like object returned on access to a real-valued parameter.</p>
+<p>This is a Python float that forwards non-float attribute access to
+a handler that holds additional parameter state, such as the allowed
+range, the parameter status (fixed, varying, stepped&hellip;), etc..</p>
+<p>Signature:
+v = RealParamValue(value, handler)</p>
+<p>value = float value to be returned by "normal" value access
+handler = handler instance that will handle access to anything
+not part of a Python float</p>
+<p>As with float(), this is a no-op to preserve immutability.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RealParamValue(float):
+    &#34;&#34;&#34;A float-like object returned on access to a real-valued parameter.
+
+    This is a Python float that forwards non-float attribute access to
+    a handler that holds additional parameter state, such as the allowed
+    range, the parameter status (fixed, varying, stepped...), etc..
+
+    Signature:  v = RealParamValue(value, handler)
+
+      value = float value to be returned by &#34;normal&#34; value access
+      handler = handler instance that will handle access to anything
+                not part of a Python float
+    &#34;&#34;&#34;
+
+    def __new__(cls, value, handler):
+        rpv = float.__new__(cls, value)
+        rpv.init(handler)
+        return rpv
+
+    def __init__(self, *args, **kwds):
+        &#34;&#34;&#34;As with float(), this is a no-op to preserve immutability.&#34;&#34;&#34;
+        pass
+
+    def init(self, handler):
+        self.handler = handler
+
+    def copy_value(self):
+        &#34;&#34;&#34;
+        Return the &#34;bare&#34; float value of this instance, for purposes
+        of storing a read-only copy of the parameter value rather than the
+        entire instance.
+        &#34;&#34;&#34;
+        # We can&#39;t simply call copy.copy(rpv) with rpv a RealParamValue
+        # instance.  copy.copy would need a handler to pass to the
+        # __new__ method to create the copy.
+        return float(self)
+
+    def __getattr__(self, name):
+        &#34;&#34;&#34;Catch accesses to anything not in a normal float and pass
+        them to the handler.&#34;&#34;&#34;
+        return getattr(self.handler, name)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.float</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="inference.pie.realparam.RealParamValue.copy_value"><code class="name flex">
+<span>def <span class="ident">copy_value</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the "bare" float value of this instance, for purposes
+of storing a read-only copy of the parameter value rather than the
+entire instance.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy_value(self):
+    &#34;&#34;&#34;
+    Return the &#34;bare&#34; float value of this instance, for purposes
+    of storing a read-only copy of the parameter value rather than the
+    entire instance.
+    &#34;&#34;&#34;
+    # We can&#39;t simply call copy.copy(rpv) with rpv a RealParamValue
+    # instance.  copy.copy would need a handler to pass to the
+    # __new__ method to create the copy.
+    return float(self)</code></pre>
+</details>
+</dd>
+<dt id="inference.pie.realparam.RealParamValue.init"><code class="name flex">
+<span>def <span class="ident">init</span></span>(<span>self, handler)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init(self, handler):
+    self.handler = handler</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="inference.pie" href="index.html">inference.pie</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="inference.pie.realparam.RealParam" href="#inference.pie.realparam.RealParam">RealParam</a></code></h4>
+<ul class="">
+<li><code><a title="inference.pie.realparam.RealParam.handler_class" href="#inference.pie.realparam.RealParam.handler_class">handler_class</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="inference.pie.realparam.RealParamHandler" href="#inference.pie.realparam.RealParamHandler">RealParamHandler</a></code></h4>
+<ul class="two-column">
+<li><code><a title="inference.pie.realparam.RealParamHandler.check" href="#inference.pie.realparam.RealParamHandler.check">check</a></code></li>
+<li><code><a title="inference.pie.realparam.RealParamHandler.first_step" href="#inference.pie.realparam.RealParamHandler.first_step">first_step</a></code></li>
+<li><code><a title="inference.pie.realparam.RealParamHandler.fix" href="#inference.pie.realparam.RealParamHandler.fix">fix</a></code></li>
+<li><code><a title="inference.pie.realparam.RealParamHandler.get_value" href="#inference.pie.realparam.RealParamHandler.get_value">get_value</a></code></li>
+<li><code><a title="inference.pie.realparam.RealParamHandler.last_step" href="#inference.pie.realparam.RealParamHandler.last_step">last_step</a></code></li>
+<li><code><a title="inference.pie.realparam.RealParamHandler.linstep" href="#inference.pie.realparam.RealParamHandler.linstep">linstep</a></code></li>
+<li><code><a title="inference.pie.realparam.RealParamHandler.logstep" href="#inference.pie.realparam.RealParamHandler.logstep">logstep</a></code></li>
+<li><code><a title="inference.pie.realparam.RealParamHandler.next_step" href="#inference.pie.realparam.RealParamHandler.next_step">next_step</a></code></li>
+<li><code><a title="inference.pie.realparam.RealParamHandler.prev_step" href="#inference.pie.realparam.RealParamHandler.prev_step">prev_step</a></code></li>
+<li><code><a title="inference.pie.realparam.RealParamHandler.range" href="#inference.pie.realparam.RealParamHandler.range">range</a></code></li>
+<li><code><a title="inference.pie.realparam.RealParamHandler.set_value" href="#inference.pie.realparam.RealParamHandler.set_value">set_value</a></code></li>
+<li><code><a title="inference.pie.realparam.RealParamHandler.show" href="#inference.pie.realparam.RealParamHandler.show">show</a></code></li>
+<li><code><a title="inference.pie.realparam.RealParamHandler.step" href="#inference.pie.realparam.RealParamHandler.step">step</a></code></li>
+<li><code><a title="inference.pie.realparam.RealParamHandler.step_index" href="#inference.pie.realparam.RealParamHandler.step_index">step_index</a></code></li>
+<li><code><a title="inference.pie.realparam.RealParamHandler.value_class" href="#inference.pie.realparam.RealParamHandler.value_class">value_class</a></code></li>
+<li><code><a title="inference.pie.realparam.RealParamHandler.vary" href="#inference.pie.realparam.RealParamHandler.vary">vary</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="inference.pie.realparam.RealParamValue" href="#inference.pie.realparam.RealParamValue">RealParamValue</a></code></h4>
+<ul class="">
+<li><code><a title="inference.pie.realparam.RealParamValue.copy_value" href="#inference.pie.realparam.RealParamValue.copy_value">copy_value</a></code></li>
+<li><code><a title="inference.pie.realparam.RealParamValue.init" href="#inference.pie.realparam.RealParamValue.init">init</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
