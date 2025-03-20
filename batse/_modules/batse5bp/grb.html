@@ -1,0 +1,446 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>batse5bp.grb &mdash; batse5bp 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="batse5bp 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+
+<div class="banner">
+<a href="../../index.html"><img src="../../_static/batse.gif" border="0" alt="BATSE on CGRO"/></a>
+batse5bp
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for batse5bp.grb</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Define a GRB object holding BATSE data associated with a single GRB trigger,</span>
+<span class="sd">and a GRBCollection to hold GRB instances for many GRBs.</span>
+
+<span class="sd">Created 2012-05-06 by Tom Loredo</span>
+<span class="sd">(adapted from an earlier version for the 4B catalog)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">exists</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">mkdir</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+
+<span class="kn">from</span> <span class="nn">locations</span> <span class="kn">import</span> <span class="n">root</span><span class="p">,</span> <span class="n">trigger_paths</span><span class="p">,</span> <span class="n">trigger_url</span><span class="p">,</span> <span class="n">raw_cache</span>
+<span class="kn">from</span> <span class="nn">locations</span> <span class="kn">import</span> <span class="n">ascii64_paths</span><span class="p">,</span> <span class="n">ascii64_url</span>
+<span class="kn">from</span> <span class="nn">drm</span> <span class="kn">import</span> <span class="n">DRMs_DISCSC</span>
+<span class="kn">from</span> <span class="nn">ascii64</span> <span class="kn">import</span> <span class="n">ASCII64</span>
+
+
+<div class="viewcode-block" id="GRB"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.grb.GRB">[docs]</a><span class="k">class</span> <span class="nc">GRB</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Provide access to BATSE data for a single GRB, both through persistant</span>
+<span class="sd">    local storage and via access to the CGRO SSC data archive.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># In order of columns (after trigger column) in the flux table:</span>
+    <span class="n">flux_attributes</span> <span class="o">=</span> <span class="p">[</span> 
+        <span class="s">&#39;F1&#39;</span><span class="p">,</span> <span class="s">&#39;F1_err&#39;</span><span class="p">,</span> <span class="s">&#39;F2&#39;</span><span class="p">,</span> <span class="s">&#39;F2_err&#39;</span><span class="p">,</span> <span class="s">&#39;F3&#39;</span><span class="p">,</span> <span class="s">&#39;F3_err&#39;</span><span class="p">,</span> <span class="s">&#39;F4&#39;</span><span class="p">,</span> <span class="s">&#39;F4_err&#39;</span><span class="p">,</span> <span class="c"># 0-7</span>
+        <span class="s">&#39;F64ms&#39;</span><span class="p">,</span> <span class="s">&#39;F64ms_err&#39;</span><span class="p">,</span> <span class="s">&#39;t64ms&#39;</span><span class="p">,</span>        <span class="c"># 8-10</span>
+        <span class="s">&#39;F256ms&#39;</span><span class="p">,</span> <span class="s">&#39;F256ms_err&#39;</span><span class="p">,</span> <span class="s">&#39;t256ms&#39;</span><span class="p">,</span>     <span class="c"># 11-13</span>
+        <span class="s">&#39;F1024ms&#39;</span><span class="p">,</span> <span class="s">&#39;F1024ms_err&#39;</span><span class="p">,</span> <span class="s">&#39;t1024ms&#39;</span><span class="p">,</span>  <span class="c"># 14-16</span>
+        <span class="p">]</span>
+
+    <span class="c"># In order of columns (after trigger column) in the duration table:</span>
+    <span class="n">duration_attributes</span> <span class="o">=</span> <span class="p">[</span> 
+        <span class="s">&#39;T50&#39;</span><span class="p">,</span> <span class="s">&#39;T50_err&#39;</span><span class="p">,</span> <span class="s">&#39;T50_start&#39;</span><span class="p">,</span>  <span class="c"># 0-2</span>
+        <span class="s">&#39;T90&#39;</span><span class="p">,</span> <span class="s">&#39;T90_err&#39;</span><span class="p">,</span> <span class="s">&#39;T90_start&#39;</span><span class="p">,</span>  <span class="c"># 3-5</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basic_record</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Define a burst from its record in the basic table.&quot;&quot;&quot;</span>
+        <span class="c"># Break record into the trigger/name, Ulysses flag, and rest,</span>
+        <span class="c"># since there may be no space between the name and Uflag.</span>
+        <span class="c"># (The Ulysses flag is only in the published 4B catalog.)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">basic_record</span><span class="p">[:</span><span class="mi">18</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="c"># Uflag = basic_record[16]</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">basic_record</span><span class="p">[</span><span class="mi">18</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">start</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">desig</span> <span class="o">=</span> <span class="n">start</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_4B</span> <span class="o">=</span> <span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;4B&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">TJDate</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c"># integer date</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">secs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  <span class="c"># seconds on that day</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TJD</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TJDate</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">secs</span><span class="o">/</span><span class="mf">86400.</span>
+        <span class="c"># All angles are in degrees.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RA</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dec</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">long</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drxn_err</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>  <span class="c"># error circle radius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geo</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span>  <span class="c"># angle from nadir</span>
+        <span class="k">if</span> <span class="n">cols</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Y&#39;</span><span class="p">:</span>  <span class="c"># overwrote previous trigger</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">overwrote</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">overwrote</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">cols</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Y&#39;</span><span class="p">:</span>  <span class="c"># overwritten by later trigger</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">incomplete</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">incomplete</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_flux</span> <span class="o">=</span> <span class="bp">False</span>  <span class="c"># bursts with gaps will have no flux data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_durn</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comments</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c"># store (flag, comment) tuples</span>
+
+        <span class="c"># Store path elements for local and remote data access.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">trigger_paths</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trigger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_dir</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remote_dir</span> <span class="o">=</span> <span class="n">trigger_url</span> <span class="o">+</span> <span class="n">tail</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">a64_group</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a64_fname</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">ascii64_paths</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trigger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a64_remote</span> <span class="o">=</span> <span class="n">ascii64_url</span> <span class="o">+</span> <span class="n">tail</span>
+
+<div class="viewcode-block" id="GRB.set_bright"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.grb.GRB.set_bright">[docs]</a>    <span class="k">def</span> <span class="nf">set_bright</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trigger</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add peak flux &amp; fluence data from a brightness table record.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">trigger</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="s">&#39;Flux data for wrong trigger!&#39;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flux_attributes</span><span class="p">):</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_flux</span> <span class="o">=</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="GRB.set_durn"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.grb.GRB.set_durn">[docs]</a>    <span class="k">def</span> <span class="nf">set_durn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trigger</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add duration data from a duration table record.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">trigger</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="s">&#39;Duration data for wrong trigger!&#39;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration_attributes</span><span class="p">):</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_durn</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="c"># Replaced below.</span>
+    <span class="c"># def grb_dir(self):</span>
+    <span class="c">#     &quot;&quot;&quot;</span>
+    <span class="c">#     Return the path to the directory in the local database holding data</span>
+    <span class="c">#     associated with this GRB, creating the directory if necessary.</span>
+    <span class="c">#     &quot;&quot;&quot;</span>
+    <span class="c">#     group = join(root, self.group)</span>
+    <span class="c">#     if not exists(group):</span>
+    <span class="c">#         mkdir(group)</span>
+    <span class="c">#     dir_path = join(root, self.local_dir)</span>
+    <span class="c">#     if not exists(dir_path):</span>
+    <span class="c">#         mkdir(dir_path)</span>
+    <span class="c">#     return dir_path</span>
+</div>
+<div class="viewcode-block" id="GRB.set_grb_dir"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.grb.GRB.set_grb_dir">[docs]</a>    <span class="k">def</span> <span class="nf">set_grb_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the path to this GRB&#39;s local data directory, creating the directory</span>
+<span class="sd">        and its containing group if needed.</span>
+
+<span class="sd">        This is not done in __init__ so the group and burst directories are</span>
+<span class="sd">        created only when detailed data are loaded for a burst.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
+            <span class="n">mkdir</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grb_dir</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_dir</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grb_dir</span><span class="p">):</span>
+            <span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grb_dir</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="GRB.file_check"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.grb.GRB.file_check">[docs]</a>    <span class="k">def</span> <span class="nf">file_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check to see if the named file exists in this bursts data directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grb_dir</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="GRB.cached_path"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.grb.GRB.cached_path">[docs]</a>    <span class="k">def</span> <span class="nf">cached_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the path to a persistant local copy of a remote file.</span>
+<span class="sd">        </span>
+<span class="sd">        Point to a local copy of the resource if present; otherwise, fetch it</span>
+<span class="sd">        remotely and save a copy locally, then return the local path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">resource</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grb_dir</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">resource</span><span class="p">):</span>
+            <span class="n">remote</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote_dir</span> <span class="o">+</span> <span class="n">fname</span>
+            <span class="n">urllib</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">remote</span><span class="p">,</span> <span class="n">resource</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resource</span>
+</div>
+<div class="viewcode-block" id="GRB.raw_cached_path"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.grb.GRB.raw_cached_path">[docs]</a>    <span class="k">def</span> <span class="nf">raw_cached_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the path to a local copy of a remote file; it is stored in the</span>
+<span class="sd">        raw_cache directory for temporary use.</span>
+<span class="sd">        </span>
+<span class="sd">        Point to an existing local copy of the resource if present; otherwise,</span>
+<span class="sd">        fetch it remotely and save a copy locally, then return the local path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">resource</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">raw_cache</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">resource</span><span class="p">):</span>
+            <span class="n">remote</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote_dir</span> <span class="o">+</span> <span class="n">fname</span>
+            <span class="n">urllib</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">remote</span><span class="p">,</span> <span class="n">resource</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resource</span>
+</div>
+<div class="viewcode-block" id="GRB.open_cached"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.grb.GRB.open_cached">[docs]</a>    <span class="k">def</span> <span class="nf">open_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="GRB.clear_cached"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.grb.GRB.clear_cached">[docs]</a>    <span class="k">def</span> <span class="nf">clear_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="GRB.save_pickle"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.grb.GRB.save_pickle">[docs]</a>    <span class="k">def</span> <span class="nf">save_pickle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save an object associated with this GRB as a pickle in the database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="GRB.load_pickle"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.grb.GRB.load_pickle">[docs]</a>    <span class="k">def</span> <span class="nf">load_pickle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrive an object associated with this GRB from a pickle in the</span>
+<span class="sd">        database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+</div>
+<div class="viewcode-block" id="GRB.show_lc"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.grb.GRB.show_lc">[docs]</a>    <span class="k">def</span> <span class="nf">show_lc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show light curve GIF files in the default image browser, merging 4ch</span>
+<span class="sd">        and summed light curves.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ch_path</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%d</span><span class="s">_4ch.gif&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span>
+        <span class="n">sum_path</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%d</span><span class="s">_sum.gif&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span>
+        <span class="n">ch_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cached_path</span><span class="p">(</span><span class="n">ch_path</span><span class="p">)</span>
+        <span class="n">sum_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cached_path</span><span class="p">(</span><span class="n">sum_path</span><span class="p">)</span>
+        <span class="n">ch_im</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">ch_path</span><span class="p">)</span>
+        <span class="c"># Some ch plots are higher than others, so note the height.</span>
+        <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">ch_im</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">sum_im</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">sum_path</span><span class="p">)</span>
+        <span class="n">both</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;RGB&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1610</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="n">h</span><span class="p">)))</span>
+        <span class="n">both</span><span class="o">.</span><span class="n">paste</span><span class="p">(</span><span class="n">ch_im</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">both</span><span class="o">.</span><span class="n">paste</span><span class="p">(</span><span class="n">sum_im</span><span class="p">,</span> <span class="p">(</span><span class="mi">810</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">both</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="c"># This version takes less space, but looks horrible due to interpolation!</span>
+        <span class="c"># both = Image.new(&quot;RGB&quot;, (1210, 600))</span>
+        <span class="c"># both.paste(ch_im, (0,0))</span>
+        <span class="c"># sum_im.thumbnail((400,300), Image.BILINEAR)</span>
+        <span class="c"># both.paste(sum_im, (810,150))</span>
+        <span class="c"># both.show()</span>
+</div>
+<div class="viewcode-block" id="GRB.load_discsc_drms"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.grb.GRB.load_discsc_drms">[docs]</a>    <span class="k">def</span> <span class="nf">load_discsc_drms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load DISCSC DRM data for the triggered detectors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">discsc_drms</span> <span class="o">=</span> <span class="n">DRMs_DISCSC</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="GRB.load_ascii64"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.grb.GRB.load_ascii64">[docs]</a>    <span class="k">def</span> <span class="nf">load_ascii64</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load 64 ms count data from COSSC ASCII files.</span>
+
+<span class="sd">        These files compile DISCLA, PREB, and DISCSC data over an interval</span>
+<span class="sd">        determined by examination of trigger and pre-trigger data by the</span>
+<span class="sd">        BATSE team.</span>
+
+<span class="sd">        NOTE:  The DISCLA data is in 1024 ms bins; the counts are divided by</span>
+<span class="sd">        16 to distribute across the tabulated 64 ms bins.  The DISCLA bins</span>
+<span class="sd">        can overlap with the 1st PREB bin, in which case the PREB overlap</span>
+<span class="sd">        is subtracted and the remaining counts divided among earlier bins.</span>
+
+<span class="sd">        For full documentation, see:</span>
+
+<span class="sd">        ftp://legacy.gsfc.nasa.gov/compton/data/batse/ascii_data/64ms/README</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ascii64</span> <span class="o">=</span> <span class="n">ASCII64</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Implement auto-loading of some data by catching attributes not yet</span>
+<span class="sd">        assigned in the instance dict.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&#39;grb_dir&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_grb_dir</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">grb_dir</span>
+        <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&#39;discsc_drms&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_discsc_drms</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">discsc_drms</span>
+        <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&#39;ascii64&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_ascii64</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ascii64</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&#39;No such attribute!&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;Trigger:  </span><span class="si">%i</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;Name:  </span><span class="si">%s</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;TJD:   </span><span class="si">%f</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">TJD</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;(RA, Dec) (long, lat) (deg):    (</span><span class="si">%6.2f</span><span class="s">  </span><span class="si">%6.2f</span><span class="s">)  (</span><span class="si">%6.2f</span><span class="s">  </span><span class="si">%6.2f</span><span class="s">)</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> \
+             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RA</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;Drxn err (deg):   </span><span class="si">%5.2f</span><span class="se">\n</span><span class="s">&#39;</span>  <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">drxn_err</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;Complete?  </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">incomplete</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_flux</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">Ch 1-4 fluence (ergs):  </span><span class="si">%7.1e</span><span class="s">  </span><span class="si">%7.1e</span><span class="s">  </span><span class="si">%7.1e</span><span class="s">  </span><span class="si">%7.1e</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> \
+                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F4</span><span class="p">)</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;Ch 1-4 S/N:             </span><span class="si">%7.1e</span><span class="s">  </span><span class="si">%7.1e</span><span class="s">  </span><span class="si">%7.1e</span><span class="s">  </span><span class="si">%7.1e</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> \
+                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F1</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">F1_err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F2</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">F2_err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F3</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">F3_err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F4</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">F4_err</span><span class="p">)</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;64ms F_pk (cts), S/N, t:  </span><span class="si">%6.2f</span><span class="s">  </span><span class="si">%6.2f</span><span class="s">  </span><span class="si">%7.2f</span><span class="s">&#39;</span> <span class="o">%</span> \
+                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F64ms</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F64ms</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">F64ms_err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t64ms</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_durn</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">T50, T90:  </span><span class="si">%6.2f</span><span class="s">  </span><span class="si">%6.2f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T50</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T90</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comments</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comments</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="si">%s</span><span class="s">:  </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">entry</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+</div>
+<div class="viewcode-block" id="GRBCollection"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.grb.GRBCollection">[docs]</a><span class="k">class</span> <span class="nc">GRBCollection</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Store GRB objects in an ordered dict accessed by BATSE trigger number</span>
+<span class="sd">    (with the key being the integer trigger number, not a string).</span>
+<span class="sd">    </span>
+<span class="sd">    GRB data may also be accessed as attributes in two ways:</span>
+<span class="sd">    </span>
+<span class="sd">      .t#    where # is the trigger number; returns a GRB instance</span>
+<span class="sd">    </span>
+<span class="sd">      .b#    where # is YYMMDD from the traditional GRBYY... designation;</span>
+<span class="sd">             returns a list of GRB instances</span>
+<span class="sd">    </span>
+<span class="sd">    Note that multiple bursts may occur on the same day, so the .b# value is a</span>
+<span class="sd">    list of GRBs that occurred on that day.  The 4B catalog distinguished</span>
+<span class="sd">    such bursts with designators that add a letter suffix (B, C, D after</span>
+<span class="sd">    the first burst), nominally ordered by intensity.  The 5Bp bursts (even</span>
+<span class="sd">    those from 4B) are not so labeled.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="c"># Note:  &quot;*args, **kwds&quot; are needed to support re-creating the instance</span>
+        <span class="c"># after pickling, via OrderedDict&#39;s pickling interface.</span>
+        <span class="n">OrderedDict</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="c"># These dicts map from &#39;t&#39; and &#39;b&#39; attributes to trigger numbers.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_attrs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b_attrs</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="GRBCollection.add"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.grb.GRBCollection.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grb</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a GRB instance to the collection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="n">grb</span><span class="o">.</span><span class="n">trigger</span><span class="p">]</span> <span class="o">=</span> <span class="n">grb</span>
+        <span class="n">t_attr</span> <span class="o">=</span> <span class="s">&#39;t</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">grb</span><span class="o">.</span><span class="n">trigger</span>
+        <span class="n">b_attr</span> <span class="o">=</span> <span class="s">&#39;b</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">grb</span><span class="o">.</span><span class="n">desig</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_attrs</span><span class="p">[</span><span class="n">t_attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">grb</span><span class="o">.</span><span class="n">trigger</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">b_attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">b_attrs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">b_attrs</span><span class="p">[</span><span class="n">b_attr</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">grb</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">b_attrs</span><span class="p">[</span><span class="n">b_attr</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grb</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return values associated with .t# or .b# attributes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;t&#39;</span><span class="p">:</span>
+            <span class="n">tnum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_attrs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">tnum</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;b&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">grb</span> <span class="k">for</span> <span class="n">grb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">b_attrs</span><span class="p">[</span><span class="n">name</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&#39;Illegal attribute!&#39;</span><span class="p">)</span>
+
+<span class="c"># These are experiments to support unpickling; the solution was to provide</span>
+<span class="c"># *args and **kwds arguments to the superclass initializer.</span>
+
+<span class="c">#     def __reduce__(self):</span>
+<span class="c">#         &quot;&quot;&quot;</span>
+<span class="c">#         Method used to support pickling of an OrderedDict subclass.</span>
+<span class="c">#         &quot;&quot;&quot;</span>
+<span class="c">#         t = OrderedDict.__reduce__(self)</span>
+<span class="c">#         return (t[0], ()) + t[2:]</span>
+
+<span class="c">#     def __reduce__(self):</span>
+<span class="c">#         &quot;&quot;&quot;Return state information for pickling.&quot;&quot;&quot;</span>
+<span class="c">#         items = [[k, self[k]] for k in self]</span>
+<span class="c">#         inst_dict = vars(self).copy()</span>
+<span class="c">#         for k in vars(OrderedDict()):</span>
+<span class="c">#             inst_dict.pop(k, None)</span>
+<span class="c">#         if inst_dict:</span>
+<span class="c">#             return (self.__class__, (items,), inst_dict)</span>
+<span class="c">#         return self.__class__, (items,)</span>
+
+<span class="c">#     def __reduce__(self):</span>
+<span class="c">#         return self.__class__, (OrderedDict(self),)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Tom Loredo.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

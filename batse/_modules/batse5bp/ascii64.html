@@ -1,0 +1,238 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>batse5bp.ascii64 &mdash; batse5bp 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="batse5bp 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+
+<div class="banner">
+<a href="../../index.html"><img src="../../_static/batse.gif" border="0" alt="BATSE on CGRO"/></a>
+batse5bp
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for batse5bp.ascii64</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Objects providing access to 64 ms count data as compiled in the ASCII data</span>
+<span class="sd">files at the COSSC.</span>
+
+<span class="sd">These files compile DISCLA, PREB, and DISCSC data over an interval determined by</span>
+<span class="sd">examination of trigger and pre-trigger data by the BATSE team.</span>
+
+<span class="sd">NOTE:  The DISCLA data is in 1024 ms bins; the counts are divided by 16 to</span>
+<span class="sd">distribute across the tabulated 64 ms bins.  The DISCLA bins can overlap with</span>
+<span class="sd">the 1st PREB bin, in which case the PREB overlap is subtracted and the remaining</span>
+<span class="sd">counts divided among earlier bins.</span>
+
+<span class="sd">For full documentation, see:</span>
+
+<span class="sd">ftp://legacy.gsfc.nasa.gov/compton/data/batse/ascii_data/64ms/README</span>
+
+<span class="sd">Created 2012-10-22 by Tom Loredo</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">exists</span>
+<span class="kn">import</span> <span class="nn">cPickle</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">loadtxt</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">array</span>
+
+<span class="kn">from</span> <span class="nn">locations</span> <span class="kn">import</span> <span class="n">root</span><span class="p">,</span> <span class="n">raw_cache</span>
+
+
+<span class="c"># TODO:  Should probably fetch and cache the compressed group directories</span>
+<span class="c"># to save bandwidth and speed access of large parts of the catalog</span>
+<span class="c"># (perhaps optionally).</span>
+
+
+<div class="viewcode-block" id="ASCII64"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.ascii64.ASCII64">[docs]</a><span class="k">class</span> <span class="nc">ASCII64</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Provide access to the 64 ms count data compiled in the ASCII data files</span>
+<span class="sd">    hosted by the COSSC.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grb</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load ASCII 64 ms count data for the GRB instance `grb`.</span>
+
+<span class="sd">        If the data is not already locally cached, it is fetched from the SSC,</span>
+<span class="sd">        loaded, and cached for future use.  Otherwise, the cached copy is</span>
+<span class="sd">        loaded.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grb</span> <span class="o">=</span> <span class="n">grb</span>
+        <span class="n">a64_path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">grb</span><span class="o">.</span><span class="n">grb_dir</span><span class="p">,</span> <span class="n">grb</span><span class="o">.</span><span class="n">a64_fname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">a64_path</span><span class="p">):</span>
+            <span class="n">ifile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">a64_path</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">cPickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ifile</span><span class="p">)</span>
+            <span class="n">ifile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">a64_raw</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">raw_cache</span><span class="p">,</span> <span class="n">grb</span><span class="o">.</span><span class="n">a64_fname</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">a64_raw</span><span class="p">):</span>
+                <span class="n">urllib</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">grb</span><span class="o">.</span><span class="n">a64_remote</span><span class="p">,</span> <span class="n">a64_raw</span><span class="p">)</span>
+            <span class="n">dfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">a64_raw</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span>
+            <span class="n">dfile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>  <span class="c"># header</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="n">dfile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">grb</span><span class="o">.</span><span class="n">trigger</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Trigger \# mismatch for ASCII64 data!&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_asc64</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_discla</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">olap</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="c"># Data are indexed as [ch, time].</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="n">loadtxt</span><span class="p">(</span><span class="n">dfile</span><span class="p">,</span> <span class="n">unpack</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">=</span> <span class="n">raw</span>
+
+            <span class="c"># Break up the data into the (early) DISCLA bins, the (late) 64 ms</span>
+            <span class="c"># bins (PREB + DISCSC), and a possible (mid) truncated DISCLA bin.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_early</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_discla</span> <span class="o">/</span> <span class="mi">16</span>
+            <span class="n">early</span> <span class="o">=</span> <span class="n">empty</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_early</span><span class="p">),</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_early</span><span class="p">):</span>
+                    <span class="n">j</span> <span class="o">=</span> <span class="mi">16</span> <span class="o">*</span> <span class="n">i</span>
+                    <span class="n">early</span><span class="p">[</span><span class="n">ch</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mi">16</span><span class="o">*</span><span class="n">raw</span><span class="p">[</span><span class="n">ch</span><span class="p">,</span><span class="n">j</span><span class="p">]))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">early</span> <span class="o">=</span> <span class="n">early</span>
+
+            <span class="n">n_trail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_discla</span> <span class="o">-</span> <span class="mi">16</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">n_early</span>
+            <span class="k">if</span> <span class="n">n_trail</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">n_mid</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">mid</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">n_mid</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">mid</span> <span class="o">=</span> <span class="n">empty</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="nb">int</span><span class="p">)</span>  <span class="c"># must be 4x1 for concat with others</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_early</span><span class="o">*</span><span class="mi">16</span>
+                <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">):</span>
+                    <span class="n">mid</span><span class="p">[</span><span class="n">ch</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">n_trail</span><span class="o">*</span><span class="n">raw</span><span class="p">[</span><span class="n">ch</span><span class="p">,</span><span class="n">j</span><span class="p">]))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mid</span> <span class="o">=</span> <span class="n">mid</span>
+ 
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_late</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_asc64</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_discla</span>
+            <span class="n">late</span> <span class="o">=</span> <span class="n">empty</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">n_late</span><span class="p">),</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_late</span><span class="p">):</span>
+                    <span class="n">late</span><span class="p">[</span><span class="n">ch</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="n">ch</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">n_discla</span><span class="o">+</span><span class="n">j</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">late</span> <span class="o">=</span> <span class="n">late</span>
+ 
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_early</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_mid</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_late</span>
+
+            <span class="c"># Create vectors of bin time interval boundaries.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t_early</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.024</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">n_early</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_early</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_early</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_mid</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">t_mid</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">last</span><span class="p">,</span> <span class="n">last</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">t_mid</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">last</span><span class="p">,</span> <span class="n">last</span><span class="o">+</span><span class="n">n_trail</span><span class="o">*</span><span class="mf">0.064</span><span class="p">])</span>
+                <span class="n">last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_mid</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t_late</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="n">last</span><span class="p">,</span> <span class="n">last</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_late</span><span class="o">*</span><span class="mf">0.064</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_late</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c"># Shift the times to be relative to the trigger time, which is</span>
+            <span class="c"># 2.048 s after the start of the PREB data (the first 64 ms data).</span>
+            <span class="n">t_trig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_late</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">2.048</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t_early</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_early</span> <span class="o">-</span> <span class="n">t_trig</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t_mid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_mid</span> <span class="o">-</span> <span class="n">t_trig</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t_late</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_late</span> <span class="o">-</span> <span class="n">t_trig</span>
+
+            <span class="c"># Create a concatenated set of counts and times.</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_mid</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">early</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">late</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_early</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_late</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">early</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">late</span><span class="p">),</span>
+                                    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_early</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_late</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ASCII64.rates"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.ascii64.ASCII64.rates">[docs]</a>    <span class="k">def</span> <span class="nf">rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return time bin centers &amp; widths (vectors) &amp; count rates (4-row matrix).</span>
+<span class="sd">        These values are useful for plotting.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">centers</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">widths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">counts</span> <span class="o">/</span> <span class="n">widths</span>
+        <span class="k">return</span> <span class="n">centers</span><span class="p">,</span> <span class="n">widths</span><span class="p">,</span> <span class="n">rates</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Tom Loredo.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

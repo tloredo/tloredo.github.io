@@ -1,0 +1,251 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>batse5bp.docn &mdash; batse5bp 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="batse5bp 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+
+<div class="banner">
+<a href="../../index.html"><img src="../../_static/batse.gif" border="0" alt="BATSE on CGRO"/></a>
+batse5bp
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for batse5bp.docn</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Documentation supporting the 5Bp data.</span>
+
+<span class="sd">Created 2012-05-07 by Tom Loredo</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">webbrowser</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;show_ssc&#39;</span><span class="p">,</span> <span class="s">&#39;show_4B&#39;</span><span class="p">,</span> <span class="s">&#39;show_5Bp&#39;</span><span class="p">,</span> <span class="s">&#39;show_problems&#39;</span><span class="p">]</span>
+
+
+<span class="c"># Access to 4B, 5Bp (&quot;Current&quot;) catalog web pages:</span>
+<span class="n">url_ssc</span> <span class="o">=</span> <span class="s">&#39;http://heasarc.gsfc.nasa.gov/docs/cgro/&#39;</span>
+<span class="n">url_4B</span> <span class="o">=</span> <span class="s">&#39;http://gammaray.msfc.nasa.gov/batse/grb/catalog/4b/&#39;</span>
+<span class="n">url_5Bp</span> <span class="o">=</span> <span class="s">&#39;http://gammaray.msfc.nasa.gov/batse/grb/catalog/current/&#39;</span>
+<span class="n">url_problems</span> <span class="o">=</span> <span class="s">&#39;ftp://legacy.gsfc.nasa.gov/compton/data/batse/trigger/data_problems/&#39;</span>
+
+<div class="viewcode-block" id="show_ssc"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.docn.show_ssc">[docs]</a><span class="k">def</span> <span class="nf">show_ssc</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Show the COSSC web site in the user&#39;s default web browser.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">url_ssc</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="show_4B"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.docn.show_4B">[docs]</a><span class="k">def</span> <span class="nf">show_4B</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Show the 4B catalog web site in the user&#39;s default web browser.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">url_4B</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="show_5Bp"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.docn.show_5Bp">[docs]</a><span class="k">def</span> <span class="nf">show_5Bp</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Show the 5Bp (&quot;current&quot;) catalog web site in the user&#39;s default web browser.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">url_5Bp</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="show_problems"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.docn.show_problems">[docs]</a><span class="k">def</span> <span class="nf">show_problems</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Show the BATSE data problems archive in the user&#39;s default web browser.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">url_problems</span><span class="p">)</span>
+
+
+<span class="c"># Basic table description:</span></div>
+<span class="n">basic</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">There are twelve columns in the Basic Table file:</span>
+
+<span class="s"> 1. The BATSE trigger number</span>
+<span class="s"> 2. The BATSE Catalog burst name</span>
+<span class="s"> 3. The truncated Julian Date (TJD) of the trigger; TJD = JD - 2440000.5</span>
+<span class="s"> 4. The time in decimal seconds of day (UT) of the trigger</span>
+<span class="s"> 5. Right ascension (J2000) in decimal degrees</span>
+<span class="s"> 6. Declination (J2000) in decimal degrees</span>
+<span class="s"> 7. Galactic longitude in decimal degrees</span>
+<span class="s"> 8. Galactic latitude in decimal degrees</span>
+<span class="s"> 9. Radius in decimal degrees of positional error box</span>
+<span class="s">10. Angle in decimal degrees of geocenter (the angle between the burst and the nadir, as measured from the satellite)</span>
+<span class="s">11. Overwrite flag: Y(true) if this burst overwrote an earlier, weaker trigger. N(false) otherwise</span>
+<span class="s">12. Overwritten flag: Y(true) if this burst was overwritten by a later, more intense trigger. N(false) otherwise</span>
+<span class="s">&quot;&quot;&quot;</span>
+
+<span class="c"># Flux table description, from 4B catalog:</span>
+<span class="n">flux</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s">The FLUX Table contains the fluence and peak flux values for the BATSE</span>
+<span class="s">gamma-ray bursts between 19 April, 1991 and 29 August, 1996. There are 1292</span>
+<span class="s">bursts, each specified by the BATSE trigger number. This table contains 18</span>
+<span class="s">columns. All fluences and their errors have units of of ergs/cm^2. All peak</span>
+<span class="s">fluxes and their errors have units of photons/cm^2/sec. The errors are one</span>
+<span class="s">sigma statistical errors. The peak flux times are expressed in decimal seconds</span>
+<span class="s">relative to the burst trigger time for the end of the interval in which the</span>
+<span class="s">flux was calculated. The channel 1,2,3 and 4 fluences cover the energy ranges</span>
+<span class="s">20-50 keV, 50-100 keV, 100-300 keV, and E &gt; 300 keV respectively. The peak</span>
+<span class="s">flux energy range is 50-300 keV, coinciding with the energy range of the</span>
+<span class="s">nominal BATSE on-board burst trigger.</span>
+
+<span class="s">Since channel 4 is an integral channel, fluences given for this channel are</span>
+<span class="s">quite sensitive to the assumed spectral form. Spectral analyses in this energy</span>
+<span class="s">range should be performed with higher resolution data types.</span>
+
+<span class="s">Many of the bursts between March 1992 and March 1993 have significant gaps in</span>
+<span class="s">the data and are not included in the table.</span>
+<span class="s">&quot;&quot;&quot;</span>
+
+<span class="c"># Duration table description, from 4B catalog:</span>
+<span class="n">durn</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s">The DURATION Table contains values for T90 and T50, quantities related to</span>
+<span class="s">burst duration, for 1234 gamma-ray bursts that triggered the BATSE LAD</span>
+<span class="s">detectors between April 1991 and 29 August 1996. T90 measures the duration of</span>
+<span class="s">the time interval during which 90</span><span class="si">% o</span><span class="s">f the total observed counts have been</span>
+<span class="s">detected. The start of the T90 interval is defined by the time at which 5</span><span class="si">% o</span><span class="s">f</span>
+<span class="s">the total counts have been detected, and the end of the T90 interval is</span>
+<span class="s">defined by the time at which 95</span><span class="si">% o</span><span class="s">f the total counts have been detected. T50</span>
+<span class="s">is similarly defined using the times at which 25% and 75</span><span class="si">% o</span><span class="s">f the counts have</span>
+<span class="s">been detected. T90 and T50 are calculated using data summed over the 4 LAD</span>
+<span class="s">discriminator channels and using data summed over only those detectors that</span>
+<span class="s">satisfied the BATSE trigger criteria.</span>
+
+<span class="s">Users must note that T90 and T50 are not available for those bursts which</span>
+<span class="s">suffer from data gaps during the event; the integration procedure inherently</span>
+<span class="s">fails in these cases. However, visual estimates of the burst duration are</span>
+<span class="s">provided in the BATSE Comments table for those bursts with sufficient data</span>
+<span class="s">coverage. Users may also find other pertinent comments concerning the</span>
+<span class="s">calculated value of T90 and T50 in the BATSE COMMENTS table, and it is highly</span>
+<span class="s">recommended that the COMMENTS table be consulted before any distribution</span>
+<span class="s">selected on T90 or T50 is used.</span>
+<span class="s">&quot;&quot;&quot;</span>
+
+<span class="c"># Comments description; only for 4B bursts:</span>
+<span class="n">comments</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s">The COMMENTS Table contains comments relevant to BATSE gamma-ray burst data</span>
+<span class="s">found in the GROSSC BATSE burst catalog. Each category of comment is sorted by</span>
+<span class="s">a flag identification and ordered by BATSE trigger number. A gamma-ray burst</span>
+<span class="s">may have more than one entry or may have no entry.</span>
+
+<span class="s">Flag  Definition</span>
+<span class="s">Q     comments on data quality</span>
+<span class="s">A     additional observations by other instruments</span>
+<span class="s">O     general comments</span>
+<span class="s">L     comments on the gamma-ray burst coordinates</span>
+<span class="s">T     comments on the gamma-ray burst duration</span>
+<span class="s">&quot;&quot;&quot;</span>
+
+<span class="c"># Reclassification information as of 2005-08-01; tab-delimited:</span>
+<span class="n">reclass</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s">288	 GRB. Reclassified from solar flare in May 1995. Changed from 00288_flare to 00288_burst</span>
+
+<span class="s">1530	 Probably GRB; very little data. Not available at COSSC</span>
+
+<span class="s">2154	 GRB. No data except max rates. Not available at COSSC</span>
+
+<span class="s">2162	 Probably GRB. No data except max rates. Not available at COSSC</span>
+
+<span class="s">2411	 Thought to be a particle event. Changed from 02411_burst to 02411_particles</span>
+
+<span class="s">2548	 Commanded trigger to get data on a transient source. Not available at COSSC</span>
+
+<span class="s">2777	 Solar flare</span>
+
+<span class="s">2778	 Solar flare</span>
+
+<span class="s">3452	 Unknown - possibly a GRB. 03452_burst</span>
+
+<span class="s">3720	 Triggered on a Cyg X-1 fluctuation in dets. 4,5; a GRB occurred at approx. T+25 s, primarily in dets. 7,5,3,1. 03720_burst</span>
+
+<span class="s">3904	 The data in the TTE file seem to be partially corrupted. The reason is not understood but may be a hardware problem. The TTE data seem to change from the trigger detectors to two other detectors. The trigger detectors (DSELB) were 2 and 6. The first quarter of TTE (first half of packet ID 33Hex), which is pre-load time, has all detectors as it should. The first two packets and part of the third packet of the second quarter of the TTE data (post-load time) have detectors 2 and 6 as they should. However, part of the way through the third packet (packet sequence number 67 of packet ID 33Hex) and for the remainder of the TTE file, only detectors 0 and 1 appear.</span>
+
+<span class="s">3931	 Terrestrial Gamma-ray Flash. Changed from 03931_burst to 03931_tgf TTE &amp; STTE data</span>
+
+<span class="s">4327	 During flight software revisions, the TTE data in the second board became bad for a limited time. Therefore, triggers no. 4317 - 4336 bad TTE data in the second board (second quarter of TTE data). (The TTE data for trigger no. 4317 should be all bad for related but different reasons.)</span>
+
+<span class="s">5339	 TTE data are OK but STTE data are for trigger 5338 because of overwriting.</span>
+<span class="s">&quot;&quot;&quot;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Tom Loredo.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

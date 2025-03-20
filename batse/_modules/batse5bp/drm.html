@@ -1,0 +1,342 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>batse5bp.drm &mdash; batse5bp 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="batse5bp 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+
+<div class="banner">
+<a href="../../index.html"><img src="../../_static/batse.gif" border="0" alt="BATSE on CGRO"/></a>
+batse5bp
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for batse5bp.drm</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Provide access to DRM data stored in FITS files at COSSC.</span>
+
+<span class="sd">Documentation of the compressed DRM format from the DRM FITS header</span>
+<span class="sd">(for 1-based array indexing):</span>
+
+<span class="sd">The detector response matrix is stored in a compressed format:        </span>
+
+<span class="sd">Elements are listed in order of row by column (n_e_bin by n_e_chan), with</span>
+<span class="sd">all elements equal to 0 at the top of the column ommited.</span>
+
+<span class="sd">The row index of the first non-zero element for each column is given by</span>
+<span class="sd">n_zeros.</span>
+
+<span class="sd">Thus, for the ith column: insert n_zeros(i) - 1 0s, followed by the next</span>
+<span class="sd">n_e_bin - n_zeros(i) + 1 elements of the drm (either drm_dir, drm_sct or</span>
+<span class="sd">drm_sum).</span>
+
+<span class="sd">The last column should exhaust the elements of the compressed drm.</span>
+
+<span class="sd">Created 2012-10-16 by Tom Loredo</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">exists</span>
+<span class="kn">import</span> <span class="nn">cPickle</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">minimum</span>
+
+<span class="kn">import</span> <span class="nn">pyfits</span>
+
+
+<span class="c"># This list of the binary table header fields was obtained from a DISCSC DRM</span>
+<span class="c"># file by examining the binary table header __dict__.</span>
+<span class="n">hdr_fields</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s">&#39;TTYPE1&#39;</span><span class="p">,</span> <span class="s">&#39;DET_NUM&#39;</span><span class="p">,</span> <span class="s">&#39;the active detector for one row&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TFORM1&#39;</span><span class="p">,</span> <span class="s">&#39;1I&#39;</span><span class="p">,</span> <span class="s">&#39;data format of the field: 2-byte INTEGER&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TTYPE2&#39;</span><span class="p">,</span> <span class="s">&#39;MAT_TYPE&#39;</span><span class="p">,</span> <span class="s">&#39;0=Direct,1=Scattered, 2= Both, 3=Summed&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TFORM2&#39;</span><span class="p">,</span> <span class="s">&#39;1I&#39;</span><span class="p">,</span> <span class="s">&#39;data format of the field: 2-byte INTEGER&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TTYPE3&#39;</span><span class="p">,</span> <span class="s">&#39;TIME&#39;</span><span class="p">,</span> <span class="s">&#39;time drm is calculated for&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TFORM3&#39;</span><span class="p">,</span> <span class="s">&#39;1D&#39;</span><span class="p">,</span> <span class="s">&#39;data format of the field: DOUBLE PRECISION&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TUNIT3&#39;</span><span class="p">,</span> <span class="s">&#39;TJD&#39;</span><span class="p">,</span> <span class="s">&#39;physical unit field&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TTYPE4&#39;</span><span class="p">,</span> <span class="s">&#39;NUMEBINS&#39;</span><span class="p">,</span> <span class="s">&#39;number of rows in PHT_EDGE (N_E_BINS+1)&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TFORM4&#39;</span><span class="p">,</span> <span class="s">&#39;1I&#39;</span><span class="p">,</span> <span class="s">&#39;data format of the field: 2-byte INTEGER&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TTYPE5&#39;</span><span class="p">,</span> <span class="s">&#39;NUMCHAN&#39;</span><span class="p">,</span> <span class="s">&#39;number of columns in E_EDGES (N_E_CHAN+1)&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TFORM5&#39;</span><span class="p">,</span> <span class="s">&#39;1I&#39;</span><span class="p">,</span> <span class="s">&#39;data format of the field: 2-byte INTEGER&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TTYPE6&#39;</span><span class="p">,</span> <span class="s">&#39;NUMZERO&#39;</span><span class="p">,</span> <span class="s">&#39;number of of zeroes top of each column&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TFORM6&#39;</span><span class="p">,</span> <span class="s">&#39;1I&#39;</span><span class="p">,</span> <span class="s">&#39;data format of the field: 2-byte INTEGER&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TTYPE7&#39;</span><span class="p">,</span> <span class="s">&#39;DIRDRM&#39;</span><span class="p">,</span> <span class="s">&#39;number of rows in the DIR drm&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TFORM7&#39;</span><span class="p">,</span> <span class="s">&#39;1J&#39;</span><span class="p">,</span> <span class="s">&#39;data format of the field: 4-byte INTEGER&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TTYPE8&#39;</span><span class="p">,</span> <span class="s">&#39;SCTDRM&#39;</span><span class="p">,</span> <span class="s">&#39;number of rows in the  SCT drm&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TFORM8&#39;</span><span class="p">,</span> <span class="s">&#39;1J&#39;</span><span class="p">,</span> <span class="s">&#39;data format of the field: 4-byte INTEGER&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TTYPE9&#39;</span><span class="p">,</span> <span class="s">&#39;SUMDRM&#39;</span><span class="p">,</span> <span class="s">&#39;number of rows in the  SUM drm&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TFORM9&#39;</span><span class="p">,</span> <span class="s">&#39;1J&#39;</span><span class="p">,</span> <span class="s">&#39;data format of the field: 4-byte INTEGER&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TTYPE10&#39;</span><span class="p">,</span> <span class="s">&#39;PHT_EDGE&#39;</span><span class="p">,</span> <span class="s">&#39;input bin energy edges&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TFORM10&#39;</span><span class="p">,</span> <span class="s">&#39;PE(276)&#39;</span><span class="p">,</span> <span class="s">&#39;data format of the field&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TUNIT10&#39;</span><span class="p">,</span> <span class="s">&#39;keV&#39;</span><span class="p">,</span> <span class="s">&#39;physical unit field&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TTYPE11&#39;</span><span class="p">,</span> <span class="s">&#39;E_EDGES&#39;</span><span class="p">,</span> <span class="s">&#39;channel energy edges&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TFORM11&#39;</span><span class="p">,</span> <span class="s">&#39;PE(253)&#39;</span><span class="p">,</span> <span class="s">&#39;data format of the field&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TUNIT11&#39;</span><span class="p">,</span> <span class="s">&#39;keV&#39;</span><span class="p">,</span> <span class="s">&#39;physical unit field&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TTYPE12&#39;</span><span class="p">,</span> <span class="s">&#39;N_ZEROS&#39;</span><span class="p">,</span> <span class="s">&#39;list of how many 0 elements in each column&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TFORM12&#39;</span><span class="p">,</span> <span class="s">&#39;PI(252)&#39;</span><span class="p">,</span> <span class="s">&#39;data format of the field&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TTYPE13&#39;</span><span class="p">,</span> <span class="s">&#39;DRM_DIR&#39;</span><span class="p">,</span> <span class="s">&#39;detector response matrix&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TFORM13&#39;</span><span class="p">,</span> <span class="s">&#39;PE(69552)&#39;</span><span class="p">,</span> <span class="s">&#39;data format of the field&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TUNIT13&#39;</span><span class="p">,</span> <span class="s">&#39;cm**2&#39;</span><span class="p">,</span> <span class="s">&#39;physical unit field&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TTYPE14&#39;</span><span class="p">,</span> <span class="s">&#39;DRM_SCT&#39;</span><span class="p">,</span> <span class="s">&#39;detector response matrix&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TFORM14&#39;</span><span class="p">,</span> <span class="s">&#39;PE(69552)&#39;</span><span class="p">,</span> <span class="s">&#39;data format of the field&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TUNIT14&#39;</span><span class="p">,</span> <span class="s">&#39;cm**2&#39;</span><span class="p">,</span> <span class="s">&#39;physical unit field&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TTYPE15&#39;</span><span class="p">,</span> <span class="s">&#39;DRM_SUM&#39;</span><span class="p">,</span> <span class="s">&#39;detector response matrix&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TFORM15&#39;</span><span class="p">,</span> <span class="s">&#39;PE(69552)&#39;</span><span class="p">,</span> <span class="s">&#39;data format of the field&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TUNIT15&#39;</span><span class="p">,</span> <span class="s">&#39;cm**2&#39;</span><span class="p">,</span> <span class="s">&#39;physical unit field&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TTYPE16&#39;</span><span class="p">,</span> <span class="s">&#39;CAL_NAME&#39;</span><span class="p">,</span> <span class="s">&#39;Name of energy calibration method&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;TFORM16&#39;</span><span class="p">,</span> <span class="s">&#39;16A&#39;</span><span class="p">,</span> <span class="s">&#39;data format of the field&#39;</span><span class="p">)</span> <span class="p">]</span>
+
+
+<span class="c"># Collect information for the TTYPE fields in a dict.</span>
+<span class="n">ttype_fields</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">comment</span> <span class="ow">in</span> <span class="n">hdr_fields</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">attr</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TTYPE&#39;</span><span class="p">:</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">attr</span><span class="p">[</span><span class="mi">5</span><span class="p">:])</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">ttype_fields</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">comment</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DRM_DISCSC"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.drm.DRM_DISCSC">[docs]</a><span class="k">class</span> <span class="nc">DRM_DISCSC</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Provide access to the detector response matrix (DRM) for a single BATSE</span>
+<span class="sd">    detector&#39;s discriminator science (DISCSC) data.</span>
+
+<span class="sd">    The DRM units according to the FITS header is area in cm^2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">fields</span> <span class="o">=</span> <span class="n">ttype_fields</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_data</span><span class="p">,</span> <span class="n">n_ch</span><span class="p">,</span> <span class="n">n_E</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve DRM info from a single row of parsed binary FITS table data.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">row_data</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">det_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DET_NUM</span>
+
+        <span class="c"># Discriminator bin boundaries (nominal energy loss units):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ch_bins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">E_EDGES</span>  <span class="c"># n_ch+1 values</span>
+
+        <span class="c"># Incident photon energy &quot;edges;&quot; there should be n_E of these but</span>
+        <span class="c"># they are treated as if binned somehow....</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">E_bins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PHT_EDGE</span>
+
+        <span class="c"># Unpack the zero-shortened format.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N_ZEROS</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c"># N_ZEROS is 1-based index of 1st non-0 element</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drm</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="n">n_ch</span><span class="p">,</span> <span class="n">n_E</span><span class="p">))</span>
+        <span class="n">run</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_ch</span><span class="p">):</span>
+            <span class="n">num_nz</span> <span class="o">=</span> <span class="n">n_E</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="c"># Use the summed (direct + atmospheric scattering) matrix; typically</span>
+            <span class="c"># the direct and scattering entries are empty.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drm</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">[</span><span class="n">i</span><span class="p">]:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DRM_SUM</span><span class="p">[</span><span class="n">run</span><span class="p">:</span><span class="n">run</span><span class="o">+</span><span class="n">num_nz</span><span class="p">]</span>
+            <span class="n">run</span> <span class="o">+=</span> <span class="n">num_nz</span>
+
+        <span class="c"># Make views providing detector channel response vectors.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">crv</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_ch</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">crv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">drm</span><span class="p">[</span><span class="n">i</span><span class="p">,:])</span>
+
+</div>
+<div class="viewcode-block" id="DRMs_DISCSC"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.drm.DRMs_DISCSC">[docs]</a><span class="k">class</span> <span class="nc">DRMs_DISCSC</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Provide access to detector response matrix (DRM) data from a BATSE DISCSC DRM</span>
+<span class="sd">    FITS file for all triggered detectors associated with a BATSE trigger; also</span>
+<span class="sd">    calculate the summed response.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># Metadata attributes stored in the &quot;-meta&quot; file.</span>
+    <span class="n">meta_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;burst_id&#39;</span><span class="p">,</span> <span class="s">&#39;file_id&#39;</span><span class="p">,</span> <span class="s">&#39;n_ch&#39;</span><span class="p">,</span> <span class="s">&#39;n_E&#39;</span><span class="p">,</span> <span class="s">&#39;alpha&#39;</span><span class="p">,</span> <span class="s">&#39;n_det&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grb</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load DRM data for the DISCSC data associated with GRB instance `grb`.</span>
+
+<span class="sd">        If the DRM data is not locally cached, it is fetched from the SSC,</span>
+<span class="sd">        loaded, and cached for future use.  Otherwise, the cached copy is</span>
+<span class="sd">        loaded.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grb</span> <span class="o">=</span> <span class="n">grb</span>
+
+        <span class="c"># Get DRMs for the triggered detectors.</span>
+        <span class="n">drm_path</span> <span class="o">=</span> <span class="s">&#39;discsc_drm_</span><span class="si">%i</span><span class="s">.pkl&#39;</span> <span class="o">%</span> <span class="n">grb</span><span class="o">.</span><span class="n">trigger</span>  <span class="c"># stores detector DRMs</span>
+        <span class="n">drm_path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grb</span><span class="o">.</span><span class="n">grb_dir</span><span class="p">,</span> <span class="n">drm_path</span><span class="p">)</span>
+        <span class="n">meta_path</span> <span class="o">=</span> <span class="s">&#39;discsc_drm_</span><span class="si">%i</span><span class="s">-meta.pkl&#39;</span> <span class="o">%</span> <span class="n">grb</span><span class="o">.</span><span class="n">trigger</span>  <span class="c"># stores metadata</span>
+        <span class="n">meta_path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grb</span><span class="o">.</span><span class="n">grb_dir</span><span class="p">,</span> <span class="n">meta_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">drm_path</span><span class="p">)</span> <span class="ow">and</span> <span class="n">exists</span><span class="p">(</span><span class="n">meta_path</span><span class="p">):</span>  <span class="c"># already parsed FITS</span>
+            <span class="n">ifile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">meta_path</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">cPickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ifile</span><span class="p">)</span>
+            <span class="n">ifile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta_attrs</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">metadata</span><span class="p">[</span><span class="n">attr</span><span class="p">])</span>
+            <span class="n">ifile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">drm_path</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">detectors</span> <span class="o">=</span> <span class="n">cPickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ifile</span><span class="p">)</span>
+            <span class="n">ifile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_det</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">detectors</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;Data mismatch in archive DRM files!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c"># must parse FITS</span>
+            <span class="n">fits_name</span> <span class="o">=</span> <span class="s">&#39;discsc_drm_</span><span class="si">%i</span><span class="s">.fits.gz&#39;</span> <span class="o">%</span> <span class="n">grb</span><span class="o">.</span><span class="n">trigger</span>
+            <span class="n">fits_path</span> <span class="o">=</span> <span class="n">grb</span><span class="o">.</span><span class="n">raw_cached_path</span><span class="p">(</span><span class="n">fits_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_from_fits</span><span class="p">(</span><span class="n">fits_path</span><span class="p">,</span> <span class="n">drm_path</span><span class="p">,</span> <span class="n">meta_path</span><span class="p">)</span>
+
+        <span class="c"># The full-instrument DRM sums the triggered detector DRMs.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drm</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n_ch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_E</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">detectors</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drm</span> <span class="o">+=</span> <span class="n">d</span><span class="o">.</span><span class="n">drm</span>
+            <span class="c"># Keep track of lowest non-zero entry for each summed channel.</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">start</span><span class="p">[:]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">minimum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+
+        <span class="c"># Make views providing detector channel response vectors.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">crv</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_ch</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">crv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">drm</span><span class="p">[</span><span class="n">i</span><span class="p">,:])</span>
+
+        <span class="c"># Get energy node info for sum DRM from one of the detectors.</span>
+        <span class="c"># Discriminator bin boundaries (nominal energy loss units), n_ch+1 vals:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ch_bins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ch_bins</span>
+        <span class="c"># Incident photon energy &quot;edges;&quot; there should be n_E of these but</span>
+        <span class="c"># they are treated as if binned somehow....</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">E_bins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">detectors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">E_bins</span>
+
+<div class="viewcode-block" id="DRMs_DISCSC.load_from_fits"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.drm.DRMs_DISCSC.load_from_fits">[docs]</a>    <span class="k">def</span> <span class="nf">load_from_fits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fits_path</span><span class="p">,</span> <span class="n">drm_path</span><span class="p">,</span> <span class="n">meta_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read DRM data from a FITS file.  The path `fname` may be to a gzipped</span>
+<span class="sd">        version.  Archive the data at the DRM file paths.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hdus</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fits_path</span><span class="p">)</span>
+        <span class="n">primary</span> <span class="o">=</span> <span class="n">hdus</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
+
+        <span class="c"># Verify some key primary header elements.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">primary</span><span class="p">[</span><span class="s">&#39;filetype&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;BATSE_DRM&#39;</span>
+            <span class="k">assert</span> <span class="n">primary</span><span class="p">[</span><span class="s">&#39;det_mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;LAD&#39;</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Primary header is not as expected for DRM FITS file!&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">burst_id</span> <span class="o">=</span> <span class="n">primary</span><span class="p">[</span><span class="s">&#39;object&#39;</span><span class="p">]</span>  <span class="c"># GRByymmdd designator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_id</span> <span class="o">=</span> <span class="n">primary</span><span class="p">[</span><span class="s">&#39;file-id&#39;</span><span class="p">]</span>  <span class="c"># contains trigger #</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_ch</span> <span class="o">=</span> <span class="n">primary</span><span class="p">[</span><span class="s">&#39;n_e_chan&#39;</span><span class="p">]</span>  <span class="c"># number of discriminator channels</span>
+        <span class="c"># number of of incident photon energies (*not* bins):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_E</span> <span class="o">=</span> <span class="n">primary</span><span class="p">[</span><span class="s">&#39;n_e_bins&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">primary</span><span class="p">[</span><span class="s">&#39;alpha&#39;</span><span class="p">]</span>  <span class="c">#  weighting across input bins for direct matrix</span>
+
+        <span class="c"># Read the DRM binary table extension, close the file, and gather</span>
+        <span class="c"># some basic info (field names and sizes).</span>
+        <span class="n">exten</span> <span class="o">=</span> <span class="n">hdus</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">exten</span><span class="p">[</span><span class="s">&#39;exttype&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;BATSEDRM&#39;</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Table header is not as expected for DRM FITS file!&#39;</span><span class="p">)</span>
+
+        <span class="c"># These are handy for interactive exploring/checking of FITS data:</span>
+        <span class="c"># self.primary = primary</span>
+        <span class="c"># self.exten = exten</span>
+        <span class="c"># self.data = hdus[1].data</span>
+
+        <span class="c"># Each row contains the DRM for one of the triggered detectors.</span>
+        <span class="bp">self</span><span class="o">.</span> <span class="n">n_det</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hdus</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>  <span class="c"># number of triggered detectors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">detectors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">hdus</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">detectors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DRM_DISCSC</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_ch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_E</span><span class="p">))</span>
+        <span class="n">hdus</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="c"># Store the data in a format for easier reloading.</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta_attrs</span><span class="p">:</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="n">ofile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">meta_path</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span>
+        <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">ofile</span><span class="p">)</span>
+        <span class="n">ofile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">ofile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">drm_path</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span>
+        <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">detectors</span><span class="p">,</span> <span class="n">ofile</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c"># use highest protocol</span>
+        <span class="n">ofile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Tom Loredo.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

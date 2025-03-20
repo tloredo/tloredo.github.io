@@ -1,0 +1,337 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>batse5bp.catalog &mdash; batse5bp 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="batse5bp 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+
+<div class="banner">
+<a href="../../index.html"><img src="../../_static/batse.gif" border="0" alt="BATSE on CGRO"/></a>
+batse5bp
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for batse5bp.catalog</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Read data from the &quot;current&quot; BATSE catalog (dubbed 5Bp here, with &quot;p&quot; for</span>
+<span class="sd">&quot;preliminary,&quot; since an official 5B successor to the 4B catalog has not yet</span>
+<span class="sd">been released).  Provide access to catalog data and other GRB data via</span>
+<span class="sd">a GRBCollection instance providing access to its individual GRB elements</span>
+<span class="sd">in three ways:</span>
+
+<span class="sd">* as an OrderedDict indexed by BATSE trigger number</span>
+<span class="sd">* via attributes of the form .t#, with # = BATSE trigger number</span>
+<span class="sd">* via attributes of the form .b#, with # = YYMMDD burst designation;</span>
+<span class="sd">  this returns a list of triggers matching the designation (there will</span>
+<span class="sd">  be &gt;1 if BATSE detected multiple bursts on the specified date)</span>
+
+<span class="sd">Only one function in this module is intended for users:  load().</span>
+
+<span class="sd">This module was created to access the data as released in Jul-Sep 2000.</span>
+
+<span class="sd">Created 2012-05-06 by Tom Loredo</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">abspath</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">split</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">mkdir</span>
+<span class="kn">import</span> <span class="nn">cPickle</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span>
+
+<span class="kn">from</span> <span class="nn">grb</span> <span class="kn">import</span> <span class="n">GRB</span><span class="p">,</span> <span class="n">GRBCollection</span>
+<span class="kn">from</span> <span class="nn">locations</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">retrieve_gzip</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;load_catalog&#39;</span><span class="p">]</span>
+
+
+<span class="c"># TODO:  get_grb_classes is presently unused; is there a use case?  May</span>
+<span class="c"># only be useful if the pickled files are unpickled outside this module.</span>
+
+<span class="k">def</span> <span class="nf">get_grb_classes</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">classname</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return class objects from the &quot;grb&quot; module that have the specified </span>
+<span class="sd">    `classname`.</span>
+<span class="sd">    </span>
+<span class="sd">    This function is for identifying classes encountered when unpickling</span>
+<span class="sd">    BATSE 5Bp data; it satisfies the cPickle &quot;find_global&quot; interface.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># print &#39;Module:&#39;, modname, &#39; -- Class:&#39;, classname</span>
+    <span class="k">if</span> <span class="n">classname</span> <span class="o">==</span> <span class="s">&#39;GRB&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">GRB</span>
+    <span class="k">elif</span> <span class="n">classname</span> <span class="o">==</span> <span class="s">&#39;GRBCollection&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">GRBCollection</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">,</span> <span class="s">&#39;Unrecognized class in pickled data: </span><span class="si">%s</span><span class="s">, </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">classname</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">read_summaries</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read GRB summary information from a pre-existing pickled data file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sfile</span> <span class="o">=</span> <span class="nb">file</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">summaries</span><span class="p">),</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&#39;Summary data file does not exist!&#39;</span><span class="p">)</span>
+
+    <span class="c"># Define an unpickler that will recognize grb classes even when unpickling</span>
+    <span class="c"># is done elsewhere elsewhere (in which case grb classes may not be on the</span>
+    <span class="c"># top level, thwarting normal unpickling).</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">cPickle</span><span class="o">.</span><span class="n">Unpickler</span><span class="p">(</span><span class="n">sfile</span><span class="p">)</span>
+    <span class="c"># loader.find_global = get_grb_classes</span>
+    <span class="n">GRBs</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+    <span class="n">sfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&#39;Loaded summary data for&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">GRBs</span><span class="p">),</span> <span class="s">&#39;GRBs comprising the 5Bp catalog.&#39;</span>
+    <span class="k">return</span> <span class="n">GRBs</span>
+
+<span class="k">def</span> <span class="nf">get_grb_bright</span><span class="p">(</span><span class="n">bfile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read the brightness data for a single GRB from the brightness data file</span>
+<span class="sd">    `bfile`; return the trigger number and a list of data entries (strings).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="n">bfile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c"># 1:  trigger, ch1 fluence &amp; err, ch2 fluence &amp; err</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">trig</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="c"># 2:  ch3 fluence &amp; err, ch4 fluence &amp; err</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">bfile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+    <span class="c"># 3:  64ms peak flux, err, time</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">bfile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+    <span class="c"># 4:  256ms peak flux, err, time</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">bfile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+    <span class="c"># 5:  1024ms peak flux, err, time</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">bfile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">trig</span><span class="p">,</span> <span class="n">data</span>
+
+<span class="k">def</span> <span class="nf">fetch_summaries</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetch GRB summary information from the CGRO SSC; return it in a</span>
+<span class="sd">    GRBCollection instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># Get access to the raw data files, either cached or fetched from the SSC.</span>
+    <span class="n">cache</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">raw_cache</span><span class="p">)</span>
+    <span class="n">basic</span> <span class="o">=</span> <span class="n">retrieve_gzip</span><span class="p">(</span><span class="n">basic_url</span><span class="p">,</span> <span class="n">cache</span><span class="p">)</span>    
+    <span class="n">bright4</span> <span class="o">=</span> <span class="n">retrieve_gzip</span><span class="p">(</span><span class="n">bright_url4</span><span class="p">,</span> <span class="n">cache</span><span class="p">)</span>    
+    <span class="n">bright5</span> <span class="o">=</span> <span class="n">retrieve_gzip</span><span class="p">(</span><span class="n">bright_url5</span><span class="p">,</span> <span class="n">cache</span><span class="p">)</span>    
+    <span class="n">durn</span> <span class="o">=</span> <span class="n">retrieve_gzip</span><span class="p">(</span><span class="n">durn_url</span><span class="p">,</span> <span class="n">cache</span><span class="p">)</span>    
+    <span class="n">comments</span> <span class="o">=</span> <span class="n">retrieve_gzip</span><span class="p">(</span><span class="n">comments_url4</span><span class="p">,</span> <span class="n">cache</span><span class="p">)</span>    
+
+    <span class="c"># Read basic data, defining the GRB objects.  Add the trigger data path.</span>
+    <span class="n">GRBs</span> <span class="o">=</span> <span class="n">GRBCollection</span><span class="p">()</span>
+    <span class="n">ncomp</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c"># count complete GRBs (not overwritten by subsequent GRB)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">basic</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>  <span class="c"># in case of empty lines at end</span>
+            <span class="k">break</span>
+        <span class="n">grb</span> <span class="o">=</span> <span class="n">GRB</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">grb</span><span class="o">.</span><span class="n">trigger</span> <span class="ow">in</span> <span class="n">GRBs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="s">&#39;Duplicate entries for trigger </span><span class="si">%i</span><span class="s"> !&#39;</span> <span class="o">%</span> <span class="n">grb</span><span class="o">.</span><span class="n">trigger</span>
+        <span class="n">GRBs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">grb</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">grb</span><span class="o">.</span><span class="n">incomplete</span><span class="p">:</span>
+            <span class="n">ncomp</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">basic</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&#39;Read data for&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">GRBs</span><span class="p">),</span> <span class="s">&#39;triggers from basic table,&#39;</span><span class="p">,</span> <span class="n">ncomp</span><span class="p">,</span>\
+        <span class="s">&#39;complete...&#39;</span>
+    <span class="k">print</span>
+
+    <span class="c"># Add brightness (flux, fluence) data.</span>
+    <span class="n">nf</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">extra</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c"># collect triggers in flux table but not basic table</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">trigger</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">get_grb_bright</span><span class="p">(</span><span class="n">bright4</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">trigger</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">if</span> <span class="n">trigger</span> <span class="ow">in</span> <span class="n">GRBs</span><span class="p">:</span>
+            <span class="n">GRBs</span><span class="p">[</span><span class="n">trigger</span><span class="p">]</span><span class="o">.</span><span class="n">set_bright</span><span class="p">(</span><span class="n">trigger</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="n">nf</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">extra</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trigger</span><span class="p">)</span>
+    <span class="n">bright4</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">trigger</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">get_grb_bright</span><span class="p">(</span><span class="n">bright5</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">trigger</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">if</span> <span class="n">trigger</span> <span class="ow">in</span> <span class="n">GRBs</span><span class="p">:</span>
+            <span class="n">GRBs</span><span class="p">[</span><span class="n">trigger</span><span class="p">]</span><span class="o">.</span><span class="n">set_bright</span><span class="p">(</span><span class="n">trigger</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="n">nf</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">extra</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trigger</span><span class="p">)</span>
+    <span class="n">bright5</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&#39;Read flux data for&#39;</span><span class="p">,</span> <span class="n">nf</span><span class="p">,</span> <span class="s">&#39;basic table triggers.&#39;</span>
+    <span class="k">print</span> <span class="s">&#39;Extraneous flux data for:&#39;</span><span class="p">,</span> <span class="n">extra</span>
+    <span class="k">if</span> <span class="n">extra</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;***** Data for these GRBs was ignored!!! *****&#39;</span>
+    <span class="k">print</span>
+
+    <span class="c"># Add duration data.</span>
+    <span class="n">ndur</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">extra</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">durn</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">trigger</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">trigger</span> <span class="ow">in</span> <span class="n">GRBs</span><span class="p">:</span>
+            <span class="n">GRBs</span><span class="p">[</span><span class="n">trigger</span><span class="p">]</span><span class="o">.</span><span class="n">set_durn</span><span class="p">(</span><span class="n">trigger</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">ndur</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c">#</span>
+            <span class="n">extra</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trigger</span><span class="p">)</span>
+    <span class="n">durn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&#39;Read duration data for&#39;</span><span class="p">,</span> <span class="n">ndur</span><span class="p">,</span> <span class="s">&#39;basic table triggers.&#39;</span>
+    <span class="k">print</span> <span class="s">&#39;Extraneous data for:&#39;</span><span class="p">,</span> <span class="n">extra</span>
+    <span class="k">if</span> <span class="n">extra</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;***** Data for these GRBs was ignored!!! *****&#39;</span>
+    <span class="k">print</span>
+
+    <span class="c"># Add comments.</span>
+    <span class="n">ncom</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">extra</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">comments</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;#&#39;</span><span class="p">:</span>  <span class="c"># header</span>
+            <span class="k">continue</span>
+        <span class="n">trigger</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[:</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+        <span class="n">com</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">14</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">trigger</span> <span class="ow">in</span> <span class="n">GRBs</span><span class="p">:</span>
+            <span class="n">GRBs</span><span class="p">[</span><span class="n">trigger</span><span class="p">]</span><span class="o">.</span><span class="n">comments</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">flag</span><span class="p">,</span> <span class="n">com</span><span class="p">))</span>
+            <span class="n">ncom</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c">#</span>
+            <span class="n">extra</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trigger</span><span class="p">)</span>
+    <span class="n">durn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&#39;Read comment data for&#39;</span><span class="p">,</span> <span class="n">ncom</span><span class="p">,</span> <span class="s">&#39;basic table triggers.&#39;</span>
+    <span class="k">print</span> <span class="s">&#39;Extraneous data for:&#39;</span><span class="p">,</span> <span class="n">extra</span>
+    <span class="k">if</span> <span class="n">extra</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;***** Data for these GRBs was ignored!!! *****&#39;</span>
+
+    <span class="k">return</span> <span class="n">GRBs</span>
+
+<div class="viewcode-block" id="load_catalog"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.catalog.load_catalog">[docs]</a><span class="k">def</span> <span class="nf">load_catalog</span><span class="p">(</span><span class="n">root_dir</span><span class="o">=</span><span class="n">root</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Establish access to GRB data from the BATSE &#39;5B&#39; catalog, stored in the</span>
+<span class="sd">    `root_dir` directory.  Return a GRBCollection providing burst-by-burst</span>
+<span class="sd">    access keyed by trigger number and via trigger and YYMMDD (date)</span>
+<span class="sd">    attributes.</span>
+<span class="sd">    </span>
+<span class="sd">    If no catalog has yet been established, the directory is created and</span>
+<span class="sd">    summary data for all GRBs are fetched from the CGRO SSC and stored</span>
+<span class="sd">    locally for future use.</span>
+<span class="sd">    </span>
+<span class="sd">    Detailed data for specific bursts is fetched, parsed, and cached</span>
+<span class="sd">    lazily as requested.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># TODO:  Probably a better way to handle this than with a global....</span>
+    <span class="k">global</span> <span class="n">root</span>
+
+    <span class="c"># Make sure root directory exists.</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="n">root_dir</span><span class="p">)</span>  <span class="c"># assigns full path throughout package</span>
+    <span class="n">rc_dir</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">raw_cache</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+        <span class="n">mkdir</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">rc_dir</span><span class="p">):</span>
+        <span class="n">mkdir</span><span class="p">(</span><span class="n">rc_dir</span><span class="p">)</span>
+ 
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">GRBs</span> <span class="o">=</span> <span class="n">read_summaries</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">GRBs</span> <span class="o">=</span> <span class="n">fetch_summaries</span><span class="p">()</span>
+        <span class="n">sfile</span> <span class="o">=</span> <span class="nb">file</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span><span class="n">summaries</span><span class="p">),</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span>
+        <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">GRBs</span><span class="p">,</span> <span class="n">sfile</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c"># protocol 2 for efficiency</span>
+        <span class="n">sfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">GRBs</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Tom Loredo.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

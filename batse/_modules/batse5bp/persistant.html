@@ -1,0 +1,376 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>batse5bp.persistant &mdash; batse5bp 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="batse5bp 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+
+<div class="banner">
+<a href="../../index.html"><img src="../../_static/batse.gif" border="0" alt="BATSE on CGRO"/></a>
+batse5bp
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for batse5bp.persistant</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Utility classes for simple object persistance.</span>
+
+<span class="sd">More sophisticated alternatives include atpy, h5py, and PyTables.  This</span>
+<span class="sd">simple approach is adopted for now to reduce dependencies.</span>
+
+<span class="sd">*** MODULE NOT YET USED ***</span>
+
+<span class="sd">Based on ioutils.py from the Inference package.</span>
+
+<span class="sd">Created 2012-10-22 by Tom Loredo</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">cPickle</span> <span class="kn">as</span> <span class="nn">pkl</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">savez</span><span class="p">,</span> <span class="n">load</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ArrayStore&#39;</span><span class="p">,</span> <span class="s">&#39;AttrStore&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ArrayStore"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.persistant.ArrayStore">[docs]</a><span class="k">class</span> <span class="nc">ArrayStore</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A container class that provides lazy persistance of array instance</span>
+<span class="sd">    attributes via NumPy&#39;s .npz archives.</span>
+
+<span class="sd">    This is doubly lazy:  arrays are not read into the namespace until</span>
+<span class="sd">    actually requested, and they are not saved to the archive until the</span>
+<span class="sd">    ArrayStore is explicitly saved.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># *** Is loading really lazy, i.e., does NumPy&#39;s load() read in array data</span>
+    <span class="c"># before actual access via dict lookup?</span>
+
+    <span class="c"># TODO:  Perhaps have a __del__ method that saves on deletion?</span>
+    <span class="c"># It would have to handle fname=None gracefully.</span>
+    <span class="c"># Perhaps an init arg should specify whether to save on deletion.</span>
+
+    <span class="c"># TODO:  Support creating with a name to a non-existing file;</span>
+    <span class="c"># subsequent &quot;save()&quot; will use the stored name.</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prepare to load arrays from storage if a file name is provided;</span>
+<span class="sd">        otherwise support saving of arrays assigned as attributes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># All internal attributes start with &#39;_&#39; to avoid __setattr__</span>
+        <span class="c"># array filtering.</span>
+        <span class="k">if</span> <span class="n">fname</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.npz&#39;</span><span class="p">):</span>
+                <span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span> <span class="o">+</span> <span class="s">&#39;.npz&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_npz</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_npz</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span> <span class="o">=</span> <span class="n">fname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_archived</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c"># arrays pulled from the archive</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_new</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c"># arrays to be archived</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Catch references to array attributes that have not yet been</span>
+<span class="sd">        loaded from the archive.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># This is called only if name is not already in the instance dict.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_npz</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>  <span class="c"># no archive to grab attribute from</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c"># get value from archive and keep a reference to it</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_npz</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="c"># Set the attribute directly so __setattr__ won&#39;t add it</span>
+                <span class="c"># to self.new.</span>
+                <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_archived</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="k">return</span> <span class="n">value</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Catch assignments to new attributes, marking them for saving when</span>
+<span class="sd">        the store is next saved.</span>
+
+<span class="sd">        Names starting with &#39;_&#39; have their corresponding attributes set</span>
+<span class="sd">        without marking; such names are intended for internal use only,</span>
+<span class="sd">        to keep track of the state of the store.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># *** Should this prevent over-writing existing names, either</span>
+        <span class="c"># directly assigned or yet to be loaded from the archive?</span>
+        <span class="c"># Right now we allow reassignments; saving will save the</span>
+        <span class="c"># reassigned value.</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">):</span>
+            <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_new</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Only ndarray objects may be stored!&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ArrayStore.save"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.persistant.ArrayStore.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save array attributes to a NumPy .npz archive.  If a name is</span>
+<span class="sd">        provided, it is used (adding &#39;.npz&#39; if needed); otherwise it is</span>
+<span class="sd">        presumed this store was created from an existing archive, and</span>
+<span class="sd">        that archive&#39;s name is used.</span>
+
+<span class="sd">        In either case, any existing version is backed up before the</span>
+<span class="sd">        new one is created, with up to two levels of backups (with &#39;%&#39;</span>
+<span class="sd">        and &#39;%%&#39; suffixes).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># *** Perhaps this should be called by __del__; or this possibility</span>
+        <span class="c"># could be set by a flag on init???</span>
+
+        <span class="c"># If no name given, use the name provided at creation.</span>
+        <span class="k">if</span> <span class="n">fname</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Need a file name for saving!&#39;</span><span class="p">)</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.npz&#39;</span><span class="p">):</span>
+                <span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span> <span class="o">+</span> <span class="s">&#39;.npz&#39;</span>
+        <span class="c"># Gather arrays to store; note new versions supersede old ones.</span>
+        <span class="n">arrays</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_archived</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">arrays</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="c"># Don&#39;t forget to get any archived values not already accessed.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_npz</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_npz</span><span class="o">.</span><span class="n">files</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_archived</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+                    <span class="n">arrays</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_npz</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">arrays</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="c"># Backup any existing file, and save the arrays to a new file.</span>
+        <span class="n">backup</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+        <span class="n">savez</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="o">**</span><span class="n">arrays</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ArrayStore.contents"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.persistant.ArrayStore.contents">[docs]</a>    <span class="k">def</span> <span class="nf">contents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List the names of arrays accessible by this store, including</span>
+<span class="sd">        both previously archived arrays and newly defined arrays.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_npz</span><span class="p">:</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_npz</span><span class="o">.</span><span class="n">files</span><span class="p">)</span>  <span class="c"># archive file names will be array names</span>
+        <span class="n">names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_new</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">names</span>
+
+</div></div>
+<div class="viewcode-block" id="AttrStore"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.persistant.AttrStore">[docs]</a><span class="k">class</span> <span class="nc">AttrStore</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A container class that provides lazy persistance of instance attributes</span>
+<span class="sd">    as a Python pickle.</span>
+
+<span class="sd">    This is doubly lazy:  attributes are not placed in the namespace until</span>
+<span class="sd">    actually requested (but they are all read from the file), and they are not</span>
+<span class="sd">    saved to the archive until the AttrStore is explicitly saved.</span>
+<span class="sd">    </span>
+<span class="sd">    If only NumPy arrays are to be stored, ArrayStore may be more efficient.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># *** Is there any virtue to laziness in loading the namespace, since</span>
+    <span class="c"># we aren&#39;t unpacking a NumPy npz file archive?</span>
+
+    <span class="c"># TODO:  Perhaps have a __del__ method that saves on deletion?</span>
+    <span class="c"># It would have to handle fname=None gracefully.</span>
+    <span class="c"># Perhaps an init arg should specify whether to save on deletion.</span>
+
+    <span class="c"># TODO:  Support creating with a name to a non-existing file;</span>
+    <span class="c"># subsequent &quot;save()&quot; will use the stored name.</span>
+    
+    <span class="c"># TODO:  Add kwd args to init for setting attributes to store.</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prepare to load attributes from storage if a file name is provided;</span>
+<span class="sd">        otherwise support saving of arrays assigned as attributes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># All internal attributes start with &#39;_&#39; to avoid __setattr__</span>
+        <span class="c"># array filtering.</span>
+        <span class="k">if</span> <span class="n">fname</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.pkl&#39;</span><span class="p">):</span>
+                <span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span> <span class="o">+</span> <span class="s">&#39;.pkl&#39;</span>
+                <span class="n">ifile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_archive</span> <span class="o">=</span> <span class="n">pkl</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ifile</span><span class="p">)</span>
+                <span class="n">ifile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_archive</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span> <span class="o">=</span> <span class="n">fname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pulled</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c"># attributes pulled from the archive</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_new</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c"># attributes to be archived</span>
+        <span class="k">if</span> <span class="n">kwds</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwds</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Catch references to attributes that have not yet been loaded from</span>
+<span class="sd">        the store.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># This is called only if name is not already in the instance dict.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_archive</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>  <span class="c"># no archive to grab attribute from</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c"># get value from archive and keep a reference to it</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_archive</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="c"># Set the attribute directly so __setattr__ won&#39;t add it</span>
+                <span class="c"># to self.new.</span>
+                <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pulled</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="k">return</span> <span class="n">value</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Catch assignments to new attributes, marking them for saving when</span>
+<span class="sd">        the store is next saved.</span>
+
+<span class="sd">        Names starting with &#39;_&#39; have their corresponding attributes set</span>
+<span class="sd">        without marking; such names are intended for internal use only,</span>
+<span class="sd">        to keep track of the state of the store.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># *** Should this prevent over-writing existing names, either</span>
+        <span class="c"># directly assigned or yet to be loaded from the archive?</span>
+        <span class="c"># Right now we allow reassignments; saving will save the</span>
+        <span class="c"># reassigned value.</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">):</span>
+            <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_new</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AttrStore.save"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.persistant.AttrStore.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save attributes to a high-protocal pickle.  If a name is</span>
+<span class="sd">        provided, it is used (adding &#39;.pkl&#39; if needed); otherwise it is</span>
+<span class="sd">        presumed this store was created from an existing archive, and</span>
+<span class="sd">        that archive&#39;s name is used.</span>
+
+<span class="sd">        In either case, any existing version is backed up before the</span>
+<span class="sd">        new one is created, with up to two levels of backups (with &#39;%&#39;</span>
+<span class="sd">        and &#39;%%&#39; suffixes).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># *** Perhaps this should be called by __del__; or this possibility</span>
+        <span class="c"># could be set by a flag on init???</span>
+
+        <span class="c"># If no name given, use the name provided at creation.</span>
+        <span class="k">if</span> <span class="n">fname</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Need a file name for saving!&#39;</span><span class="p">)</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.pkl&#39;</span><span class="p">):</span>
+                <span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span> <span class="o">+</span> <span class="s">&#39;.pkl&#39;</span>
+        <span class="c"># Gather attributes to store; note new versions supersede old ones.</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulled</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">attrs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="c"># Don&#39;t forget to get any archived values not already accessed.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_archive</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_archive</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulled</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+                    <span class="n">attrs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_archive</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">attrs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="c"># Backup any existing file, and save the attrs to a new file.</span>
+        <span class="n">ofile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span>
+        <span class="n">pkl</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="n">ofile</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c"># use highest protocol</span>
+        <span class="n">ofile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="AttrStore.contents"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.persistant.AttrStore.contents">[docs]</a>    <span class="k">def</span> <span class="nf">contents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List the names of arrays accessible by this store, including</span>
+<span class="sd">        both previously archived arrays and newly defined arrays.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_archive</span><span class="p">:</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_archive</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_new</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">names</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Tom Loredo.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

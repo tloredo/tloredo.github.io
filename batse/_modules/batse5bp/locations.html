@@ -1,0 +1,171 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>batse5bp.locations &mdash; batse5bp 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="batse5bp 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+
+<div class="banner">
+<a href="../../index.html"><img src="../../_static/batse.gif" border="0" alt="BATSE on CGRO"/></a>
+batse5bp
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for batse5bp.locations</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Specify locations, locally and the COSSC, for accessing GRB data.</span>
+
+<span class="sd">No modules are imported here; &#39;from locations import *&#39; should be safe.</span>
+
+<span class="sd">Created 2012-05-07 by Tom Loredo</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c"># Local locations for persistant data:</span>
+<span class="n">root</span> <span class="o">=</span> <span class="s">&#39;BATSE_5Bp_Data&#39;</span>  <span class="c"># default name in CWD; can change via load()</span>
+<span class="n">raw_cache</span> <span class="o">=</span> <span class="s">&#39;raw_cache&#39;</span>  <span class="c"># subdir for raw data files</span>
+<span class="n">summaries</span> <span class="o">=</span> <span class="s">&#39;summaries.pkl&#39;</span>
+
+
+<span class="c"># CGRO SSC URLs for 5Bp catalog summary data:</span>
+
+<span class="n">basic_url</span> <span class="o">=</span> <span class="s">&#39;http://gammaray.msfc.nasa.gov/batse/grb/catalog/current/tables/basic_table.txt&#39;</span>
+<span class="n">durn_url</span> <span class="o">=</span> <span class="s">&#39;http://gammaray.msfc.nasa.gov/batse/grb/catalog/current/tables/duration_table.txt&#39;</span>
+
+<span class="c"># Brightnesses are in two tables; 4B and new in 5Bp.</span>
+<span class="n">bright_url4</span> <span class="o">=</span> <span class="s">&#39;http://gammaray.msfc.nasa.gov/batse/grb/catalog/current/tables/flux_table_4b.txt&#39;</span>
+<span class="n">bright_url5</span> <span class="o">=</span> <span class="s">&#39;http://gammaray.msfc.nasa.gov/batse/grb/catalog/current/tables/flux_table.txt&#39;</span>
+
+<span class="c"># Comments are only available for 4B bursts.</span>
+<span class="n">comments_url4</span> <span class="o">=</span> <span class="s">&#39;http://gammaray.msfc.nasa.gov/batse/grb/catalog/4b/tables/4br_grossc.comments&#39;</span>
+
+
+<span class="c"># COSSC FTP site for trigger data:</span>
+<span class="n">trigger_url</span> <span class="o">=</span> <span class="s">&#39;ftp://legacy.gsfc.nasa.gov/compton/data/batse/trigger/&#39;</span>
+
+<span class="c"># TODO:  ASCII data should be used only for getting the BATSE team&#39;s</span>
+<span class="c"># subjective start/end times for GRBs; the actual count data should</span>
+<span class="c"># come from DISCLA, PREB, and DISCSC files; it will not all be in 64 ms bins.</span>
+
+<span class="c"># COSSC FTP site for ASCII 64ms count data:</span>
+<span class="n">ascii64_url</span> <span class="o">=</span> <span class="s">&#39;ftp://legacy.gsfc.nasa.gov/compton/data/batse/ascii_data/64ms/&#39;</span>
+
+
+<div class="viewcode-block" id="trigger_paths"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.locations.trigger_paths">[docs]</a><span class="k">def</span> <span class="nf">trigger_paths</span><span class="p">(</span><span class="n">tnum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return components of the path to the data for trigger `tnum`, both at</span>
+<span class="sd">    the COSSC FTP site and locally:  (group, trigger, remote).</span>
+
+<span class="sd">    group       name of the group directory containing the trigger directory</span>
+<span class="sd">    trigger     name of the trigger directory, &quot;&lt;tnum&gt;_burst&quot;</span>
+<span class="sd">    remote      tail of the ftp path @ COSSC, &quot;&lt;group&gt;/&lt;trigger&gt;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Trigger data is in groups spanning a trigger range of 200.</span>
+    <span class="n">fac</span> <span class="o">=</span> <span class="n">tnum</span><span class="o">/</span><span class="mi">200</span>
+    <span class="n">l</span><span class="p">,</span> <span class="n">u</span> <span class="o">=</span> <span class="n">fac</span><span class="o">*</span><span class="mi">200</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">fac</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">200</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%05d</span><span class="s">_</span><span class="si">%05d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+    <span class="n">trigger</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%05d</span><span class="s">_burst&#39;</span> <span class="o">%</span> <span class="n">tnum</span>
+    <span class="n">remote</span> <span class="o">=</span> <span class="n">group</span> <span class="o">+</span> <span class="s">&#39;/&#39;</span> <span class="o">+</span> <span class="n">trigger</span> <span class="o">+</span> <span class="s">&#39;/&#39;</span>  <span class="c"># don&#39;t use join; not a local path</span>
+    <span class="k">return</span> <span class="n">group</span><span class="p">,</span> <span class="n">trigger</span><span class="p">,</span> <span class="n">remote</span>
+</div>
+<div class="viewcode-block" id="ascii64_paths"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.locations.ascii64_paths">[docs]</a><span class="k">def</span> <span class="nf">ascii64_paths</span><span class="p">(</span><span class="n">tnum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return components of the path to the data for trigger `tnum`, both at</span>
+<span class="sd">    the COSSC FTP site and locally:  (group, fname, remote).</span>
+
+<span class="sd">    group       name of the group directory containing the trigger directory</span>
+<span class="sd">    fname       name of the ASCII data file, &quot;cat64ms.&lt;tnum&gt;&quot;</span>
+<span class="sd">    remote      tail of the ftp path @ COSSC, &quot;&lt;group&gt;/&lt;fname&gt;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># ASCII data is in groups spanning a trigger range of 1000.</span>
+    <span class="n">fac</span> <span class="o">=</span> <span class="n">tnum</span><span class="o">/</span><span class="mi">1000</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">fac</span><span class="o">*</span><span class="mi">1000</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="s">&#39;trig</span><span class="si">%05d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">u</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="s">&#39;cat64ms.</span><span class="si">%05d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">tnum</span>
+    <span class="n">remote</span> <span class="o">=</span> <span class="n">group</span> <span class="o">+</span> <span class="s">&#39;/&#39;</span> <span class="o">+</span> <span class="n">fname</span>  <span class="c"># don&#39;t use join; not a local path</span>
+    <span class="k">return</span> <span class="n">group</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">remote</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Tom Loredo.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

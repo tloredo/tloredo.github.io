@@ -1,0 +1,670 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>batse5bp Package &mdash; batse5bp 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="batse5bp 0.1 documentation" href="index.html" />
+    <link rel="up" title="batse5bp" href="modules.html" />
+    <link rel="prev" title="batse5bp" href="modules.html" /> 
+  </head>
+  <body>
+
+<div class="banner">
+<a href="index.html"><img src="_static/batse.gif" border="0" alt="BATSE on CGRO"/></a>
+batse5bp
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="modules.html" title="batse5bp"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+
+          <li><a href="modules.html" accesskey="U">batse5bp</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">batse5bp Package</a><ul>
+<li><a class="reference internal" href="#id1"><tt class="docutils literal"><span class="pre">batse5bp</span></tt> Package</a></li>
+<li><a class="reference internal" href="#module-batse5bp.ascii64"><tt class="docutils literal"><span class="pre">ascii64</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-batse5bp.catalog"><tt class="docutils literal"><span class="pre">catalog</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-batse5bp.docn"><tt class="docutils literal"><span class="pre">docn</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-batse5bp.drm"><tt class="docutils literal"><span class="pre">drm</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-batse5bp.grb"><tt class="docutils literal"><span class="pre">grb</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-batse5bp.locations"><tt class="docutils literal"><span class="pre">locations</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-batse5bp.persistant"><tt class="docutils literal"><span class="pre">persistant</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-batse5bp.read_tte"><tt class="docutils literal"><span class="pre">read_tte</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-batse5bp.utils"><tt class="docutils literal"><span class="pre">utils</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="modules.html"
+                        title="previous chapter">batse5bp</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/batse5bp.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="batse5bp-package">
+<h1>batse5bp Package<a class="headerlink" href="#batse5bp-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2><tt class="xref py py-mod docutils literal"><span class="pre">batse5bp</span></tt> Package<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-batse5bp.__init__"></span><p>Package providing remote access to and local persistant storage of GRB data
+from the BATSE 5Bp (&#8220;Current&#8221;) catalog hosted by the Compton Observatory
+Science Support Center (COSSC) at Goddard Space Flight Center.</p>
+<p>Created 2012-05-07 by Tom Loredo</p>
+</div>
+<div class="section" id="module-batse5bp.ascii64">
+<span id="ascii64-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">ascii64</span></tt> Module<a class="headerlink" href="#module-batse5bp.ascii64" title="Permalink to this headline">¶</a></h2>
+<p>Objects providing access to 64 ms count data as compiled in the ASCII data
+files at the COSSC.</p>
+<p>These files compile DISCLA, PREB, and DISCSC data over an interval determined by
+examination of trigger and pre-trigger data by the BATSE team.</p>
+<p>NOTE:  The DISCLA data is in 1024 ms bins; the counts are divided by 16 to
+distribute across the tabulated 64 ms bins.  The DISCLA bins can overlap with
+the 1st PREB bin, in which case the PREB overlap is subtracted and the remaining
+counts divided among earlier bins.</p>
+<p>For full documentation, see:</p>
+<p><a class="reference external" href="ftp://legacy.gsfc.nasa.gov/compton/data/batse/ascii_data/64ms/README">ftp://legacy.gsfc.nasa.gov/compton/data/batse/ascii_data/64ms/README</a></p>
+<p>Created 2012-10-22 by Tom Loredo</p>
+<dl class="class">
+<dt id="batse5bp.ascii64.ASCII64">
+<em class="property">class </em><tt class="descclassname">batse5bp.ascii64.</tt><tt class="descname">ASCII64</tt><big>(</big><em>grb</em><big>)</big><a class="reference internal" href="_modules/batse5bp/ascii64.html#ASCII64"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.ascii64.ASCII64" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide access to the 64 ms count data compiled in the ASCII data files
+hosted by the COSSC.</p>
+<dl class="method">
+<dt id="batse5bp.ascii64.ASCII64.rates">
+<tt class="descname">rates</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/batse5bp/ascii64.html#ASCII64.rates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.ascii64.ASCII64.rates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return time bin centers &amp; widths (vectors) &amp; count rates (4-row matrix).
+These values are useful for plotting.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-batse5bp.catalog">
+<span id="catalog-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">catalog</span></tt> Module<a class="headerlink" href="#module-batse5bp.catalog" title="Permalink to this headline">¶</a></h2>
+<p>Read data from the &#8220;current&#8221; BATSE catalog (dubbed 5Bp here, with &#8220;p&#8221; for
+&#8220;preliminary,&#8221; since an official 5B successor to the 4B catalog has not yet
+been released).  Provide access to catalog data and other GRB data via
+a GRBCollection instance providing access to its individual GRB elements
+in three ways:</p>
+<ul class="simple">
+<li>as an OrderedDict indexed by BATSE trigger number</li>
+<li>via attributes of the form .t#, with # = BATSE trigger number</li>
+<li>via attributes of the form .b#, with # = YYMMDD burst designation;
+this returns a list of triggers matching the designation (there will
+be &gt;1 if BATSE detected multiple bursts on the specified date)</li>
+</ul>
+<p>Only one function in this module is intended for users:  load().</p>
+<p>This module was created to access the data as released in Jul-Sep 2000.</p>
+<p>Created 2012-05-06 by Tom Loredo</p>
+<dl class="function">
+<dt id="batse5bp.catalog.load_catalog">
+<tt class="descclassname">batse5bp.catalog.</tt><tt class="descname">load_catalog</tt><big>(</big><em>root_dir='BATSE_5Bp_Data'</em><big>)</big><a class="reference internal" href="_modules/batse5bp/catalog.html#load_catalog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.catalog.load_catalog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Establish access to GRB data from the BATSE &#8216;5B&#8217; catalog, stored in the
+<cite>root_dir</cite> directory.  Return a GRBCollection providing burst-by-burst
+access keyed by trigger number and via trigger and YYMMDD (date)
+attributes.</p>
+<p>If no catalog has yet been established, the directory is created and
+summary data for all GRBs are fetched from the CGRO SSC and stored
+locally for future use.</p>
+<p>Detailed data for specific bursts is fetched, parsed, and cached
+lazily as requested.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-batse5bp.docn">
+<span id="docn-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">docn</span></tt> Module<a class="headerlink" href="#module-batse5bp.docn" title="Permalink to this headline">¶</a></h2>
+<p>Documentation supporting the 5Bp data.</p>
+<p>Created 2012-05-07 by Tom Loredo</p>
+<dl class="function">
+<dt id="batse5bp.docn.show_ssc">
+<tt class="descclassname">batse5bp.docn.</tt><tt class="descname">show_ssc</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/batse5bp/docn.html#show_ssc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.docn.show_ssc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the COSSC web site in the user&#8217;s default web browser.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="batse5bp.docn.show_4B">
+<tt class="descclassname">batse5bp.docn.</tt><tt class="descname">show_4B</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/batse5bp/docn.html#show_4B"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.docn.show_4B" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the 4B catalog web site in the user&#8217;s default web browser.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="batse5bp.docn.show_5Bp">
+<tt class="descclassname">batse5bp.docn.</tt><tt class="descname">show_5Bp</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/batse5bp/docn.html#show_5Bp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.docn.show_5Bp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the 5Bp (&#8220;current&#8221;) catalog web site in the user&#8217;s default web browser.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="batse5bp.docn.show_problems">
+<tt class="descclassname">batse5bp.docn.</tt><tt class="descname">show_problems</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/batse5bp/docn.html#show_problems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.docn.show_problems" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the BATSE data problems archive in the user&#8217;s default web browser.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-batse5bp.drm">
+<span id="drm-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">drm</span></tt> Module<a class="headerlink" href="#module-batse5bp.drm" title="Permalink to this headline">¶</a></h2>
+<p>Provide access to DRM data stored in FITS files at COSSC.</p>
+<p>Documentation of the compressed DRM format from the DRM FITS header
+(for 1-based array indexing):</p>
+<p>The detector response matrix is stored in a compressed format:</p>
+<p>Elements are listed in order of row by column (n_e_bin by n_e_chan), with
+all elements equal to 0 at the top of the column ommited.</p>
+<p>The row index of the first non-zero element for each column is given by
+n_zeros.</p>
+<p>Thus, for the ith column: insert n_zeros(i) - 1 0s, followed by the next
+n_e_bin - n_zeros(i) + 1 elements of the drm (either drm_dir, drm_sct or
+drm_sum).</p>
+<p>The last column should exhaust the elements of the compressed drm.</p>
+<p>Created 2012-10-16 by Tom Loredo</p>
+<dl class="class">
+<dt id="batse5bp.drm.DRM_DISCSC">
+<em class="property">class </em><tt class="descclassname">batse5bp.drm.</tt><tt class="descname">DRM_DISCSC</tt><big>(</big><em>row_data</em>, <em>n_ch</em>, <em>n_E</em><big>)</big><a class="reference internal" href="_modules/batse5bp/drm.html#DRM_DISCSC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.drm.DRM_DISCSC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide access to the detector response matrix (DRM) for a single BATSE
+detector&#8217;s discriminator science (DISCSC) data.</p>
+<p>The DRM units according to the FITS header is area in cm^2.</p>
+<dl class="attribute">
+<dt id="batse5bp.drm.DRM_DISCSC.fields">
+<tt class="descname">fields</tt><em class="property"> = {0: ('DET_NUM', 'the active detector for one row'), 1: ('MAT_TYPE', '0=Direct,1=Scattered, 2= Both, 3=Summed'), 2: ('TIME', 'time drm is calculated for'), 3: ('NUMEBINS', 'number of rows in PHT_EDGE (N_E_BINS+1)'), 4: ('NUMCHAN', 'number of columns in E_EDGES (N_E_CHAN+1)'), 5: ('NUMZERO', 'number of of zeroes top of each column'), 6: ('DIRDRM', 'number of rows in the DIR drm'), 7: ('SCTDRM', 'number of rows in the  SCT drm'), 8: ('SUMDRM', 'number of rows in the  SUM drm'), 9: ('PHT_EDGE', 'input bin energy edges'), 10: ('E_EDGES', 'channel energy edges'), 11: ('N_ZEROS', 'list of how many 0 elements in each column'), 12: ('DRM_DIR', 'detector response matrix'), 13: ('DRM_SCT', 'detector response matrix'), 14: ('DRM_SUM', 'detector response matrix'), 15: ('CAL_NAME', 'Name of energy calibration method')}</em><a class="headerlink" href="#batse5bp.drm.DRM_DISCSC.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="batse5bp.drm.DRMs_DISCSC">
+<em class="property">class </em><tt class="descclassname">batse5bp.drm.</tt><tt class="descname">DRMs_DISCSC</tt><big>(</big><em>grb</em><big>)</big><a class="reference internal" href="_modules/batse5bp/drm.html#DRMs_DISCSC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.drm.DRMs_DISCSC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide access to detector response matrix (DRM) data from a BATSE DISCSC DRM
+FITS file for all triggered detectors associated with a BATSE trigger; also
+calculate the summed response.</p>
+<dl class="method">
+<dt id="batse5bp.drm.DRMs_DISCSC.load_from_fits">
+<tt class="descname">load_from_fits</tt><big>(</big><em>fits_path</em>, <em>drm_path</em>, <em>meta_path</em><big>)</big><a class="reference internal" href="_modules/batse5bp/drm.html#DRMs_DISCSC.load_from_fits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.drm.DRMs_DISCSC.load_from_fits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read DRM data from a FITS file.  The path <cite>fname</cite> may be to a gzipped
+version.  Archive the data at the DRM file paths.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="batse5bp.drm.DRMs_DISCSC.meta_attrs">
+<tt class="descname">meta_attrs</tt><em class="property"> = ['burst_id', 'file_id', 'n_ch', 'n_E', 'alpha', 'n_det']</em><a class="headerlink" href="#batse5bp.drm.DRMs_DISCSC.meta_attrs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-batse5bp.grb">
+<span id="grb-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">grb</span></tt> Module<a class="headerlink" href="#module-batse5bp.grb" title="Permalink to this headline">¶</a></h2>
+<p>Define a GRB object holding BATSE data associated with a single GRB trigger,
+and a GRBCollection to hold GRB instances for many GRBs.</p>
+<p>Created 2012-05-06 by Tom Loredo
+(adapted from an earlier version for the 4B catalog)</p>
+<dl class="class">
+<dt id="batse5bp.grb.GRB">
+<em class="property">class </em><tt class="descclassname">batse5bp.grb.</tt><tt class="descname">GRB</tt><big>(</big><em>basic_record</em><big>)</big><a class="reference internal" href="_modules/batse5bp/grb.html#GRB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.grb.GRB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Provide access to BATSE data for a single GRB, both through persistant
+local storage and via access to the CGRO SSC data archive.</p>
+<dl class="method">
+<dt id="batse5bp.grb.GRB.cached_path">
+<tt class="descname">cached_path</tt><big>(</big><em>fname</em><big>)</big><a class="reference internal" href="_modules/batse5bp/grb.html#GRB.cached_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.grb.GRB.cached_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the path to a persistant local copy of a remote file.</p>
+<p>Point to a local copy of the resource if present; otherwise, fetch it
+remotely and save a copy locally, then return the local path.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="batse5bp.grb.GRB.clear_cached">
+<tt class="descname">clear_cached</tt><big>(</big><em>fname</em><big>)</big><a class="reference internal" href="_modules/batse5bp/grb.html#GRB.clear_cached"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.grb.GRB.clear_cached" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="batse5bp.grb.GRB.duration_attributes">
+<tt class="descname">duration_attributes</tt><em class="property"> = ['T50', 'T50_err', 'T50_start', 'T90', 'T90_err', 'T90_start']</em><a class="headerlink" href="#batse5bp.grb.GRB.duration_attributes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="batse5bp.grb.GRB.file_check">
+<tt class="descname">file_check</tt><big>(</big><em>fname</em><big>)</big><a class="reference internal" href="_modules/batse5bp/grb.html#GRB.file_check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.grb.GRB.file_check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check to see if the named file exists in this bursts data directory.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="batse5bp.grb.GRB.flux_attributes">
+<tt class="descname">flux_attributes</tt><em class="property"> = ['F1', 'F1_err', 'F2', 'F2_err', 'F3', 'F3_err', 'F4', 'F4_err', 'F64ms', 'F64ms_err', 't64ms', 'F256ms', 'F256ms_err', 't256ms', 'F1024ms', 'F1024ms_err', 't1024ms']</em><a class="headerlink" href="#batse5bp.grb.GRB.flux_attributes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="batse5bp.grb.GRB.load_ascii64">
+<tt class="descname">load_ascii64</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/batse5bp/grb.html#GRB.load_ascii64"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.grb.GRB.load_ascii64" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load 64 ms count data from COSSC ASCII files.</p>
+<p>These files compile DISCLA, PREB, and DISCSC data over an interval
+determined by examination of trigger and pre-trigger data by the
+BATSE team.</p>
+<p>NOTE:  The DISCLA data is in 1024 ms bins; the counts are divided by
+16 to distribute across the tabulated 64 ms bins.  The DISCLA bins
+can overlap with the 1st PREB bin, in which case the PREB overlap
+is subtracted and the remaining counts divided among earlier bins.</p>
+<p>For full documentation, see:</p>
+<p><a class="reference external" href="ftp://legacy.gsfc.nasa.gov/compton/data/batse/ascii_data/64ms/README">ftp://legacy.gsfc.nasa.gov/compton/data/batse/ascii_data/64ms/README</a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="batse5bp.grb.GRB.load_discsc_drms">
+<tt class="descname">load_discsc_drms</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/batse5bp/grb.html#GRB.load_discsc_drms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.grb.GRB.load_discsc_drms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load DISCSC DRM data for the triggered detectors.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="batse5bp.grb.GRB.load_pickle">
+<tt class="descname">load_pickle</tt><big>(</big><em>fname</em><big>)</big><a class="reference internal" href="_modules/batse5bp/grb.html#GRB.load_pickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.grb.GRB.load_pickle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrive an object associated with this GRB from a pickle in the
+database.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="batse5bp.grb.GRB.open_cached">
+<tt class="descname">open_cached</tt><big>(</big><em>fname</em><big>)</big><a class="reference internal" href="_modules/batse5bp/grb.html#GRB.open_cached"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.grb.GRB.open_cached" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="batse5bp.grb.GRB.raw_cached_path">
+<tt class="descname">raw_cached_path</tt><big>(</big><em>fname</em><big>)</big><a class="reference internal" href="_modules/batse5bp/grb.html#GRB.raw_cached_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.grb.GRB.raw_cached_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the path to a local copy of a remote file; it is stored in the
+raw_cache directory for temporary use.</p>
+<p>Point to an existing local copy of the resource if present; otherwise,
+fetch it remotely and save a copy locally, then return the local path.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="batse5bp.grb.GRB.save_pickle">
+<tt class="descname">save_pickle</tt><big>(</big><em>obj</em>, <em>fname</em><big>)</big><a class="reference internal" href="_modules/batse5bp/grb.html#GRB.save_pickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.grb.GRB.save_pickle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save an object associated with this GRB as a pickle in the database.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="batse5bp.grb.GRB.set_bright">
+<tt class="descname">set_bright</tt><big>(</big><em>trigger</em>, <em>cols</em><big>)</big><a class="reference internal" href="_modules/batse5bp/grb.html#GRB.set_bright"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.grb.GRB.set_bright" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add peak flux &amp; fluence data from a brightness table record.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="batse5bp.grb.GRB.set_durn">
+<tt class="descname">set_durn</tt><big>(</big><em>trigger</em>, <em>cols</em><big>)</big><a class="reference internal" href="_modules/batse5bp/grb.html#GRB.set_durn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.grb.GRB.set_durn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add duration data from a duration table record.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="batse5bp.grb.GRB.set_grb_dir">
+<tt class="descname">set_grb_dir</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/batse5bp/grb.html#GRB.set_grb_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.grb.GRB.set_grb_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the path to this GRB&#8217;s local data directory, creating the directory
+and its containing group if needed.</p>
+<p>This is not done in __init__ so the group and burst directories are
+created only when detailed data are loaded for a burst.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="batse5bp.grb.GRB.show_lc">
+<tt class="descname">show_lc</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/batse5bp/grb.html#GRB.show_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.grb.GRB.show_lc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show light curve GIF files in the default image browser, merging 4ch
+and summed light curves.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="batse5bp.grb.GRBCollection">
+<em class="property">class </em><tt class="descclassname">batse5bp.grb.</tt><tt class="descname">GRBCollection</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="reference internal" href="_modules/batse5bp/grb.html#GRBCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.grb.GRBCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">collections.OrderedDict</span></tt></p>
+<p>Store GRB objects in an ordered dict accessed by BATSE trigger number
+(with the key being the integer trigger number, not a string).</p>
+<p>GRB data may also be accessed as attributes in two ways:</p>
+<blockquote>
+<div><p>.t#    where # is the trigger number; returns a GRB instance</p>
+<dl class="docutils">
+<dt>.b#    where # is YYMMDD from the traditional GRBYY... designation;</dt>
+<dd>returns a list of GRB instances</dd>
+</dl>
+</div></blockquote>
+<p>Note that multiple bursts may occur on the same day, so the .b# value is a
+list of GRBs that occurred on that day.  The 4B catalog distinguished
+such bursts with designators that add a letter suffix (B, C, D after
+the first burst), nominally ordered by intensity.  The 5Bp bursts (even
+those from 4B) are not so labeled.</p>
+<dl class="method">
+<dt id="batse5bp.grb.GRBCollection.add">
+<tt class="descname">add</tt><big>(</big><em>grb</em><big>)</big><a class="reference internal" href="_modules/batse5bp/grb.html#GRBCollection.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.grb.GRBCollection.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a GRB instance to the collection.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-batse5bp.locations">
+<span id="locations-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">locations</span></tt> Module<a class="headerlink" href="#module-batse5bp.locations" title="Permalink to this headline">¶</a></h2>
+<p>Specify locations, locally and the COSSC, for accessing GRB data.</p>
+<p>No modules are imported here; &#8216;from locations import <a href="#id2"><span class="problematic" id="id3">*</span></a>&#8216; should be safe.</p>
+<p>Created 2012-05-07 by Tom Loredo</p>
+<dl class="function">
+<dt id="batse5bp.locations.ascii64_paths">
+<tt class="descclassname">batse5bp.locations.</tt><tt class="descname">ascii64_paths</tt><big>(</big><em>tnum</em><big>)</big><a class="reference internal" href="_modules/batse5bp/locations.html#ascii64_paths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.locations.ascii64_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return components of the path to the data for trigger <cite>tnum</cite>, both at
+the COSSC FTP site and locally:  (group, fname, remote).</p>
+<p>group       name of the group directory containing the trigger directory
+fname       name of the ASCII data file, &#8220;cat64ms.&lt;tnum&gt;&#8221;
+remote      tail of the ftp path &#64; COSSC, &#8220;&lt;group&gt;/&lt;fname&gt;&#8221;</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="batse5bp.locations.trigger_paths">
+<tt class="descclassname">batse5bp.locations.</tt><tt class="descname">trigger_paths</tt><big>(</big><em>tnum</em><big>)</big><a class="reference internal" href="_modules/batse5bp/locations.html#trigger_paths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.locations.trigger_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return components of the path to the data for trigger <cite>tnum</cite>, both at
+the COSSC FTP site and locally:  (group, trigger, remote).</p>
+<p>group       name of the group directory containing the trigger directory
+trigger     name of the trigger directory, &#8220;&lt;tnum&gt;_burst&#8221;
+remote      tail of the ftp path &#64; COSSC, &#8220;&lt;group&gt;/&lt;trigger&gt;&#8221;</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-batse5bp.persistant">
+<span id="persistant-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">persistant</span></tt> Module<a class="headerlink" href="#module-batse5bp.persistant" title="Permalink to this headline">¶</a></h2>
+<p>Utility classes for simple object persistance.</p>
+<p>More sophisticated alternatives include atpy, h5py, and PyTables.  This
+simple approach is adopted for now to reduce dependencies.</p>
+<p><strong>* MODULE NOT YET USED *</strong></p>
+<p>Based on ioutils.py from the Inference package.</p>
+<p>Created 2012-10-22 by Tom Loredo</p>
+<dl class="class">
+<dt id="batse5bp.persistant.ArrayStore">
+<em class="property">class </em><tt class="descclassname">batse5bp.persistant.</tt><tt class="descname">ArrayStore</tt><big>(</big><em>fname=None</em><big>)</big><a class="reference internal" href="_modules/batse5bp/persistant.html#ArrayStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.persistant.ArrayStore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A container class that provides lazy persistance of array instance
+attributes via NumPy&#8217;s .npz archives.</p>
+<p>This is doubly lazy:  arrays are not read into the namespace until
+actually requested, and they are not saved to the archive until the
+ArrayStore is explicitly saved.</p>
+<dl class="method">
+<dt id="batse5bp.persistant.ArrayStore.contents">
+<tt class="descname">contents</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/batse5bp/persistant.html#ArrayStore.contents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.persistant.ArrayStore.contents" title="Permalink to this definition">¶</a></dt>
+<dd><p>List the names of arrays accessible by this store, including
+both previously archived arrays and newly defined arrays.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="batse5bp.persistant.ArrayStore.save">
+<tt class="descname">save</tt><big>(</big><em>fname=None</em><big>)</big><a class="reference internal" href="_modules/batse5bp/persistant.html#ArrayStore.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.persistant.ArrayStore.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save array attributes to a NumPy .npz archive.  If a name is
+provided, it is used (adding &#8216;.npz&#8217; if needed); otherwise it is
+presumed this store was created from an existing archive, and
+that archive&#8217;s name is used.</p>
+<p>In either case, any existing version is backed up before the
+new one is created, with up to two levels of backups (with &#8216;%&#8217;
+and &#8216;%%&#8217; suffixes).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="batse5bp.persistant.AttrStore">
+<em class="property">class </em><tt class="descclassname">batse5bp.persistant.</tt><tt class="descname">AttrStore</tt><big>(</big><em>fname=None</em>, <em>**kwds</em><big>)</big><a class="reference internal" href="_modules/batse5bp/persistant.html#AttrStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.persistant.AttrStore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A container class that provides lazy persistance of instance attributes
+as a Python pickle.</p>
+<p>This is doubly lazy:  attributes are not placed in the namespace until
+actually requested (but they are all read from the file), and they are not
+saved to the archive until the AttrStore is explicitly saved.</p>
+<p>If only NumPy arrays are to be stored, ArrayStore may be more efficient.</p>
+<dl class="method">
+<dt id="batse5bp.persistant.AttrStore.contents">
+<tt class="descname">contents</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/batse5bp/persistant.html#AttrStore.contents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.persistant.AttrStore.contents" title="Permalink to this definition">¶</a></dt>
+<dd><p>List the names of arrays accessible by this store, including
+both previously archived arrays and newly defined arrays.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="batse5bp.persistant.AttrStore.save">
+<tt class="descname">save</tt><big>(</big><em>fname=None</em><big>)</big><a class="reference internal" href="_modules/batse5bp/persistant.html#AttrStore.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.persistant.AttrStore.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save attributes to a high-protocal pickle.  If a name is
+provided, it is used (adding &#8216;.pkl&#8217; if needed); otherwise it is
+presumed this store was created from an existing archive, and
+that archive&#8217;s name is used.</p>
+<p>In either case, any existing version is backed up before the
+new one is created, with up to two levels of backups (with &#8216;%&#8217;
+and &#8216;%%&#8217; suffixes).</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-batse5bp.read_tte">
+<span id="read-tte-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">read_tte</span></tt> Module<a class="headerlink" href="#module-batse5bp.read_tte" title="Permalink to this headline">¶</a></h2>
+<p>A class (TTE) and support functions for reading and writing BATSE TTE data
+from tte_ibdb FITS files, loosely based on IDL code by Jay Norris.</p>
+<p>NOTE:  Jay Norris has found that a few tte_ibdb files have corrupt
+data.  There is no simple way to identify these automatically, but
+they are obvious when one plots a histogram of the TTE data.  The
+problem appears to be due to misidentified triggered detectors.
+In addition, Adam Kruger has found more complicated corruption in
+a few files; this is reported in ApJ v. 576, 532 (2002).</p>
+<p>FTP users take note!  If you are downloading a FITS file by ftp from an
+archive, make sure you download it in BINARY format.  Some ftp programs
+(e.g. &#8216;Fetch&#8217; on the Mac) work by default in an &#8216;automatic&#8217; mode that
+attempts to distinguish text files from binary files automatically.  FITS
+files mix ASCII and binary data and can confuse these programs.  An
+improperly downloaded file will appear to read correctly, but the data
+will be corrupted.</p>
+<p>Created:  25 May 2000 by Tom Loredo
+Modified: 01 Jun 2000 TL</p>
+<blockquote>
+<div>14 Dec 2006 TL - Convert to PyFITS
+2012-05-09 TJL - Adapt for batse5bp</div></blockquote>
+<dl class="class">
+<dt id="batse5bp.read_tte.TTE">
+<em class="property">class </em><tt class="descclassname">batse5bp.read_tte.</tt><tt class="descname">TTE</tt><big>(</big><em>fname</em><big>)</big><a class="reference internal" href="_modules/batse5bp/read_tte.html#TTE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.read_tte.TTE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Instances of this class read and store TTE IDBD data from a BATSE
+tte_ibdb FITS file.  TTE.primary stores the primary header data.  Each
+IBDB field value that is constant (from packet to packet) is stored as
+a TTE attribute (e.g. TTE.BSTNO).  Data from &#8216;good&#8217; events that were
+detected in a single energy channel in one of the 4 maximum-count-rate
+detectors are stored as follows:</p>
+<blockquote>
+<div>TTE.nevents # of events (int)
+TTE.time    integer # of us for each event (list of int)
+TTE.det     detector # for each event (list of int)
+TTE.chan    channel # for each event (list of int)</div></blockquote>
+<p>Other events are either &#8216;bad&#8217; events (multiple channels hit in 2us) or
+&#8216;background&#8217; events (detected with detectors other than the &#8216;good&#8217;
+ones).  These are collected in lists of tuples:</p>
+<blockquote>
+<div>TTE.background  (t, det, ch) for each bg event
+TTE.bad     (t, det, ch) for each bad event</div></blockquote>
+<p>In these tuples, ch is a tuple of the channels for that event.</p>
+<p>The initializer does a lot of internal consistency checking of the FITS
+file contents as it reads and parses the data; it takes ~10 s per file on
+a 2 GHz processor.  Store the instance for fast repeated use of the data.</p>
+<p>FWIW: I don&#8217;t think multi-channel &#8216;bad&#8217; events should be ignored, unless
+this is a discriminator error!</p>
+<dl class="attribute">
+<dt id="batse5bp.read_tte.TTE.const_fields">
+<tt class="descname">const_fields</tt><em class="property"> = ['SCHED_PTR', 'LOOP_CTR', 'ITER_NUM', 'BSTST', 'BSTLT', 'BSTNO', 'DSELB', 'NSCALE', 'BERFGS', 'TTRIG', 'SOLFLG', 'TIME', 'DSELH', 'SPARE']</em><a class="headerlink" href="#batse5bp.read_tte.TTE.const_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="batse5bp.read_tte.TTE.const_sizes">
+<tt class="descname">const_sizes</tt><em class="property"> = [1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 1, 3, 4, 1]</em><a class="headerlink" href="#batse5bp.read_tte.TTE.const_sizes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="batse5bp.read_tte.TTE.nconst">
+<tt class="descname">nconst</tt><em class="property"> = 14</em><a class="headerlink" href="#batse5bp.read_tte.TTE.nconst" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="batse5bp.read_tte.TTE.write_ASCII">
+<tt class="descname">write_ASCII</tt><big>(</big><em>fname=None</em><big>)</big><a class="reference internal" href="_modules/batse5bp/read_tte.html#TTE.write_ASCII"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.read_tte.TTE.write_ASCII" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the good event data in the ASCII TTE format adopted by
+the COSSC.  This method opens the indicated file for writing,
+and closes it on completion.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="batse5bp.read_tte.byte2bits">
+<tt class="descclassname">batse5bp.read_tte.</tt><tt class="descname">byte2bits</tt><big>(</big><em>d</em><big>)</big><a class="reference internal" href="_modules/batse5bp/read_tte.html#byte2bits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.read_tte.byte2bits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a 1-byte datum into a list of 8 bits ordered from
+lsb to msb.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="batse5bp.read_tte.byte2bits_">
+<tt class="descclassname">batse5bp.read_tte.</tt><tt class="descname">byte2bits_</tt><big>(</big><em>d</em><big>)</big><a class="reference internal" href="_modules/batse5bp/read_tte.html#byte2bits_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.read_tte.byte2bits_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a 1-byte datum into a list of 8 bits ordered from
+lsb to msb.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="batse5bp.read_tte.bytes2bits">
+<tt class="descclassname">batse5bp.read_tte.</tt><tt class="descname">bytes2bits</tt><big>(</big><em>d</em><big>)</big><a class="reference internal" href="_modules/batse5bp/read_tte.html#bytes2bits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.read_tte.bytes2bits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a 2-byte datum into a list of 16 bits ordered from
+lsb to msb.  Uses logical operations.  This approach is transparent
+to whether the datum has been read from a signed or unsigned
+representation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="batse5bp.read_tte.bytes2bits_">
+<tt class="descclassname">batse5bp.read_tte.</tt><tt class="descname">bytes2bits_</tt><big>(</big><em>d</em><big>)</big><a class="reference internal" href="_modules/batse5bp/read_tte.html#bytes2bits_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.read_tte.bytes2bits_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a 2-byte datum into a list of 16 bits ordered from
+lsb to msb.  Uses logical operations.  This approach is transparent
+to whether the datum has been read from a signed or unsigned
+representation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="batse5bp.read_tte.unpack_TTESD">
+<tt class="descclassname">batse5bp.read_tte.</tt><tt class="descname">unpack_TTESD</tt><big>(</big><em>d</em><big>)</big><a class="reference internal" href="_modules/batse5bp/read_tte.html#unpack_TTESD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.read_tte.unpack_TTESD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unpack a TTE SCIENCE_DATA datum from its 2 byte packed format
+into (detector #, channel #&#8217;s, # of 2us clock cycles), returned
+as a tuple.  Since mutiple channels can be triggered in a 2us
+interval, the channel value is itself a tuple.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-batse5bp.utils">
+<span id="utils-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">utils</span></tt> Module<a class="headerlink" href="#module-batse5bp.utils" title="Permalink to this headline">¶</a></h2>
+<p>Utilities for the batse5bp package.</p>
+<p>Created 2012-05-08 by Tom Loredo</p>
+<dl class="function">
+<dt id="batse5bp.utils.retrieve_gzip">
+<tt class="descclassname">batse5bp.utils.</tt><tt class="descname">retrieve_gzip</tt><big>(</big><em>url</em>, <em>cache</em><big>)</big><a class="reference internal" href="_modules/batse5bp/utils.html#retrieve_gzip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.utils.retrieve_gzip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an open file accessing data from the file at the http URL <cite>url</cite>
+that may be persistantly stored as a gzipped file named from the URL tail
+and stored in the directory <cite>cache</cite>.</p>
+<p>If the cached file exists, simply return an opened file object accessing
+it.</p>
+<p>If it does not exist, retrieve the file using the URL, cache a gzipped
+version, and return an opened file object accessing it.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="batse5bp.utils.write_seq">
+<tt class="descclassname">batse5bp.utils.</tt><tt class="descname">write_seq</tt><big>(</big><em>fob</em>, <em>seq</em>, <em>format</em>, <em>per_line</em>, <em>label=None</em><big>)</big><a class="reference internal" href="_modules/batse5bp/utils.html#write_seq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#batse5bp.utils.write_seq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the contents of the sequence object seq to the open file
+object fob, writing each element according to the passed format,
+with per_line elements per line.  label gives an optional label to
+start each line.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="modules.html" title="batse5bp"
+             >previous</a> |</li>
+        <li><a href="index.html">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+
+          <li><a href="modules.html" >batse5bp</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Tom Loredo.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

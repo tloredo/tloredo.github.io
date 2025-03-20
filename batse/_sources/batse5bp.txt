@@ -1,0 +1,83 @@
+batse5bp Package
+================
+
+:mod:`batse5bp` Package
+-----------------------
+
+.. automodule:: batse5bp.__init__
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`ascii64` Module
+---------------------
+
+.. automodule:: batse5bp.ascii64
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`catalog` Module
+---------------------
+
+.. automodule:: batse5bp.catalog
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`docn` Module
+------------------
+
+.. automodule:: batse5bp.docn
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`drm` Module
+-----------------
+
+.. automodule:: batse5bp.drm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`grb` Module
+-----------------
+
+.. automodule:: batse5bp.grb
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`locations` Module
+-----------------------
+
+.. automodule:: batse5bp.locations
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`persistant` Module
+------------------------
+
+.. automodule:: batse5bp.persistant
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`read_tte` Module
+----------------------
+
+.. automodule:: batse5bp.read_tte
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`utils` Module
+-------------------
+
+.. automodule:: batse5bp.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+

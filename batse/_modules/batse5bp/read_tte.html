@@ -1,0 +1,452 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>batse5bp.read_tte &mdash; batse5bp 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="batse5bp 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+
+<div class="banner">
+<a href="../../index.html"><img src="../../_static/batse.gif" border="0" alt="BATSE on CGRO"/></a>
+batse5bp
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for batse5bp.read_tte</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A class (TTE) and support functions for reading and writing BATSE TTE data</span>
+<span class="sd">from tte_ibdb FITS files, loosely based on IDL code by Jay Norris.</span>
+
+<span class="sd">NOTE:  Jay Norris has found that a few tte_ibdb files have corrupt</span>
+<span class="sd">data.  There is no simple way to identify these automatically, but</span>
+<span class="sd">they are obvious when one plots a histogram of the TTE data.  The</span>
+<span class="sd">problem appears to be due to misidentified triggered detectors.</span>
+<span class="sd">In addition, Adam Kruger has found more complicated corruption in</span>
+<span class="sd">a few files; this is reported in ApJ v. 576, 532 (2002).</span>
+
+<span class="sd">FTP users take note!  If you are downloading a FITS file by ftp from an</span>
+<span class="sd">archive, make sure you download it in BINARY format.  Some ftp programs</span>
+<span class="sd">(e.g. &#39;Fetch&#39; on the Mac) work by default in an &#39;automatic&#39; mode that</span>
+<span class="sd">attempts to distinguish text files from binary files automatically.  FITS</span>
+<span class="sd">files mix ASCII and binary data and can confuse these programs.  An</span>
+<span class="sd">improperly downloaded file will appear to read correctly, but the data</span>
+<span class="sd">will be corrupted.</span>
+
+<span class="sd">Created:  25 May 2000 by Tom Loredo</span>
+<span class="sd">Modified: 01 Jun 2000 TL</span>
+<span class="sd">          14 Dec 2006 TL - Convert to PyFITS</span>
+<span class="sd">          2012-05-09 TJL - Adapt for batse5bp</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pyfits</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">not_equal</span><span class="p">,</span> <span class="n">array</span>
+
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">write_seq</span>
+
+
+<span class="c"># Start with utilities for unpacking packet data into standard types.</span>
+
+<span class="c"># A collection of 1-bit masks for the 16 least significant bits in a Python int.</span>
+<span class="n">masks</span> <span class="o">=</span> <span class="p">[</span><span class="mh">0x8000</span><span class="p">,</span> <span class="mh">0x4000</span><span class="p">,</span> <span class="mh">0x2000</span><span class="p">,</span> <span class="mh">0x1000</span><span class="p">,</span> <span class="mh">0x0800</span><span class="p">,</span> <span class="mh">0x0400</span><span class="p">,</span> <span class="mh">0x0200</span><span class="p">,</span> <span class="mh">0x0100</span><span class="p">,</span>
+         <span class="mh">0x0080</span><span class="p">,</span> <span class="mh">0x0040</span><span class="p">,</span> <span class="mh">0x0020</span><span class="p">,</span> <span class="mh">0x0010</span><span class="p">,</span> <span class="mh">0x0008</span><span class="p">,</span> <span class="mh">0x0004</span><span class="p">,</span> <span class="mh">0x0002</span><span class="p">,</span> <span class="mh">0x0001</span><span class="p">]</span>
+<span class="n">masks</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span> <span class="c"># Reverse them so they are ordered lsb to msb.</span>
+
+<span class="c"># Pre-list comprehension versions (&quot;_&quot; suffix); not currently used:</span>
+<div class="viewcode-block" id="bytes2bits_"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.read_tte.bytes2bits_">[docs]</a><span class="k">def</span> <span class="nf">bytes2bits_</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert a 2-byte datum into a list of 16 bits ordered from</span>
+<span class="sd">    lsb to msb.  Uses logical operations.  This approach is transparent</span>
+<span class="sd">    to whether the datum has been read from a signed or unsigned</span>
+<span class="sd">    representation.&quot;&quot;&quot;</span>
+
+    <span class="n">bits</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">masks</span><span class="p">:</span>
+        <span class="n">bits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">d</span> <span class="o">&amp;</span> <span class="n">mask</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">bits</span>
+</div>
+<div class="viewcode-block" id="byte2bits_"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.read_tte.byte2bits_">[docs]</a><span class="k">def</span> <span class="nf">byte2bits_</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert a 1-byte datum into a list of 8 bits ordered from</span>
+<span class="sd">    lsb to msb.&quot;&quot;&quot;</span>
+
+    <span class="n">bits</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">masks</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">8</span><span class="p">]:</span>
+        <span class="n">bits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">d</span> <span class="o">&amp;</span> <span class="n">mask</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">bits</span>
+
+</div>
+<div class="viewcode-block" id="bytes2bits"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.read_tte.bytes2bits">[docs]</a><span class="k">def</span> <span class="nf">bytes2bits</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert a 2-byte datum into a list of 16 bits ordered from</span>
+<span class="sd">    lsb to msb.  Uses logical operations.  This approach is transparent</span>
+<span class="sd">    to whether the datum has been read from a signed or unsigned</span>
+<span class="sd">    representation.&quot;&quot;&quot;</span>
+
+    <span class="c"># Note that the comprehension returns a list of bools; use array</span>
+    <span class="c"># to cast it to ints.  The bools work without the cast since Pyton</span>
+    <span class="c"># treats True == 1, but just to play it safe....</span>
+    <span class="k">return</span> <span class="n">array</span><span class="p">([(</span><span class="n">d</span> <span class="o">&amp;</span> <span class="n">mask</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">masks</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="byte2bits"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.read_tte.byte2bits">[docs]</a><span class="k">def</span> <span class="nf">byte2bits</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert a 1-byte datum into a list of 8 bits ordered from</span>
+<span class="sd">    lsb to msb.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">array</span><span class="p">([(</span><span class="n">d</span> <span class="o">&amp;</span> <span class="n">mask</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">masks</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">8</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="unpack_TTESD"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.read_tte.unpack_TTESD">[docs]</a><span class="k">def</span> <span class="nf">unpack_TTESD</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Unpack a TTE SCIENCE_DATA datum from its 2 byte packed format</span>
+<span class="sd">    into (detector #, channel #&#39;s, # of 2us clock cycles), returned</span>
+<span class="sd">    as a tuple.  Since mutiple channels can be triggered in a 2us</span>
+<span class="sd">    interval, the channel value is itself a tuple.&quot;&quot;&quot;</span>
+
+    <span class="c"># Get the bits from the 2-byte datum.</span>
+    <span class="n">bits</span> <span class="o">=</span> <span class="n">bytes2bits</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+    <span class="c"># The time is in the 9 lsb&#39;s.</span>
+    <span class="n">fac</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">fac</span><span class="o">*</span><span class="n">bits</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">fac</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">fac</span>
+
+    <span class="c"># The next 4 bits give the energy channel, with each bit assigned</span>
+    <span class="c"># to a channel.  Compile a list of channels triggered.</span>
+    <span class="c"># *** Some packets don&#39;t have a channel bit set; what does this mean?</span>
+    <span class="n">ch</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">bits</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">8</span><span class="p">]:</span> <span class="n">ch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="c"># The last 3 bits give the detector number; this is 0-based to match</span>
+    <span class="c"># DSELB/DSELH.</span>
+    <span class="n">fac</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">det</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">det</span> <span class="o">=</span> <span class="n">det</span> <span class="o">+</span> <span class="n">fac</span><span class="o">*</span><span class="n">bits</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">13</span><span class="p">]</span>
+        <span class="n">fac</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">fac</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">det</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ch</span><span class="p">),</span> <span class="n">t</span><span class="p">)</span>
+
+
+<span class="c"># Some test data from trigger 830.</span></div>
+<span class="k">if</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">&#39;Bits are LSB first...&#39;</span>
+    <span class="k">print</span> <span class="s">&#39;127 in bits:&#39;</span><span class="p">,</span> <span class="n">bytes2bits</span><span class="p">(</span><span class="mi">127</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s">&#39;-1 in bits: &#39;</span><span class="p">,</span> <span class="n">bytes2bits</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s">&#39;2**16-1 in bits: &#39;</span><span class="p">,</span> <span class="n">bytes2bits</span><span class="p">(</span><span class="mi">65535</span><span class="p">)</span>
+    <span class="n">sd830</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">601</span><span class="p">,</span> <span class="mi">18532</span><span class="p">,</span> <span class="o">-</span><span class="mi">7578</span><span class="p">,</span> <span class="o">-</span><span class="mi">15254</span><span class="p">,</span> <span class="o">-</span><span class="mi">31616</span><span class="p">,</span> <span class="mi">2242</span><span class="p">,</span> <span class="mi">17125</span><span class="p">,</span> <span class="mi">757</span><span class="p">,</span> <span class="mi">1271</span><span class="p">,</span> <span class="o">-</span><span class="mi">15600</span><span class="p">,</span> <span class="mi">8976</span><span class="p">,</span>
+            <span class="mi">9490</span><span class="p">,</span> <span class="o">-</span><span class="mi">31964</span><span class="p">,</span> <span class="mi">17708</span><span class="p">,</span> <span class="o">-</span><span class="mi">31933</span><span class="p">,</span> <span class="mi">20804</span><span class="p">,</span> <span class="o">-</span><span class="mi">3731</span><span class="p">,</span> <span class="o">-</span><span class="mi">24177</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">22127</span><span class="p">,</span> <span class="mi">9115</span><span class="p">,</span> <span class="mi">18863</span><span class="p">,</span> <span class="o">-</span><span class="mi">11855</span><span class="p">,</span> <span class="o">-</span><span class="mi">3660</span><span class="p">,</span> <span class="mi">17336</span><span class="p">,</span> <span class="o">-</span><span class="mi">11844</span><span class="p">,</span>
+         <span class="mi">25537</span><span class="p">,</span> <span class="mi">9689</span><span class="p">,</span> <span class="o">-</span><span class="mi">7192</span><span class="p">,</span> <span class="o">-</span><span class="mi">22037</span><span class="p">,</span> <span class="o">-</span><span class="mi">7186</span><span class="p">,</span> <span class="o">-</span><span class="mi">23055</span><span class="p">,</span> <span class="mi">26107</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">24575</span><span class="p">,</span> <span class="mi">18434</span><span class="p">,</span> <span class="mi">9226</span><span class="p">,</span> <span class="o">-</span><span class="mi">7142</span><span class="p">,</span> <span class="o">-</span><span class="mi">24019</span><span class="p">]</span>
+    <span class="k">print</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">sign, detector, (channels), tics, usec&#39;</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">sd830</span><span class="p">:</span>
+        <span class="n">det</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">t</span> <span class="o">=</span> <span class="n">unpack_TTESD</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;-&#39;</span>
+        <span class="k">if</span> <span class="n">d</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">:</span> <span class="n">s</span><span class="o">=</span><span class="s">&#39;+&#39;</span>
+        <span class="k">print</span> <span class="n">s</span><span class="p">,</span> <span class="n">det</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">t</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">t</span><span class="o">+</span><span class="mi">1024</span>
+
+
+<div class="viewcode-block" id="TTE"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.read_tte.TTE">[docs]</a><span class="k">class</span> <span class="nc">TTE</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Instances of this class read and store TTE IDBD data from a BATSE</span>
+<span class="sd">    tte_ibdb FITS file.  TTE.primary stores the primary header data.  Each</span>
+<span class="sd">    IBDB field value that is constant (from packet to packet) is stored as</span>
+<span class="sd">    a TTE attribute (e.g. TTE.BSTNO).  Data from &#39;good&#39; events that were</span>
+<span class="sd">    detected in a single energy channel in one of the 4 maximum-count-rate</span>
+<span class="sd">    detectors are stored as follows:</span>
+
+<span class="sd">        TTE.nevents # of events (int)</span>
+<span class="sd">        TTE.time    integer # of us for each event (list of int)</span>
+<span class="sd">        TTE.det     detector # for each event (list of int)</span>
+<span class="sd">        TTE.chan    channel # for each event (list of int)</span>
+
+<span class="sd">    Other events are either &#39;bad&#39; events (multiple channels hit in 2us) or</span>
+<span class="sd">    &#39;background&#39; events (detected with detectors other than the &#39;good&#39;</span>
+<span class="sd">    ones).  These are collected in lists of tuples:</span>
+
+<span class="sd">        TTE.background  (t, det, ch) for each bg event</span>
+<span class="sd">        TTE.bad     (t, det, ch) for each bad event</span>
+
+<span class="sd">    In these tuples, ch is a tuple of the channels for that event.</span>
+
+<span class="sd">    The initializer does a lot of internal consistency checking of the FITS</span>
+<span class="sd">    file contents as it reads and parses the data; it takes ~10 s per file on</span>
+<span class="sd">    a 2 GHz processor.  Store the instance for fast repeated use of the data.</span>
+
+<span class="sd">    FWIW: I don&#39;t think multi-channel &#39;bad&#39; events should be ignored, unless</span>
+<span class="sd">    this is a discriminator error!</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># TODO:  Reconsider &#39;bad&#39; event handling?</span>
+    <span class="c"># TODO:  Can the rollover check be wrong (e.g., for low rates)?</span>
+
+    <span class="c"># These 14 fields should be the same for every packet (row) for a given</span>
+    <span class="c"># burst.  They will be made attributes of the TTE instance, with access</span>
+    <span class="c"># returning the (constant) field value associated with the burst.</span>
+    <span class="n">nconst</span> <span class="o">=</span> <span class="mi">14</span>
+    <span class="n">const_fields</span> <span class="o">=</span> <span class="p">[</span> <span class="s">&#39;SCHED_PTR&#39;</span><span class="p">,</span> <span class="s">&#39;LOOP_CTR&#39;</span><span class="p">,</span> <span class="s">&#39;ITER_NUM&#39;</span><span class="p">,</span> <span class="s">&#39;BSTST&#39;</span><span class="p">,</span> <span class="s">&#39;BSTLT&#39;</span><span class="p">,</span>
+            <span class="s">&#39;BSTNO&#39;</span><span class="p">,</span> <span class="s">&#39;DSELB&#39;</span><span class="p">,</span> <span class="s">&#39;NSCALE&#39;</span><span class="p">,</span> <span class="s">&#39;BERFGS&#39;</span><span class="p">,</span> <span class="s">&#39;TTRIG&#39;</span><span class="p">,</span> <span class="s">&#39;SOLFLG&#39;</span><span class="p">,</span>
+            <span class="s">&#39;TIME&#39;</span><span class="p">,</span> <span class="s">&#39;DSELH&#39;</span><span class="p">,</span> <span class="s">&#39;SPARE&#39;</span> <span class="p">]</span>
+    <span class="n">const_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Open the indicated TTE FITS file, read in the primary header</span>
+<span class="sd">        and the IBDB TTE binary extension, and close the file.  Convert</span>
+<span class="sd">        the binary data into a more usable form.&quot;&quot;&quot;</span>
+
+        <span class="c"># Open the file and read and save the primary header.</span>
+        <span class="n">hdus</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">primary</span> <span class="o">=</span> <span class="n">hdus</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c"># Read the IBDB binary extension, close the file, and gather</span>
+        <span class="c"># some basic info (field names and sizes).</span>
+        <span class="n">exten</span> <span class="o">=</span> <span class="n">hdus</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">exten</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">hdus</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">exten</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s">&#39;BURST_AUX_IBDB&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Wrong ext&#39;n name:  File is not a TTE IBDB FITS file!&quot;</span><span class="p">)</span>
+        <span class="n">tot_fields</span> <span class="o">=</span> <span class="n">exten</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;TFIELDS&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">tot_fields</span> <span class="o">!=</span> <span class="mi">19</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Not 19 fields; not valid IBDB file!&#39;</span><span class="p">)</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nfields</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c"># Read in the 19 field names and sizes.</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tot_fields</span><span class="p">):</span>
+            <span class="n">field_name</span> <span class="o">=</span> <span class="n">exten</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;TTYPE</span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="s">&#39;TDIM</span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">exten</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
+                <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">exten</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">size</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+            <span class="n">sizes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">field_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">TTE</span><span class="o">.</span><span class="n">const_fields</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">nfields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nfields</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">TTE</span><span class="o">.</span><span class="n">const_sizes</span><span class="p">[</span><span class="n">TTE</span><span class="o">.</span><span class="n">const_fields</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">field_name</span><span class="p">)]</span> <span class="o">!=</span> <span class="n">size</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Field size does not match expectations!&#39;</span><span class="p">)</span>
+
+        <span class="c"># Make a list of rows, each row being a dictionary of the non-constant</span>
+        <span class="c"># IBDB data from the corresponding row in the BURST_AUX_IBDB binary</span>
+        <span class="c"># extension. Along the way, gather the values for the special fields</span>
+        <span class="c"># holding values that should be constant for a given burst.  Store</span>
+        <span class="c"># those constant values as attributes of this TTE instance.  Verify</span>
+        <span class="c"># they are indeed equal for every packet (row/record).</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nrows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chan</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">det</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nevents</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bad</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">n512</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c"># keeps track of event time rollovers beyond the 10th bit</span>
+        <span class="n">prev</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nrows</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">32</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">print</span> <span class="s">&#39;Processing row &#39;</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;...&#39;</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tot_fields</span><span class="p">):</span>
+                <span class="n">field_name</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+                <span class="n">datum</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">field_name</span><span class="p">]</span>
+
+                <span class="c"># Handle constant packet info specially: save it the 1st time;</span>
+                <span class="c"># verify it the rest.</span>
+                <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">TTE</span><span class="o">.</span><span class="n">const_fields</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">datum</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>  <span class="c"># for non-array values</span>
+                            <span class="k">if</span> <span class="n">datum</span> <span class="o">!=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">):</span>
+                                <span class="n">err</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">field_name</span><span class="p">),</span> <span class="n">datum</span><span class="p">)</span>
+                                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Packet inconsistency for &#39;</span><span class="o">+</span><span class="n">err</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>  <span class="c"># compare arrays element-wise</span>
+                            <span class="k">if</span> <span class="n">not_equal</span><span class="p">(</span><span class="n">datum</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+                                <span class="n">err</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">field_name</span><span class="p">),</span> <span class="n">datum</span><span class="p">)</span>
+                                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Packet inconsistency for &#39;</span><span class="o">+</span><span class="n">err</span><span class="p">)</span>
+
+                <span class="c"># Save SCIENCE_DATA for special processing.</span>
+                <span class="k">elif</span> <span class="n">field_name</span> <span class="o">==</span> <span class="s">&#39;SCIENCE_DATA&#39;</span><span class="p">:</span>
+                    <span class="n">event_list</span> <span class="o">=</span> <span class="n">datum</span>
+
+                <span class="c"># Otherwise, this is a non-constant field; store its value.</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">row</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">datum</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+            <span class="c"># First time thru, parse the DSELB byte into a list of</span>
+            <span class="c"># triggered detectors.</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">bits</span> <span class="o">=</span> <span class="n">byte2bits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DSELB</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tdlist</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">bits</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tdlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+
+            <span class="c"># Update event data from the SCIENCE_DATA.</span>
+            <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">event_list</span><span class="p">:</span>
+                <span class="n">det</span><span class="p">,</span> <span class="n">ch</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">unpack_TTESD</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                <span class="c"># Watch for 9-bit rollover.</span>
+                <span class="k">if</span> <span class="n">prev</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">prev</span><span class="p">:</span> <span class="n">n512</span> <span class="o">=</span> <span class="n">n512</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">prev</span> <span class="o">=</span> <span class="n">t</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="n">n512</span><span class="o">*</span><span class="mi">512</span><span class="p">)</span>  <span class="c"># presumes a 2us clock</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">det</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tdlist</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">background</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">det</span><span class="p">,</span> <span class="n">ch</span><span class="p">)</span> <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">chan</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ch</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">det</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">det</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">nevents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nevents</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">bad</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">det</span><span class="p">,</span> <span class="n">ch</span><span class="p">)</span> <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the constant fields, and a description of the data.&quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">TTE</span><span class="o">.</span><span class="n">const_fields</span><span class="p">:</span>
+            <span class="n">ss</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%-8s</span><span class="s">= </span><span class="si">%s</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">field_name</span><span class="p">))</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">s</span> <span class="o">+</span> <span class="n">ss</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span> <span class="o">+</span> <span class="s">&#39;Triggered detectors: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tdlist</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span> <span class="o">+</span> <span class="s">&#39;Row data includes: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+        <span class="n">ss</span> <span class="o">=</span> <span class="s">&#39;Events (good, bg, bad): </span><span class="si">%d</span><span class="s"> </span><span class="si">%d</span><span class="s"> </span><span class="si">%d</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> \
+              <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nevents</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">background</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bad</span><span class="p">))</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span> <span class="o">+</span> <span class="n">ss</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+<div class="viewcode-block" id="TTE.write_ASCII"><a class="viewcode-back" href="../../batse5bp.html#batse5bp.read_tte.TTE.write_ASCII">[docs]</a>    <span class="k">def</span> <span class="nf">write_ASCII</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Write the good event data in the ASCII TTE format adopted by</span>
+<span class="sd">        the COSSC.  This method opens the indicated file for writing,</span>
+<span class="sd">        and closes it on completion.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">fname</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="s">&#39;TTE</span><span class="si">%05i</span><span class="s">.ASCII&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">BSTNO</span>
+        <span class="n">ofile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+        <span class="n">ofile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;  BATSE burst trigger = </span><span class="si">%05i</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">BSTNO</span><span class="p">)</span>
+        <span class="n">ofile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;  npts =        </span><span class="si">%d</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">nevents</span><span class="p">)</span>
+        <span class="n">ofile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;  1st array:  &quot;npts&quot; times (unit = 1 microsec)</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="n">ofile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;  2nd array:  associated energy chan #s (1,2,3 or 4)</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="n">ofile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;  3rd array:  associated detector #s (0=&gt;7)</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="n">write_seq</span><span class="p">(</span><span class="n">ofile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%8i</span><span class="s">&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">write_seq</span><span class="p">(</span><span class="n">ofile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chan</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%2i</span><span class="s">&#39;</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+        <span class="n">write_seq</span><span class="p">(</span><span class="n">ofile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">det</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%2i</span><span class="s">&#39;</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+        <span class="n">ofile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        
+<span class="c">#-------------------------------------------------------------------------------</span>
+
+<span class="c"># A test case using trigger 830.</span></div></div>
+<span class="k">if</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">tte830</span> <span class="o">=</span> <span class="n">TTE</span><span class="p">(</span><span class="s">&#39;tte_ibdb_830.fits&#39;</span><span class="p">)</span>
+    <span class="c"># Total # of events should be 2**15 (TTE buffer size):</span>
+    <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">tte830</span><span class="o">.</span><span class="n">time</span><span class="p">)</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">tte830</span><span class="o">.</span><span class="n">background</span><span class="p">)</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">tte830</span><span class="o">.</span><span class="n">bad</span><span class="p">),</span> <span class="mi">2</span><span class="o">**</span><span class="mi">15</span>
+    <span class="k">print</span> <span class="n">tte830</span><span class="o">.</span><span class="n">bad</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+    <span class="k">print</span> <span class="s">&#39;DSELH: &#39;</span><span class="p">,</span> <span class="n">tte830</span><span class="o">.</span><span class="n">DSELH</span><span class="p">,</span> <span class="n">tte830</span><span class="o">.</span><span class="n">det</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">:]</span>
+    <span class="k">print</span> <span class="s">&#39;times: &#39;</span><span class="p">,</span> <span class="n">tte830</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+    <span class="k">print</span> <span class="s">&#39;chans: &#39;</span><span class="p">,</span> <span class="n">tte830</span><span class="o">.</span><span class="n">chan</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+    <span class="k">print</span> <span class="s">&#39;dets:  &#39;</span><span class="p">,</span> <span class="n">tte830</span><span class="o">.</span><span class="n">det</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+    <span class="k">print</span> <span class="n">tte830</span>
+    <span class="n">tte830</span><span class="o">.</span><span class="n">write_ASCII</span><span class="p">(</span><span class="s">&#39;830.dat&#39;</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s">&#39;Completed test!&#39;</span>
+
+<span class="c">#-------------------------------------------------------------------------------</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">sys</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="c"># Read in a trigger # from the command line, read in the associated</span>
+    <span class="c"># tte_ibdb FITS file, and write a TTE.ASCII file with data from the good</span>
+    <span class="c"># events.</span>
+
+    <span class="k">print</span> <span class="n">__name__</span>
+    <span class="k">print</span> <span class="s">&#39;Processing file from command line...&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">tnum</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Give an integer trigger number to identify the FITS file!&#39;</span><span class="p">)</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="s">&#39;tte_ibdb_</span><span class="si">%i</span><span class="s">.fits&#39;</span> <span class="o">%</span> <span class="n">tnum</span>
+    <span class="k">print</span> <span class="s">&#39;Getting TTE data from </span><span class="si">%s</span><span class="s">...&#39;</span> <span class="o">%</span> <span class="n">fname</span>
+    <span class="n">tte_tnum</span> <span class="o">=</span> <span class="n">TTE</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="k">print</span> <span class="n">tte_tnum</span>
+    <span class="n">tte_tnum</span><span class="o">.</span><span class="n">write_ASCII</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Tom Loredo.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
