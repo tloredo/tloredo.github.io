@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="author" content="Flux User" />
+    <meta name="description" content="My Website" />
+    <meta name="keywords" content="Flux, Mac" />
+    <link href="main.css" rel="stylesheet" media="screen" type="text/css" />
+    <title>Inference: Astrostatistics tools by Tom Loredo</title>
+  </head>
+  <body>
+    <div class="banner">
+      <img alt="" src="images/import_inference-banner.png" />
+    </div>
+    <div class="content">
+      <h1>Open-source astrostatistics projects</h1>
+      <p>
+        The following is a selection of Tom Loredo's open-source projects hosted
+        at GitHub:
+      </p>
+      <dl>
+        <dt>
+          <a href="https://github.com/tloredo/batse5bp" class="swlink"
+            >batse5bp</a
+          >
+        </dt>
+        <dd>
+          The <span class="modname">batse5bp</span> Python package provides
+          persistant local access to BATSE GRB data hosted at the CGRO SSC. It
+          accesses both the BATSE GRB catalogs, and a significant amount of the
+          detailed GRB data (e.g., time series and spectral data). See recent
+          <a href="batse/index.html">Sphinx documentation</a>. <i>Note:</i>
+          <span class="modname">batse5bp</span> has been subsumed into
+          <span class="modname">astrodata</span>; see
+          <a href="https://github.com/tloredo/astrodata" class="swlink"
+            >astrodata</a
+          >.
+        </dd>
+        <dt>
+          <a href="https://github.com/tloredo/sdss_legacy" class="swlink"
+            >sdss_legacy</a
+          >
+        </dt>
+        <dd>
+          This Python package provides persistant local access to photometric
+          and spectroscopic data (including SEDs) for the SDSS Main Galaxy
+          Sample (MGS), the luminous red galaxy (LRG) sample, and the
+          quasi-stellar object (QSO) sample observed during the SDSS-I/SDSS-II
+          Legacy Survey, as provided in SDSS DR17. This package will likely be
+          subsumed into
+          <span class="modname">astrodata</span>/
+        </dd>
+        <dt>
+          <a href="https://github.com/tloredo/inference" class="swlink"
+            >inference</a
+          >
+        </dt>
+        <dd>
+          The <span class="modname">inference</span> package is a collection of
+          Python modules implementing a variety of methods targeting the
+          statistical inference problems&#151;and the statistical modeling
+          <em>style</em>&#151;of the physical sciences.
+          <em>Please pardon our dust!</em>
+          <span class="modname">Inference</span> is being significantly
+          overhauled as part of updating it from Python 2.7 to Python 3. The
+          GitHub-hosted version includes some work-in-progress; the
+          <code>setup.py</code> script installs only the parts passing
+          consistency and unit tests. Modules implementing C and Fortran
+          extensions (for performance) in particular have not yet been ported;
+          they are being rewritten to use the new NumPy API and build tools. API
+          documentation for the Python-2.7 version is available
+          <a href="inference/index.html">here</a>; tutorial/appication
+          documentation is forthcoming.
+        </dd>
+        <dt>
+          <a href="https://github.com/tloredo/stanfitter" class="swlink"
+            >stanfitter</a
+          >
+        </dt>
+        <dd>
+          A more "Pythonic" interface for the
+          <a href="http://mc-stan.org/">Stan</a> Bayesian probabilistic modeling
+          language, via PyStan2. Initially developed for the
+          <a href="">XXVI Canary Islands Winter School of Astrophysics</a>, and
+          subsequently extended for use in Cornell University's STSCI 4780
+          &mdash; Bayesian Data Analysis: Principles and Practice (BDA). Public
+          documentation forthcoming; see demos and useage examples in the
+          <a href="https://github.com/CU-BDA-2022/LabResources"
+            >LabResources repo for the 2022 edition of the BDA course</a
+          >
+          (Lab11, ff.).
+        </dd>
+        <dt>
+          <a href="https://github.com/tloredo/CUDAHM-Paper1v2" class="swlink"
+            >CUDAHM</a
+          >
+        </dt>
+        <dd>
+          A C++ framework for GPU-accelerated hierarchical Bayesian inference
+          with two-level multilevel levels, using NVIDIA's CUDA library. The
+          motivating applications are cosmic demographics, such as modeling
+          number-size ("log(N)-log(S)") distributions, luminosity functions,
+          initial mass functions, etc., accounting for measurement error and
+          selection effects. A paper describing the methodology and software is
+          in preparation for <i>Astronomy &amp; Computing</i>.
+        </dd>
+        <dt>
+          <a href="https://github.com/tloredo/bb1gamma" class="swlink"
+            >bb1gamma</a
+          >
+        </dt>
+        <dd>
+          A Python implementation of the <i>break-by-one gamma</i> distribution,
+          a proper, tractable generalization of the Schechter function; see the
+          <a
+            href="https://ui.adsabs.harvard.edu/abs/2020RNAAS...4..132L/abstract"
+            >accompanying paper in Research Notes of the AAS</a
+          >.
+        </dd>
+        <dt>
+          <a href="https://github.com/tloredo/skymapuq" class="swlink"
+            >SkyMapUQ</a
+          >
+        </dt>
+        <dd>
+          A Python module implementing methods for quantifying uncertainty in a
+          HEALPix sky map describing an object's or event's sky location
+          uncertainty via a posterior probability density function (PDF) on the
+          sky, stored as a probability mass function (PMF) across HEALPix pixels
+          (that is, the sky map stores values of the PDF integrated over each
+          pixel). New quantifications include the expected search effort, and an
+          information theoretic equivalent area.
+        </dd>
+        <dt>
+          <a
+            href="https://github.com/tloredo/SummerSchool2024-IntroBayes"
+            class="swlink"
+            >CASt Summer School Introduction to Bayesian Data Analysis</a
+          >
+        </dt>
+        <dd>
+          Lecture slides and supplementary material for the
+          <i>Introduction to Bayesian Data Analysis</i> lectures presented at
+          the 2024 Penn State Center for Astrostatistics Summer School on
+          Statistics for Astronomers.
+        </dd>
+      </dl>
+    </div>
+  </body>
+</html>

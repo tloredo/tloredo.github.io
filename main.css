@@ -1,0 +1,28 @@
+DIV.banner {
+    text-align: center;
+    height: 125px;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+    /* border: 5px solid #000; */
+    border-style: solid;
+    border-color: black;
+    border-width: 0px 0px 0px 0px;
+    background-color: #0a0;
+}
+
+span.modname {
+    font-family: Courier, fixed-width;
+    font-weight: bold;
+}
+
+A.swlink {
+    font-family: Courier, fixed-width;
+    font-weight: bold;
+}
+dl dt {
+    margin-top: 1.1em;
+    margin-bottom: 0.3em;
+}
+
+.mystyle {
+}
